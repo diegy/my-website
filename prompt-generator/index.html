@@ -3,703 +3,1004 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI提示词生成器 - 让AI更懂你的需求</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>PromptCraft - AI提示词生成器</title>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .glass-effect { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.95); }
-        .tag-selected { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .fade-in { animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .typing-cursor::after { content: '|'; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
-        .history-item:hover { transform: translateX(5px); }
-        .metric-card { transition: all 0.3s ease; }
-        .metric-card:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #475569;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card-header h2 {
+            font-size: 1.25rem;
+            color: var(--text-primary);
+        }
+
+        .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .icon-input {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .icon-output {
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        textarea, select, input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        textarea {
+            min-height: 160px;
+            resize: vertical;
+        }
+
+        textarea:focus, select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .quick-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .tag {
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid var(--border);
+        }
+
+        .tag:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .output-container {
+            position: relative;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .output-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .output-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .output-box {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 300px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow-x: auto;
+        }
+
+        .output-box:empty::before {
+            content: "生成的提示词将显示在这里...";
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .output-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .section-label {
+            color: var(--accent);
+            font-weight: 600;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .section-label:first-of-type {
+            margin-top: 0;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: var(--bg-input);
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .feature-card h4 {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--success);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 10px;
+            font-weight: 500;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .analysis-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .analysis-badge {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        .tips-box {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(99, 102, 241, 0.1));
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+        }
+
+        .tips-box h3 {
+            font-size: 1rem;
+            color: var(--accent);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tips-box ul {
+            list-style: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .tips-box li {
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .tips-box li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        .template-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .template-btn {
+            padding: 12px;
+            background: var(--bg-input);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        .template-btn.active, .template-btn:hover {
+            border-color: var(--primary);
+            color: var(--text-primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* 动画效果 */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .highlight {
+            background: rgba(99, 102, 241, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- API Key Modal -->
-    <div id="apiKeyModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">设置 Claude API Key</h2>
-            <p class="text-gray-600 mb-6">请输入你的 Anthropic API Key 以使用提示词生成功能。密钥仅存储在本地浏览器中。</p>
-            <input type="password" id="apiKeyInput" placeholder="sk-ant-..." 
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none mb-4">
-            <button onclick="saveApiKey()" class="w-full gradient-bg text-white py-3 rounded-lg font-medium hover:opacity-90 transition">
-                保存并开始使用
-            </button>
-            <p class="text-xs text-gray-500 mt-4 text-center">
-                没有 API Key？<a href="https://console.anthropic.com/" target="_blank" class="text-purple-600 hover:underline">前往 Anthropic 控制台获取</a>
-            </p>
+<body>
+    <div class="container">
+        <header>
+            <h1>PromptCraft <span class="badge">内置引擎 无需API</span></h1>
+            <p>将模糊想法转化为AI可执行的结构化提示词</p>
+        </header>
+
+        <div class="main-layout">
+            <!-- 左侧输入区 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon icon-input">✏️</div>
+                    <h2>描述你的需求</h2>
+                </div>
+
+                <div class="template-selector">
+                    <button class="template-btn active" data-template="general">通用场景</button>
+                    <button class="template-btn" data-template="coding">编程开发</button>
+                    <button class="template-btn" data-template="writing">内容创作</button>
+                    <button class="template-btn" data-template="analysis">数据分析</button>
+                </div>
+
+                <div class="input-group">
+                    <label>任务类型</label>
+                    <select id="taskType">
+                        <option value="generate">生成内容</option>
+                        <option value="analyze">分析处理</option>
+                        <option value="transform">转换格式</option>
+                        <option value="answer">回答问题</option>
+                        <option value="optimize">优化改进</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>用日常语言描述你想让AI做什么</label>
+                    <textarea id="userInput" placeholder="例如：我想写一个程序来自动整理我的电脑文件，把不同类型的文件放到不同的文件夹里..."></textarea>
+                    <div class="quick-tags">
+                        <span class="tag" onclick="insertExample('writing')">📝 写一篇文章</span>
+                        <span class="tag" onclick="insertExample('coding')">💻 写代码</span>
+                        <span class="tag" onclick="insertExample('analysis')">📊 分析数据</span>
+                        <span class="tag" onclick="insertExample('explain')">❓ 解释概念</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>关键约束或要求（可选）</label>
+                    <input type="text" id="constraints" placeholder="如：预算限制、时间要求、特定格式等">
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>🎯 目标受众</h4>
+                        <input type="text" id="audience" placeholder="如：初学者、专业人士" style="background: transparent; border: none; padding: 0; color: var(--text-primary);">
+                    </div>
+                    <div class="feature-card">
+                        <h4>📏 输出长度</h4>
+                        <select id="length" style="background: transparent; border: none; padding: 0;">
+                            <option value="concise">简洁</option>
+                            <option value="medium" selected>适中</option>
+                            <option value="detailed">详细</option>
+                        </select>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🎨 语气风格</h4>
+                        <select id="tone" style="background: transparent; border: none; padding: 0;">
+                            <option value="professional">专业正式</option>
+                            <option value="casual" selected>自然友好</option>
+                            <option value="humorous">轻松幽默</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="generatePrompt()" id="generateBtn">
+                    <span>✨</span> 生成结构化提示词
+                </button>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>分析需求结构...</p>
+                    <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 8px;">基于内置规则引擎优化中</p>
+                </div>
+            </div>
+
+            <!-- 右侧输出区 -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="icon icon-output">🎯</div>
+                    <h2>优化后的提示词</h2>
+                </div>
+
+                <div class="output-container" id="outputContainer" style="display: none;">
+                    <div class="output-header">
+                        <div class="output-meta">
+                            <span>📊 <span id="tokenEstimate">0</span> tokens</span>
+                            <span>🎯 匹配度: <span id="matchScore">0</span>%</span>
+                        </div>
+                    </div>
+                    <div class="analysis-badges" id="analysisBadges"></div>
+                    <div class="output-box" id="outputBox"></div>
+                    <div class="output-actions">
+                        <button class="btn btn-secondary" onclick="copyOutput()">
+                            <span>📋</span> 复制
+                        </button>
+                        <button class="btn btn-secondary" onclick="refinePrompt()">
+                            <span>🔧</span> 进一步优化
+                        </button>
+                        <button class="btn btn-secondary" onclick="savePrompt()">
+                            <span>💾</span> 保存
+                        </button>
+                    </div>
+                </div>
+
+                <div class="tips-box">
+                    <h3>💡 为什么这样优化？</h3>
+                    <ul id="tipsList">
+                        <li>清晰的角色定义让AI知道以什么身份回答</li>
+                        <li>具体的输出格式要求确保结果可用</li>
+                        <li>约束条件帮助AI聚焦重点，避免跑题</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Header -->
-    <header class="gradient-bg text-white py-6 shadow-lg">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold">AI提示词生成器</h1>
-                    <p class="text-sm text-white text-opacity-80">让模糊想法变成精准指令</p>
-                </div>
-            </div>
-            <div class="flex items-center space-x-4">
-                <button onclick="showApiKeyModal()" class="text-sm bg-white bg-opacity-20 px-4 py-2 rounded-lg hover:bg-opacity-30 transition">
-                    更换 API Key
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <div class="container mx-auto px-4 py-8 flex gap-6">
-        <!-- Left Sidebar: Evolution Tracking -->
-        <aside class="w-80 hidden lg:block">
-            <div class="glass-effect rounded-2xl p-6 shadow-lg sticky top-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-bold text-gray-800">提示词进化追踪</h2>
-                    <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">P1功能</span>
-                </div>
-                
-                <!-- User Growth Stats -->
-                <div class="mb-6 space-y-3">
-                    <div class="metric-card bg-gradient-to-r from-purple-50 to-blue-50 p-4 rounded-xl">
-                        <p class="text-xs text-gray-600 mb-1">生成次数</p>
-                        <p class="text-2xl font-bold text-purple-700" id="totalGenerations">0</p>
-                    </div>
-                    <div class="metric-card bg-gradient-to-r from-green-50 to-teal-50 p-4 rounded-xl">
-                        <p class="text-xs text-gray-600 mb-1">平均满意度</p>
-                        <p class="text-2xl font-bold text-green-700" id="avgSatisfaction">--</p>
-                    </div>
-                    <div class="metric-card bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-xl">
-                        <p class="text-xs text-gray-600 mb-1">最爱场景</p>
-                        <p class="text-lg font-bold text-orange-700" id="favoriteScene">--</p>
-                    </div>
-                </div>
-
-                <!-- Evolution History -->
-                <div class="border-t pt-4">
-                    <h3 class="text-sm font-semibold text-gray-700 mb-3">最近优化记录</h3>
-                    <div id="evolutionList" class="space-y-3 max-h-96 overflow-y-auto">
-                        <p class="text-sm text-gray-500 text-center py-4">暂无记录，开始生成你的第一个提示词吧！</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Center: Main Generator -->
-        <main class="flex-1 max-w-3xl">
-            <!-- Scene Tag Selection (P0: Intent-Scene Tagging System) -->
-            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold text-gray-800">选择使用场景</h2>
-                    <span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-medium">P0必填</span>
-                </div>
-                <p class="text-sm text-gray-600 mb-4">选择场景可帮助我们生成更精准的提示词，并为你构建个性化推荐。</p>
-                
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="sceneTags">
-                    <button onclick="toggleScene(this, 'work-report')" class="scene-tag border-2 border-gray-200 rounded-xl p-3 text-center hover:border-purple-400 transition" data-scene="work-report">
-                        <div class="text-2xl mb-1">💼</div>
-                        <div class="text-sm font-medium">工作汇报</div>
-                    </button>
-                    <button onclick="toggleScene(this, 'creative-writing')" class="scene-tag border-2 border-gray-200 rounded-xl p-3 text-center hover:border-purple-400 transition" data-scene="creative-writing">
-                        <div class="text-2xl mb-1">✍️</div>
-                        <div class="text-sm font-medium">创意写作</div>
-                    </button>
-                    <button onclick="toggleScene(this, 'code-explain')" class="scene-tag border-2 border-gray-200 rounded-xl p-3 text-center hover:border-purple-400 transition" data-scene="code-explain">
-                        <div class="text-2xl mb-1">💻</div>
-                        <div class="text-sm font-medium">代码解释</div>
-                    </button>
-                    <button onclick="toggleScene(this, 'data-analysis')" class="scene-tag border-2 border-gray-200 rounded-xl p-3 text-center hover:border-purple-400 transition" data-scene="data-analysis">
-                        <div class="text-2xl mb-1">📊</div>
-                        <div class="text-sm font-medium">数据分析</div>
-                    </button>
-                    <button onclick="toggleScene(this, 'learning')" class="scene-tag border-2 border-gray-200 rounded-xl p-3 text-center hover:border-purple-400 transition" data-scene="learning">
-                        <div class="text-2xl mb-1">📚</div>
-                        <div class="text-sm font-medium">学习辅导</div>
-                    </button>
-                    <button onclick="toggleScene(this, 'translation')" class="scene-tag border-2 border-gray-200 rounded-xl p-3 text-center hover:border-purple-400 transition" data-scene="translation">
-                        <div class="text-2xl mb-1">🌐</div>
-                        <div class="text-sm font-medium">翻译润色</div>
-                    </button>
-                    <button onclick="toggleScene(this, 'meeting')" class="scene-tag border-2 border-gray-200 rounded-xl p-3 text-center hover:border-purple-400 transition" data-scene="meeting">
-                        <div class="text-2xl mb-1">🤝</div>
-                        <div class="text-sm font-medium">会议辅助</div>
-                    </button>
-                    <button onclick="toggleScene(this, 'other')" class="scene-tag border-2 border-gray-200 rounded-xl p-3 text-center hover:border-purple-400 transition" data-scene="other">
-                        <div class="text-2xl mb-1">🎯</div>
-                        <div class="text-sm font-medium">其他场景</div>
-                    </button>
-                </div>
-                
-                <!-- Selected tags display -->
-                <div id="selectedScenesDisplay" class="mt-4 flex flex-wrap gap-2 hidden">
-                    <span class="text-sm text-gray-600 mr-2">已选择：</span>
-                </div>
-            </div>
-
-            <!-- Input Section -->
-            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-                <h2 class="text-lg font-semibold text-gray-800 mb-4">描述你的需求</h2>
-                <textarea id="userInput" rows="4" placeholder="例如：我想让AI帮我写一份周报，总结这周完成的项目进度和遇到的问题..." 
-                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none resize-none text-gray-700"></textarea>
-                
-                <!-- Intent Analysis Preview -->
-                <div id="intentPreview" class="mt-4 p-4 bg-blue-50 rounded-xl hidden fade-in">
-                    <div class="flex items-center mb-2">
-                        <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <span class="text-sm font-medium text-blue-800">意图识别</span>
-                    </div>
-                    <p class="text-sm text-blue-700" id="intentText">检测到你的意图是...</p>
-                </div>
-
-                <button onclick="generatePrompt()" id="generateBtn" 
-                    class="w-full mt-4 gradient-bg text-white py-4 rounded-xl font-medium text-lg hover:opacity-90 transition flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span>生成结构化提示词</span>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Loading State -->
-            <div id="loadingState" class="bg-white rounded-2xl shadow-lg p-12 text-center hidden">
-                <div class="animate-spin w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full mx-auto mb-4"></div>
-                <p class="text-gray-600">正在分析你的需求并生成优化后的提示词...</p>
-                <p class="text-sm text-gray-400 mt-2" id="loadingStep">步骤 1/3: 分析意图场景</p>
-            </div>
-
-            <!-- Result Section -->
-            <div id="resultSection" class="bg-white rounded-2xl shadow-lg p-6 hidden fade-in">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold text-gray-800">生成的提示词</h2>
-                    <div class="flex space-x-2">
-                        <button onclick="copyResult()" class="text-sm text-gray-600 hover:text-purple-600 flex items-center space-x-1 px-3 py-1 rounded-lg hover:bg-purple-50 transition">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                            </svg>
-                            <span>复制</span>
-                        </button>
-                        <button onclick="regeneratePrompt()" class="text-sm text-gray-600 hover:text-purple-600 flex items-center space-x-1 px-3 py-1 rounded-lg hover:bg-purple-50 transition">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                            </svg>
-                            <span>重新生成</span>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="bg-gray-900 rounded-xl p-4 overflow-x-auto">
-                    <pre id="generatedPrompt" class="text-green-400 text-sm whitespace-pre-wrap font-mono typing-cursor"></pre>
-                </div>
-
-                <!-- Usage Tips -->
-                <div class="mt-4 p-4 bg-yellow-50 rounded-xl border border-yellow-200">
-                    <div class="flex items-start">
-                        <svg class="w-5 h-5 text-yellow-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <div>
-                            <p class="text-sm font-medium text-yellow-800">使用建议</p>
-                            <p class="text-sm text-yellow-700 mt-1">直接复制上方提示词到 Claude 或其他 AI 对话中使用。你可以根据实际情况修改 [方括号] 中的内容。</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Feedback Section (P0: Effect Feedback Loop) -->
-                <div class="mt-6 pt-6 border-t border-gray-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <div>
-                            <h3 class="font-medium text-gray-800">这个提示词好用吗？</h3>
-                            <p class="text-sm text-gray-500">你的反馈将帮助我们持续优化生成质量</p>
-                        </div>
-                        <span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">P0反馈闭环</span>
-                    </div>
-                    
-                    <div id="feedbackButtons" class="flex space-x-4">
-                        <button onclick="submitFeedback('up')" class="flex-1 py-3 border-2 border-gray-200 rounded-xl hover:border-green-400 hover:bg-green-50 transition flex items-center justify-center space-x-2 group">
-                            <svg class="w-6 h-6 text-gray-400 group-hover:text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
-                            </svg>
-                            <span class="text-gray-600 group-hover:text-green-600">好用</span>
-                        </button>
-                        <button onclick="submitFeedback('down')" class="flex-1 py-3 border-2 border-gray-200 rounded-xl hover:border-red-400 hover:bg-red-50 transition flex items-center justify-center space-x-2 group">
-                            <svg class="w-6 h-6 text-gray-400 group-hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"/>
-                            </svg>
-                            <span class="text-gray-600 group-hover:text-red-600">需要改进</span>
-                        </button>
-                    </div>
-
-                    <!-- Feedback Detail Input -->
-                    <div id="feedbackDetail" class="mt-4 hidden fade-in">
-                        <textarea id="feedbackText" rows="3" placeholder="请详细说明原因，帮助我们改进（可选）..." 
-                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none resize-none text-sm"></textarea>
-                        <button onclick="submitFeedbackDetail()" class="mt-2 bg-purple-600 text-white px-6 py-2 rounded-lg text-sm hover:bg-purple-700 transition">
-                            提交反馈
-                        </button>
-                    </div>
-
-                    <!-- Feedback Success Message -->
-                    <div id="feedbackSuccess" class="mt-4 p-4 bg-green-50 rounded-xl hidden">
-                        <p class="text-sm text-green-700 text-center">感谢你的反馈！我们会用它来优化生成质量。</p>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
+    <div class="toast" id="toast">已复制到剪贴板！</div>
 
     <script>
-        // Application State
-        const state = {
-            apiKey: localStorage.getItem('claude_api_key') || '',
-            selectedScenes: [],
-            currentGeneration: null,
-            generationHistory: JSON.parse(localStorage.getItem('generation_history') || '[]'),
-            feedbackData: JSON.parse(localStorage.getItem('feedback_data') || '[]'),
-            isGenerating: false
+        // 示例模板库
+        const examples = {
+            writing: '我需要写一篇关于"远程工作对团队协作的影响"的文章，用于发表在科技博客上。希望有数据支撑，结构清晰。',
+            coding: '帮我写一个Python脚本，能够批量重命名文件夹里的图片，按照拍摄日期排序并添加序号前缀。',
+            analysis: '我有一份销售数据，想分析哪些产品组合经常一起被购买，找出关联规则用于推荐系统。',
+            explain: '用通俗易懂的方式解释什么是区块链技术，让完全不懂技术的人也能理解它的作用和原理。'
         };
 
-        // Scene configurations with system prompts
-        const sceneConfigs = {
-            'work-report': {
-                name: '工作汇报',
-                icon: '💼',
-                description: '生成结构化工作汇报、周报、月报等'
+        // 提示词模板库
+        const promptTemplates = {
+            general: {
+                role: "你是一位专业的{task}助手，擅长将复杂问题转化为清晰可执行的方案。",
+                structure: [
+                    "【角色】{role}",
+                    "【任务】{task_desc}",
+                    "【背景】{context}",
+                    "【要求】\n{requirements}",
+                    "【输出格式】\n{format}",
+                    "【约束条件】\n{constraints}"
+                ]
             },
-            'creative-writing': {
-                name: '创意写作',
-                icon: '✍️',
-                description: '辅助小说、文章、剧本等创意内容创作'
+            coding: {
+                role: "你是一位经验丰富的软件工程师，精通多种编程语言和最佳实践。",
+                structure: [
+                    "# 编程任务",
+                    "",
+                    "## 需求描述",
+                    "{task_desc}",
+                    "",
+                    "## 技术规格",
+                    "- 语言/框架: {tech_stack}",
+                    "- 代码风格: {code_style}",
+                    "",
+                    "## 功能要求",
+                    "{requirements}",
+                    "",
+                    "## 约束条件",
+                    "{constraints}",
+                    "",
+                    "## 期望输出",
+                    "{format}",
+                    "",
+                    "请提供完整的、可直接运行的代码，并包含必要的注释。"
+                ]
             },
-            'code-explain': {
-                name: '代码解释',
-                icon: '💻',
-                description: '解释代码逻辑、生成注释、调试帮助'
+            writing: {
+                role: "你是一位资深内容创作者，擅长撰写引人入胜且结构严谨的文章。",
+                structure: [
+                    "# 内容创作任务",
+                    "",
+                    "## 主题",
+                    "{task_desc}",
+                    "",
+                    "## 目标受众",
+                    "{audience}",
+                    "",
+                    "## 风格要求",
+                    "- 语气: {tone}",
+                    "- 长度: {length}",
+                    "",
+                    "## 内容结构",
+                    "{structure}",
+                    "",
+                    "## 特殊要求",
+                    "{constraints}"
+                ]
             },
-            'data-analysis': {
-                name: '数据分析',
-                icon: '📊',
-                description: '分析数据、生成图表、业务洞察'
-            },
-            'learning': {
-                name: '学习辅导',
-                icon: '📚',
-                description: '知识点讲解、习题解答、学习计划'
-            },
-            'translation': {
-                name: '翻译润色',
-                icon: '🌐',
-                description: '多语言翻译、文本润色、语法检查'
-            },
-            'meeting': {
-                name: '会议辅助',
-                icon: '🤝',
-                description: '会议纪要、议程安排、讨论总结'
-            },
-            'other': {
-                name: '其他场景',
-                icon: '🎯',
-                description: '通用场景，灵活适配各种需求'
+            analysis: {
+                role: "你是一位数据分析专家，善于从数据中发现洞察并提出 actionable 的建议。",
+                structure: [
+                    "# 数据分析任务",
+                    "",
+                    "## 分析目标",
+                    "{task_desc}",
+                    "",
+                    "## 数据背景",
+                    "{context}",
+                    "",
+                    "## 分析方法",
+                    "{methodology}",
+                    "",
+                    "## 期望输出",
+                    "{format}",
+                    "",
+                    "## 限制条件",
+                    "{constraints}"
+                ]
             }
         };
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!state.apiKey) {
-                showApiKeyModal();
-            }
-            updateEvolutionDisplay();
-            updateStats();
+        // 任务类型映射
+        const taskTypeMap = {
+            generate: "内容生成",
+            analyze: "分析处理",
+            transform: "格式转换",
+            answer: "问题解答",
+            optimize: "优化改进"
+        };
+
+        // 语气映射
+        const toneMap = {
+            professional: "专业正式，使用行业术语，结构严谨",
+            casual: "自然友好，通俗易懂，像朋友交谈",
+            humorous: "轻松幽默，适当使用比喻和俏皮话"
+        };
+
+        // 长度映射
+        const lengthMap = {
+            concise: "简洁精炼，突出重点，控制在300字以内",
+            medium: "内容充实，详略得当，约500-800字",
+            detailed: "全面详细，深入分析，1000字以上"
+        };
+
+        // 模板切换
+        document.querySelectorAll('.template-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.template-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
         });
 
-        // API Key Management
-        function showApiKeyModal() {
-            document.getElementById('apiKeyModal').classList.remove('hidden');
-            document.getElementById('apiKeyInput').value = state.apiKey;
+        // 插入示例
+        function insertExample(type) {
+            document.getElementById('userInput').value = examples[type];
+            document.getElementById('userInput').focus();
         }
 
-        function saveApiKey() {
-            const key = document.getElementById('apiKeyInput').value.trim();
-            if (!key.startsWith('sk-ant-')) {
-                alert('请输入有效的 Anthropic API Key（以 sk-ant- 开头）');
-                return;
-            }
-            state.apiKey = key;
-            localStorage.setItem('claude_api_key', key);
-            document.getElementById('apiKeyModal').classList.add('hidden');
-        }
-
-        // Scene Tag Selection (P0: Intent-Scene Tagging System)
-        function toggleScene(element, scene) {
-            if (state.selectedScenes.includes(scene)) {
-                state.selectedScenes = state.selectedScenes.filter(s => s !== scene);
-                element.classList.remove('tag-selected', 'border-purple-500');
-                element.classList.add('border-gray-200');
-            } else {
-                state.selectedScenes.push(scene);
-                element.classList.add('tag-selected', 'border-purple-500');
-                element.classList.remove('border-gray-200');
-            }
-            updateSelectedScenesDisplay();
-        }
-
-        function updateSelectedScenesDisplay() {
-            const display = document.getElementById('selectedScenesDisplay');
-            if (state.selectedScenes.length === 0) {
-                display.classList.add('hidden');
-                return;
-            }
-            display.classList.remove('hidden');
-            display.innerHTML = '<span class="text-sm text-gray-600 mr-2">已选择：</span>';
-            state.selectedScenes.forEach(scene => {
-                const config = sceneConfigs[scene];
-                const tag = document.createElement('span');
-                tag.className = 'text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full';
-                tag.textContent = config.name;
-                display.appendChild(tag);
-            });
-        }
-
-        // Generate Prompt with Claude API
-        async function generatePrompt() {
-            const userInput = document.getElementById('userInput').value.trim();
-            
-            // Validation
-            if (state.selectedScenes.length === 0) {
-                alert('请至少选择一个使用场景，这将帮助我们生成更精准的提示词');
-                return;
-            }
-            if (!userInput) {
-                alert('请输入你的需求描述');
-                return;
-            }
-            if (!state.apiKey) {
-                showApiKeyModal();
+        // 核心生成逻辑 - 基于规则的提示词引擎
+        function generatePrompt() {
+            const input = document.getElementById('userInput').value.trim();
+            if (!input) {
+                showToast('请先描述你的需求', 'warning');
                 return;
             }
 
-            // Show loading state
-            document.getElementById('loadingState').classList.remove('hidden');
-            document.getElementById('resultSection').classList.add('hidden');
-            document.getElementById('generateBtn').disabled = true;
-            state.isGenerating = true;
-
-            // Update loading steps
-            const loadingSteps = [
-                '步骤 1/3: 分析意图场景...',
-                '步骤 2/3: 构建提示词结构...',
-                '步骤 3/3: 优化表达方式...'
-            ];
-            let stepIndex = 0;
-            const stepInterval = setInterval(() => {
-                if (stepIndex < loadingSteps.length - 1) {
-                    stepIndex++;
-                    document.getElementById('loadingStep').textContent = loadingSteps[stepIndex];
-                }
-            }, 1500);
-
-            // Build system prompt based on selected scenes
-            const sceneDescriptions = state.selectedScenes.map(s => sceneConfigs[s].name).join('、');
-            const systemPrompt = `你是一个专业的提示词工程专家。你的任务是将用户的模糊需求转化为结构化、可执行的AI提示词。
-
-用户选择的场景标签：${sceneDescriptions}
-
-请遵循以下原则生成提示词：
-1. 根据场景特点，添加该场景下最有效的提示词结构元素
-2. 使用明确的角色设定、任务描述和输出格式要求
-3. 添加必要的上下文和约束条件
-4. 如果适用，添加逐步思考或分步骤执行的指示
-5. 使用Markdown格式，让提示词易读易用
-
-生成的提示词应该：
-- 立即可用于AI对话
-- 无需用户再次修改即可产生高质量结果
-- 包含[方括号]标记的可自定义部分`;
-
-            // Prepare request body
-            const requestBody = {
-                model: "claude-opus-4-6",
-                max_tokens: 2048,
-                system: systemPrompt,
-                messages: [
-                    {
-                        role: "user",
-                        content: `请将以下需求转化为结构化提示词：\n\n"${userInput}"\n\n场景：${sceneDescriptions}`
-                    }
-                ],
-                stream: true
-            };
-
-            try {
-                const response = await fetch('https://api.anthropic.com/v1/messages', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': state.apiKey,
-                        'anthropic-version': '2023-06-01'
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error?.message || '请求失败');
-                }
-
-                // Handle streaming response
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let fullResponse = '';
-                let buffer = '';
-
-                clearInterval(stepInterval);
-                document.getElementById('loadingState').classList.add('hidden');
-                document.getElementById('resultSection').classList.remove('hidden');
-                document.getElementById('generatedPrompt').textContent = '';
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    buffer += decoder.decode(value, { stream: true });
-                    const lines = buffer.split('\n');
-                    buffer = lines.pop() || '';
-
-                    for (const line of lines) {
-                        if (line.trim() === '') continue;
-                        if (line.startsWith('event: ')) continue;
-                        if (line.startsWith('data: ')) {
-                            const data = line.slice(6);
-                            if (data === '[DONE]') continue;
-                            
-                            try {
-                                const parsed = JSON.parse(data);
-                                if (parsed.type === 'content_block_delta' && 
-                                    parsed.delta?.type === 'text_delta') {
-                                    fullResponse += parsed.delta.text;
-                                    document.getElementById('generatedPrompt').textContent = fullResponse;
-                                    // Auto-scroll to bottom
-                                    document.getElementById('generatedPrompt').scrollTop = 
-                                        document.getElementById('generatedPrompt').scrollHeight;
-                                }
-                            } catch (e) {
-                                // Ignore parse errors for incomplete chunks
-                            }
-                        }
-                    }
-                }
-
-                // Save generation to history
-                saveGeneration(userInput, fullResponse, state.selectedScenes);
-
-            } catch (error) {
-                clearInterval(stepInterval);
-                document.getElementById('loadingState').classList.add('hidden');
-                document.getElementById('generateBtn').disabled = false;
-                state.isGenerating = false;
-                
-                if (error.message.includes('authentication')) {
-                    alert('API Key 无效，请检查或重新设置');
-                    showApiKeyModal();
-                } else {
-                    alert('生成失败: ' + error.message);
-                }
-            }
-        }
-
-        // Save generation to local storage (Evolution Tracking)
-        function saveGeneration(input, output, scenes) {
-            const generation = {
-                id: Date.now(),
-                timestamp: new Date().toISOString(),
-                input: input,
-                output: output,
-                scenes: scenes,
-                inputHash: hashString(input) // Group similar inputs
-            };
-
-            state.generationHistory.unshift(generation);
-            // Keep last 50 generations
-            if (state.generationHistory.length > 50) {
-                state.generationHistory = state.generationHistory.slice(0, 50);
-            }
+            const btn = document.getElementById('generateBtn');
+            const loading = document.getElementById('loading');
+            const outputContainer = document.getElementById('outputContainer');
             
-            localStorage.setItem('generation_history', JSON.stringify(state.generationHistory));
-            state.currentGeneration = generation;
-            
-            updateEvolutionDisplay();
-            updateStats();
-        }
+            btn.disabled = true;
+            loading.classList.add('active');
+            outputContainer.style.display = 'none';
 
-        // Simple hash function to group similar inputs
-        function hashString(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                const char = str.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash;
-            }
-            return hash.toString();
-        }
-
-        // Update Evolution Display (P1: Prompt Evolution Tracking)
-        function updateEvolutionDisplay() {
-            const list = document.getElementById('evolutionList');
-            if (state.generationHistory.length === 0) {
-                list.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">暂无记录，开始生成你的第一个提示词吧！</p>';
-                return;
-            }
-
-            // Group by input hash (similar requests)
-            const groups = {};
-            state.generationHistory.forEach(gen => {
-                if (!groups[gen.inputHash]) groups[gen.inputHash] = [];
-                groups[gen.inputHash].push(gen);
-            });
-
-            // Show evolution for each group
-            list.innerHTML = '';
-            Object.entries(groups).slice(0, 5).forEach(([hash, gens]) => {
-                const latest = gens[0];
-                const sceneNames = latest.scenes.map(s => sceneConfigs[s]?.name || s).join('、');
-                
-                const item = document.createElement('div');
-                item.className = 'history-item bg-white border rounded-xl p-3 cursor-pointer transition';
-                item.onclick = () => loadGeneration(latest);
-                
-                item.innerHTML = `
-                    <div class="flex items-center justify-between mb-1">
-                        <span class="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-0.5 rounded">${sceneNames}</span>
-                        <span class="text-xs text-gray-400">${formatTime(latest.timestamp)}</span>
-                    </div>
-                    <p class="text-sm text-gray-700 truncate">${latest.input}</p>
-                    ${gens.length > 1 ? `<p class="text-xs text-green-600 mt-1">✨ 已优化 ${gens.length} 次</p>` : ''}
-                `;
-                
-                list.appendChild(item);
-            });
-        }
-
-        function updateStats() {
-            document.getElementById('totalGenerations').textContent = state.generationHistory.length;
-            
-            // Calculate satisfaction from feedback
-            const feedbacks = state.feedbackData;
-            if (feedbacks.length > 0) {
-                const positive = feedbacks.filter(f => f.type === 'up').length;
-                const percentage = Math.round((positive / feedbacks.length) * 100);
-                document.getElementById('avgSatisfaction').textContent = percentage + '%';
-            } else {
-                document.getElementById('avgSatisfaction').textContent = '--';
-            }
-            
-            // Find favorite scene
-            const sceneCounts = {};
-            state.generationHistory.forEach(g => {
-                g.scenes.forEach(s => {
-                    sceneCounts[s] = (sceneCounts[s] || 0) + 1;
-                });
-            });
-            const favorite = Object.entries(sceneCounts).sort((a, b) => b[1] - a[1])[0];
-            if (favorite) {
-                document.getElementById('favoriteScene').textContent = sceneConfigs[favorite[0]]?.name || favorite[0];
-            }
-        }
-
-        function formatTime(isoString) {
-            const date = new Date(isoString);
-            const now = new Date();
-            const diff = (now - date) / 1000; // seconds
-            
-            if (diff < 60) return '刚刚';
-            if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
-            if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
-            return date.toLocaleDateString('zh-CN');
-        }
-
-        function loadGeneration(gen) {
-            document.getElementById('userInput').value = gen.input;
-            // Restore scene selection
-            state.selectedScenes = gen.scenes;
-            document.querySelectorAll('.scene-tag').forEach(tag => {
-                const scene = tag.dataset.scene;
-                if (gen.scenes.includes(scene)) {
-                    tag.classList.add('tag-selected', 'border-purple-500');
-                    tag.classList.remove('border-gray-200');
-                } else {
-                    tag.classList.remove('tag-selected', 'border-purple-500');
-                    tag.classList.add('border-gray-200');
-                }
-            });
-            updateSelectedScenesDisplay();
-            
-            // Show result
-            document.getElementById('generatedPrompt').textContent = gen.output;
-            document.getElementById('resultSection').classList.remove('hidden');
-            window.scrollTo({ top: document.getElementById('resultSection').offsetTop - 100, behavior: 'smooth' });
-        }
-
-        // Feedback System (P0: Effect Feedback Loop)
-        function submitFeedback(type) {
-            if (!state.currentGeneration) return;
-            
-            // Show detail input
-            document.getElementById('feedbackButtons').classList.add('hidden');
-            document.getElementById('feedbackDetail').classList.remove('hidden');
-            
-            // Store preliminary feedback
-            state.currentFeedback = {
-                generationId: state.currentGeneration.id,
-                type: type,
-                timestamp: new Date().toISOString(),
-                scenes: state.currentGeneration.scenes
-            };
-        }
-
-        function submitFeedbackDetail() {
-            const detail = document.getElementById('feedbackText').value.trim();
-            
-            if (state.currentFeedback) {
-                state.currentFeedback.detail = detail;
-                state.feedbackData.push(state.currentFeedback);
-                localStorage.setItem('feedback_data', JSON.stringify(state.feedbackData));
-            }
-            
-            document.getElementById('feedbackDetail').classList.add('hidden');
-            document.getElementById('feedbackSuccess').classList.remove('hidden');
-            
-            updateStats();
-            
-            // Reset after delay
+            // 模拟处理时间，增强体验
             setTimeout(() => {
-                document.getElementById('feedbackSuccess').classList.add('hidden');
-                document.getElementById('feedbackButtons').classList.remove('hidden');
-                document.getElementById('feedbackText').value = '';
-            }, 3000);
+                const result = buildPrompt(input);
+                displayResult(result);
+                
+                loading.classList.remove('active');
+                btn.disabled = false;
+                outputContainer.style.display = 'block';
+                outputContainer.classList.add('fade-in');
+            }, 800);
         }
 
-        // Utility Functions
-        function copyResult() {
-            const text = document.getElementById('generatedPrompt').textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                alert('已复制到剪贴板！');
+        // 提示词构建引擎
+        function buildPrompt(userInput) {
+            const templateType = document.querySelector('.template-btn.active').dataset.template;
+            const taskType = document.getElementById('taskType').value;
+            const constraints = document.getElementById('constraints').value;
+            const audience = document.getElementById('audience').value;
+            const length = document.getElementById('length').value;
+            const tone = document.getElementById('tone').value;
+
+            // 分析用户输入，提取关键信息
+            const analysis = analyzeInput(userInput);
+            
+            // 选择模板
+            const template = promptTemplates[templateType] || promptTemplates.general;
+            
+            // 构建变量映射
+            const variables = {
+                task: taskTypeMap[taskType],
+                task_desc: userInput,
+                role: template.role.replace('{task}', taskTypeMap[taskType]),
+                context: analysis.context || "用户需要完成一个" + taskTypeMap[taskType] + "任务",
+                requirements: buildRequirements(analysis, taskType),
+                format: buildFormat(taskType, length),
+                constraints: constraints || "无特殊约束",
+                tech_stack: analysis.techStack || "根据需求选择合适的技术栈",
+                code_style: "清晰、可读、遵循最佳实践",
+                audience: audience || "一般读者",
+                tone: toneMap[tone],
+                length: lengthMap[length],
+                structure: buildStructure(analysis),
+                methodology: "根据数据特征选择适当的统计或机器学习方法"
+            };
+
+            // 组装最终提示词
+            let output = template.structure.join('\n');
+            for (const [key, value] of Object.entries(variables)) {
+                output = output.replace(new RegExp(`{${key}}`, 'g'), value);
+            }
+
+            return {
+                prompt: output,
+                analysis: analysis,
+                stats: {
+                    tokens: estimateTokens(output),
+                    matchScore: calculateMatchScore(analysis)
+                }
+            };
+        }
+
+        // 输入分析引擎
+        function analyzeInput(input) {
+            const analysis = {
+                context: "",
+                keyPoints: [],
+                techStack: "",
+                hasData: false,
+                hasExample: false,
+                urgency: false
+            };
+
+            // 技术栈检测
+            const techPatterns = {
+                python: /python|py/i,
+                javascript: /javascript|js|node/i,
+                java: /\bjava\b/i,
+                react: /react/i,
+                sql: /sql|数据库/i,
+                api: /api|接口/i
+            };
+
+            for (const [tech, pattern] of Object.entries(techPatterns)) {
+                if (pattern.test(input)) {
+                    analysis.techStack = tech;
+                    break;
+                }
+            }
+
+            // 数据提及检测
+            if (/数据|表格|excel|csv|统计|分析/.test(input)) {
+                analysis.hasData = true;
+                analysis.keyPoints.push("涉及数据处理");
+            }
+
+            // 示例提及检测
+            if (/例如|比如|像|示例/.test(input)) {
+                analysis.hasExample = true;
+            }
+
+            // 时间紧迫性检测
+            if (/紧急|尽快|马上|今天|立刻/.test(input)) {
+                analysis.urgency = true;
+                analysis.keyPoints.push("时间敏感");
+            }
+
+            // 生成上下文描述
+            analysis.context = generateContext(input, analysis);
+
+            return analysis;
+        }
+
+        // 生成上下文
+        function generateContext(input, analysis) {
+            const contexts = [];
+            
+            if (analysis.techStack) {
+                contexts.push(`涉及${analysis.techStack}技术实现`);
+            }
+            if (analysis.hasData) {
+                contexts.push("需要处理和分析数据");
+            }
+            if (analysis.urgency) {
+                contexts.push("时间要求较紧");
+            }
+            
+            return contexts.length > 0 ? contexts.join("，") : "标准任务场景";
+        }
+
+        // 构建要求列表
+        function buildRequirements(analysis, taskType) {
+            const requirements = [];
+            
+            if (taskType === 'generate') {
+                requirements.push("- 内容原创，避免陈词滥调");
+                requirements.push("- 结构清晰，逻辑连贯");
+            } else if (taskType === 'analyze') {
+                requirements.push("- 提供深入的分析和洞察");
+                requirements.push("- 用数据或案例支撑观点");
+            } else if (taskType === 'coding') {
+                requirements.push("- 代码可读性强，命名规范");
+                requirements.push("- 包含必要的错误处理");
+            }
+            
+            if (analysis.hasData) {
+                requirements.push("- 基于提供的数据进行分析");
+            }
+            
+            return requirements.join('\n');
+        }
+
+        // 构建输出格式
+        function buildFormat(taskType, length) {
+            const formats = {
+                generate: "- 标题\n- 正文（分段）\n- 总结",
+                analyze: "- 执行摘要\n- 详细分析\n- 结论与建议",
+                transform: "- 输入示例\n- 输出格式\n- 转换规则",
+                answer: "- 核心观点\n- 详细解释\n- 相关案例",
+                optimize: "- 现状分析\n- 优化方案\n- 实施步骤"
+            };
+            
+            return formats[taskType] || formats.generate;
+        }
+
+        // 构建内容结构
+        function buildStructure(analysis) {
+            if (analysis.hasData) {
+                return "1. 引言/背景\n2. 数据概览\n3. 深度分析\n4. 结论与建议";
+            }
+            return "1. 引入/背景\n2. 主体内容\n3. 案例分析\n4. 总结升华";
+        }
+
+        // 估算token数量
+        function estimateTokens(text) {
+            // 中文按字计算，英文按词计算（简化算法）
+            const chineseChars = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
+            const englishWords = (text.match(/[a-zA-Z]+/g) || []).length;
+            return Math.ceil(chineseChars + englishWords * 0.5);
+        }
+
+        // 计算匹配度分数
+        function calculateMatchScore(analysis) {
+            let score = 85;
+            if (analysis.keyPoints.length > 0) score += 5;
+            if (analysis.techStack) score += 5;
+            if (analysis.hasData) score += 3;
+            return Math.min(score, 98);
+        }
+
+        // 显示结果
+        function displayResult(result) {
+            document.getElementById('outputBox').textContent = result.prompt;
+            document.getElementById('tokenEstimate').textContent = result.stats.tokens;
+            document.getElementById('matchScore').textContent = result.stats.matchScore;
+            
+            // 显示分析标签
+            const badgesContainer = document.getElementById('analysisBadges');
+            badgesContainer.innerHTML = '';
+            result.analysis.keyPoints.forEach(point => {
+                const badge = document.createElement('span');
+                badge.className = 'analysis-badge';
+                badge.textContent = point;
+                badgesContainer.appendChild(badge);
+            });
+            
+            // 更新提示
+            updateTips(result.analysis);
+        }
+
+        // 更新提示列表
+        function updateTips(analysis) {
+            const tips = [
+                "清晰的角色定义让AI知道以什么身份回答",
+                "具体的输出格式要求确保结果可用"
+            ];
+            
+            if (analysis.techStack) {
+                tips.push(`针对${analysis.techStack}技术栈提供了专业指导`);
+            }
+            if (analysis.hasData) {
+                tips.push("已添加数据分析相关的约束条件");
+            }
+            if (analysis.urgency) {
+                tips.push("针对时间紧迫性优化了输出优先级");
+            }
+            
+            const tipsList = document.getElementById('tipsList');
+            tipsList.innerHTML = tips.map(tip => `<li>${tip}</li>`).join('');
+        }
+
+        // 复制功能
+        function copyOutput() {
+            const output = document.getElementById('outputBox').textContent;
+            navigator.clipboard.writeText(output).then(() => {
+                showToast('已复制到剪贴板！');
             });
         }
 
-        function regeneratePrompt() {
-            generatePrompt();
+        // 进一步优化
+        function refinePrompt() {
+            const current = document.getElementById('outputBox').textContent;
+            const refined = current + '\n\n---\n\n补充说明：请在回答前确认是否理解需求，如有歧义请提出澄清问题。';
+            document.getElementById('outputBox').textContent = refined;
+            showToast('已添加优化建议');
         }
+
+        // 保存功能（使用 localStorage）
+        function savePrompt() {
+            const output = document.getElementById('outputBox').textContent;
+            const saves = JSON.parse(localStorage.getItem('promptCraft_saves') || '[]');
+            saves.push({
+                content: output,
+                timestamp: new Date().toISOString(),
+                title: '提示词 ' + (saves.length + 1)
+            });
+            localStorage.setItem('promptCraft_saves', JSON.stringify(saves));
+            showToast('已保存到本地存储');
+        }
+
+        // 显示提示
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.background = type === 'warning' ? 'var(--warning)' : 'var(--success)';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // 回车快捷生成
+        document.getElementById('userInput').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                generatePrompt();
+            }
+        });
     </script>
 </body>
 </html>
