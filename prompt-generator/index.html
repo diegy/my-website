@@ -46,285 +46,160 @@
             
             /* Typography */
             --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
             
             /* Shadows */
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-            --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.5);
+            --shadow-glow: 0 0 20px rgba(99,102,241,0.3);
             
             /* Transitions */
-            --transition-fast: 150ms ease;
-            --transition-base: 250ms ease;
-            --transition-slow: 350ms ease;
-            
-            /* Border Radius */
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 16px;
-            --radius-xl: 24px;
+            --transition-fast: 0.15s ease;
+            --transition-base: 0.25s ease;
         }
 
         /* ===== Reset & Base ===== */
         *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         html {
-            scroll-behavior: smooth;
+            font-size: 16px;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
         body {
             font-family: var(--font-sans);
-            background: var(--bg-dark);
+            background: var(--bg-darker);
             color: var(--text-primary);
-            min-height: 100vh;
             line-height: 1.6;
-            overflow-x: hidden;
+            min-height: 100vh;
         }
 
         /* ===== Layout ===== */
-        .app-container {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            min-height: 100vh;
-        }
-
-        @media (max-width: 1024px) {
-            .app-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* ===== Sidebar ===== */
-        .sidebar {
-            background: var(--bg-darker);
-            border-right: 1px solid var(--border-light);
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: var(--space-lg);
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-lg);
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
         }
 
-        @media (max-width: 1024px) {
-            .sidebar {
-                position: fixed;
-                left: -100%;
-                top: 0;
-                width: 280px;
-                height: 100vh;
-                z-index: 100;
-                transition: left var(--transition-base);
-            }
-            .sidebar.open {
-                left: 0;
-            }
-            .sidebar-overlay {
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.7);
-                z-index: 99;
-            }
-            .sidebar-overlay.show {
-                display: block;
-            }
+        /* ===== Header ===== */
+        .header {
+            text-align: center;
+            padding: var(--space-2xl) 0;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            background: radial-gradient(ellipse, rgba(99,102,241,0.15) 0%, transparent 70%);
+            pointer-events: none;
         }
 
         .logo {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-light), var(--accent));
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-bottom: var(--space-sm);
+            position: relative;
         }
 
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            -webkit-text-fill-color: initial;
-        }
-
-        .nav-section {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-sm);
-        }
-
-        .nav-title {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            padding: 0 var(--space-sm);
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm) var(--space-md);
-            border-radius: var(--radius-md);
+        .tagline {
             color: var(--text-secondary);
-            text-decoration: none;
-            transition: all var(--transition-fast);
-            cursor: pointer;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background: var(--bg-card);
-            color: var(--text-primary);
-        }
-
-        .nav-item.active {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         /* ===== Main Content ===== */
-        .main-content {
-            padding: var(--space-xl);
-            overflow-y: auto;
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-2xl);
         }
 
         @media (max-width: 768px) {
-            .main-content {
-                padding: var(--space-md);
+            .main-grid {
+                grid-template-columns: 1fr;
             }
-        }
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-xl);
-            flex-wrap: wrap;
-            gap: var(--space-md);
-        }
-
-        .header-title {
-            font-size: 1.875rem;
-            font-weight: 700;
-        }
-
-        .header-subtitle {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: var(--space-sm);
-        }
-
-        /* ===== Buttons ===== */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm) var(--space-md);
-            border-radius: var(--radius-md);
-            font-size: 0.875rem;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            box-shadow: var(--shadow-glow);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
-        }
-
-        .btn-secondary {
-            background: var(--bg-card);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg-card-hover);
-        }
-
-        .btn-ghost {
-            background: transparent;
-            color: var(--text-secondary);
-        }
-
-        .btn-ghost:hover {
-            color: var(--text-primary);
         }
 
         /* ===== Cards ===== */
         .card {
             background: var(--bg-card);
+            border-radius: 16px;
+            padding: var(--space-xl);
             border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            margin-bottom: var(--space-lg);
+            transition: all var(--transition-base);
         }
 
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-md);
+        .card:hover {
+            border-color: var(--border);
+            box-shadow: var(--shadow-lg);
         }
 
         .card-title {
-            font-size: 1.125rem;
+            font-size: 1.25rem;
             font-weight: 600;
+            margin-bottom: var(--space-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .card-title-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
         }
 
         /* ===== Form Elements ===== */
         .form-group {
-            margin-bottom: var(--space-md);
+            margin-bottom: var(--space-lg);
         }
 
         .form-label {
             display: block;
             font-size: 0.875rem;
             font-weight: 500;
-            margin-bottom: var(--space-xs);
             color: var(--text-secondary);
+            margin-bottom: var(--space-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
 
-        .form-input, .form-select, .form-textarea {
+        .form-input,
+        .form-textarea,
+        .form-select {
             width: 100%;
-            padding: var(--space-sm) var(--space-md);
+            padding: var(--space-md);
             background: var(--bg-input);
             border: 1px solid var(--border);
-            border-radius: var(--radius-md);
+            border-radius: 10px;
             color: var(--text-primary);
-            font-size: 0.875rem;
+            font-size: 0.9375rem;
             transition: all var(--transition-fast);
         }
 
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
             outline: none;
             border-color: var(--primary);
             background: var(--bg-input-focus);
@@ -333,662 +208,678 @@
         .form-textarea {
             min-height: 120px;
             resize: vertical;
-            font-family: var(--font-sans);
         }
 
-        /* ===== Prompt Output ===== */
-        .prompt-output {
-            background: var(--bg-darker);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
-            font-family: var(--font-mono);
-            font-size: 0.875rem;
-            line-height: 1.7;
-            min-height: 200px;
-            position: relative;
-        }
-
-        .prompt-output-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-sm);
-            padding-bottom: var(--space-sm);
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        .prompt-output-actions {
-            display: flex;
-            gap: var(--space-xs);
-        }
-
-        .prompt-tag {
+        /* ===== Buttons ===== */
+        .btn {
             display: inline-flex;
             align-items: center;
-            gap: var(--space-xs);
-            padding: var(--space-xs) var(--space-sm);
-            background: var(--bg-input);
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            color: var(--accent-light);
-        }
-
-        /* ===== Templates Grid ===== */
-        .templates-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: var(--space-md);
-        }
-
-        .template-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-md);
-            padding: var(--space-md);
+            justify-content: center;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-xl);
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all var(--transition-base);
+            transition: all var(--transition-fast);
+            border: none;
         }
 
-        .template-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--primary);
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
             box-shadow: var(--shadow-glow);
         }
 
-        .template-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: var(--space-sm);
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99,102,241,0.4);
         }
 
-        .template-name {
-            font-weight: 600;
-            margin-bottom: var(--space-xs);
+        .btn-primary:active {
+            transform: translateY(0);
         }
 
-        .template-desc {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        /* ===== Toast Notifications ===== */
-        .toast-container {
-            position: fixed;
-            top: var(--space-lg);
-            right: var(--space-lg);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-sm);
-        }
-
-        .toast {
-            padding: var(--space-md);
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            animation: slideIn 0.3s ease;
-            max-width: 320px;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .toast-success {
-            border-color: var(--success);
-        }
-
-        .toast-error {
-            border-color: var(--error);
-        }
-
-        /* ===== Onboarding Overlay ===== */
-        .onboarding-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.95);
-            z-index: 2000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: var(--space-lg);
-        }
-
-        .onboarding-overlay.active {
-            display: flex;
-        }
-
-        .onboarding-modal {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-xl);
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .onboarding-header {
-            padding: var(--space-xl);
-            text-align: center;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-        }
-
-        .onboarding-header h2 {
-            font-size: 1.75rem;
-            margin-bottom: var(--space-sm);
-        }
-
-        .onboarding-header p {
-            opacity: 0.9;
-        }
-
-        .onboarding-content {
-            padding: var(--space-xl);
-            overflow-y: auto;
-        }
-
-        .onboarding-step {
-            display: none;
-        }
-
-        .onboarding-step.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .onboarding-step h3 {
-            font-size: 1.25rem;
-            margin-bottom: var(--space-md);
-            color: var(--primary-light);
-        }
-
-        .onboarding-step p {
-            color: var(--text-secondary);
-            margin-bottom: var(--space-md);
-            line-height: 1.7;
-        }
-
-        .feature-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-md);
-        }
-
-        .feature-item {
-            display: flex;
-            gap: var(--space-md);
-            padding: var(--space-md);
+        .btn-secondary {
             background: var(--bg-input);
-            border-radius: var(--radius-md);
-        }
-
-        .feature-icon {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .feature-content h4 {
-            font-weight: 600;
-            margin-bottom: var(--space-xs);
-        }
-
-        .feature-content p {
-            font-size: 0.875rem;
-            margin: 0;
-        }
-
-        .onboarding-footer {
-            padding: var(--space-lg) var(--space-xl);
-            border-top: 1px solid var(--border-light);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .onboarding-progress {
-            display: flex;
-            gap: var(--space-xs);
-        }
-
-        .progress-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--border);
-            transition: all var(--transition-fast);
-        }
-
-        .progress-dot.active {
-            background: var(--primary);
-            width: 24px;
-            border-radius: 4px;
-        }
-
-        .onboarding-buttons {
-            display: flex;
-            gap: var(--space-sm);
-        }
-
-        /* ===== Tutorial Tooltip ===== */
-        .tutorial-tooltip {
-            position: absolute;
-            background: var(--bg-card);
-            border: 2px solid var(--primary);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            max-width: 320px;
-            z-index: 1500;
-            box-shadow: var(--shadow-lg), var(--shadow-glow);
-            display: none;
-        }
-
-        .tutorial-tooltip.active {
-            display: block;
-            animation: tooltipPop 0.3s ease;
-        }
-
-        @keyframes tooltipPop {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .tutorial-tooltip::before {
-            content: '';
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background: var(--bg-card);
-            border: 2px solid var(--primary);
-            transform: rotate(45deg);
-        }
-
-        .tutorial-tooltip.top::before {
-            bottom: -9px;
-            left: 50%;
-            margin-left: -8px;
-            border-top: none;
-            border-left: none;
-        }
-
-        .tutorial-tooltip.bottom::before {
-            top: -9px;
-            left: 50%;
-            margin-left: -8px;
-            border-bottom: none;
-            border-right: none;
-        }
-
-        .tutorial-tooltip.left::before {
-            right: -9px;
-            top: 50%;
-            margin-top: -8px;
-            border-bottom: none;
-            border-left: none;
-        }
-
-        .tutorial-tooltip.right::before {
-            left: -9px;
-            top: 50%;
-            margin-top: -8px;
-            border-top: none;
-            border-right: none;
-        }
-
-        .tutorial-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-sm);
-        }
-
-        .tutorial-badge {
-            padding: var(--space-xs) var(--space-sm);
-            background: var(--primary);
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .tutorial-title {
-            font-weight: 600;
-        }
-
-        .tutorial-text {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-bottom: var(--space-md);
-        }
-
-        .tutorial-actions {
-            display: flex;
-            gap: var(--space-sm);
-        }
-
-        .tutorial-highlight {
-            position: absolute;
-            border: 3px solid var(--primary);
-            border-radius: var(--radius-md);
-            box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.8), var(--shadow-glow);
-            z-index: 1400;
-            pointer-events: none;
-            display: none;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.8), 0 0 20px var(--primary); }
-            50% { box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.8), 0 0 40px var(--primary); }
-        }
-
-        .tutorial-highlight.active {
-            display: block;
-        }
-
-        /* ===== Skip Tutorial Button ===== */
-        .skip-tutorial {
-            position: fixed;
-            bottom: var(--space-lg);
-            right: var(--space-lg);
-            z-index: 1600;
-            display: none;
-        }
-
-        .skip-tutorial.active {
-            display: flex;
-        }
-
-        /* ===== Mobile Menu Toggle ===== */
-        .mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            top: var(--space-md);
-            left: var(--space-md);
-            z-index: 90;
-            width: 44px;
-            height: 44px;
-            background: var(--bg-card);
+            color: var(--text-primary);
             border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
         }
 
-        @media (max-width: 1024px) {
-            .mobile-menu-toggle {
-                display: flex;
-            }
-        }
-
-        /* ===== Saved Prompts ===== */
-        .saved-prompts {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-sm);
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .saved-prompt-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: var(--space-sm) var(--space-md);
-            background: var(--bg-input);
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-
-        .saved-prompt-item:hover {
+        .btn-secondary:hover {
             background: var(--bg-input-focus);
+            border-color: var(--primary-light);
         }
 
-        .saved-prompt-name {
+        .btn-sm {
+            padding: var(--space-sm) var(--space-md);
             font-size: 0.875rem;
-            font-weight: 500;
         }
 
-        .saved-prompt-date {
-            font-size: 0.75rem;
-            color: var(--text-muted);
+        /* ===== Output Area ===== */
+        .output-area {
+            background: var(--bg-darker);
+            border-radius: 12px;
+            padding: var(--space-lg);
+            min-height: 200px;
+            border: 1px dashed var(--border);
+            position: relative;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: var(--space-xl);
-            color: var(--text-muted);
+        .output-content {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.875rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
         }
 
-        .empty-state-icon {
-            font-size: 3rem;
-            margin-bottom: var(--space-md);
-            opacity: 0.5;
+        .output-content:not(:empty) {
+            color: var(--text-primary);
         }
 
-        /* ===== Responsive ===== */
-        @media (max-width: 640px) {
-            .templates-grid {
+        .output-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        /* ===== Feedback Section ===== */
+        .feedback-section {
+            margin-top: var(--space-2xl);
+        }
+
+        .feedback-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+        }
+
+        @media (max-width: 768px) {
+            .feedback-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .header-title {
-                font-size: 1.5rem;
-            }
-            
-            .onboarding-modal {
-                margin: var(--space-md);
-                max-height: calc(100vh - var(--space-xl));
-            }
+        }
+
+        /* Star Rating */
+        .star-rating {
+            display: flex;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .star {
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            fill: var(--bg-input);
+        }
+
+        .star:hover,
+        .star.active {
+            fill: var(--warning);
+            transform: scale(1.1);
+        }
+
+        .star.active {
+            filter: drop-shadow(0 0 8px rgba(245,158,11,0.5));
+        }
+
+        /* Rating Summary */
+        .rating-summary {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            padding: var(--space-lg);
+            background: var(--bg-darker);
+            border-radius: 12px;
+            margin-bottom: var(--space-lg);
+        }
+
+        .rating-average {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .rating-details {
+            flex: 1;
+        }
+
+        .rating-count {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .rating-bar {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-top: var(--space-xs);
+        }
+
+        .rating-bar-track {
+            flex: 1;
+            height: 6px;
+            background: var(--bg-input);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .rating-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--warning) 0%, #fbbf24 100%);
+            border-radius: 3px;
+            transition: width var(--transition-base);
+        }
+
+        /* Feedback History */
+        .feedback-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: var(--space-sm);
+        }
+
+        .feedback-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .feedback-list::-webkit-scrollbar-track {
+            background: var(--bg-input);
+            border-radius: 3px;
+        }
+
+        .feedback-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .feedback-item {
+            padding: var(--space-md);
+            background: var(--bg-darker);
+            border-radius: 10px;
+            margin-bottom: var(--space-md);
+            border: 1px solid var(--border-light);
+            transition: all var(--transition-fast);
+        }
+
+        .feedback-item:hover {
+            border-color: var(--border);
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-sm);
+        }
+
+        .feedback-stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .feedback-star {
+            width: 14px;
+            height: 14px;
+            fill: var(--warning);
+        }
+
+        .feedback-star.empty {
+            fill: var(--bg-input);
+        }
+
+        .feedback-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .feedback-comment {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .feedback-empty {
+            text-align: center;
+            padding: var(--space-2xl);
+            color: var(--text-muted);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: var(--space-xl);
+            right: var(--space-xl);
+            padding: var(--space-md) var(--space-xl);
+            background: var(--bg-card);
+            border: 1px solid var(--success);
+            border-radius: 10px;
+            color: var(--success);
+            font-weight: 500;
+            transform: translateX(150%);
+            transition: transform var(--transition-base);
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .mt-md { margin-top: var(--space-md); }
+        .mb-md { margin-bottom: var(--space-md); }
+        .hidden { display: none; }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Mobile Menu Toggle -->
-        <button class="mobile-menu-toggle" onclick="toggleSidebar()">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-        </button>
-
-        <!-- Sidebar Overlay -->
-        <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="logo">
-                <div class="logo-icon">✦</div>
-                PromptCraft Pro
-            </div>
-
-            <nav class="nav-section">
-                <span class="nav-title">创建</span>
-                <a href="#" class="nav-item active" data-tutorial="templates">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="14" width="7" height="7"></rect>
-                        <rect x="3" y="14" width="7" height="7"></rect>
-                    </svg>
-                    模板库
-                </a>
-                <a href="#" class="nav-item" data-tutorial="custom">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 20h9"></path>
-                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                    </svg>
-                    自定义提示词
-                </a>
-                <a href="#" class="nav-item" data-tutorial="history">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                    历史记录
-                </a>
-            </nav>
-
-            <nav class="nav-section">
-                <span class="nav-title">我的</span>
-                <a href="#" class="nav-item" onclick="showSavedPrompts()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    已保存
-                    <span id="saved-count" style="margin-left: auto; background: var(--primary); padding: 2px 8px; border-radius: 10px; font-size: 0.75rem;">0</span>
-                </a>
-                <a href="#" class="nav-item" onclick="startTutorial()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                    </svg>
-                    重新引导
-                </a>
-                <a href="#" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                    </svg>
-                    设置
-                </a>
-            </nav>
-
-            <div class="nav-section" style="margin-top: auto;">
-                <div class="card" style="padding: var(--space-md);">
-                    <div style="font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-xs);">Pro 版本</div>
-                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: var(--space-sm);">解锁更多高级模板</div>
-                    <button class="btn btn-primary" style="width: 100%;">升级</button>
-                </div>
-            </div>
-        </aside>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="logo">PromptCraft Pro</h1>
+            <p class="tagline">智能AI提示词生成器 — 释放你的创造力，让AI更懂你的需求</p>
+        </header>
 
         <!-- Main Content -->
-        <main class="main-content">
-            <header class="header">
-                <div>
-                    <h1 class="header-title">模板库</h1>
-                    <p class="header-subtitle">选择模板快速开始，或创建自定义提示词</p>
-                </div>
-                <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="clearAllData()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                        清除数据
-                    </button>
-                    <button class="btn btn-primary" onclick="createCustomPrompt()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        新建提示词
-                    </button>
-                </div>
-            </header>
-
-            <!-- Templates Section -->
-            <section class="card" id="templates-section" data-tutorial-target="templates">
-                <div class="card-header">
-                    <h2 class="card-title">热门模板</h2>
-                    <button class="btn btn-ghost">查看全部</button>
-                </div>
-                <div class="templates-grid">
-                    <div class="template-card" onclick="useTemplate('code')">
-                        <div class="template-icon">💻</div>
-                        <div class="template-name">代码助手</div>
-                        <div class="template-desc">生成、解释、优化代码片段</div>
-                    </div>
-                    <div class="template-card" onclick="useTemplate('writing')">
-                        <div class="template-icon">✍️</div>
-                        <div class="template-name">写作助手</div>
-                        <div class="template-desc">撰写文章、邮件、营销文案</div>
-                    </div>
-                    <div class="template-card" onclick="useTemplate('analysis')">
-                        <div class="template-icon">📊</div>
-                        <div class="template-name">数据分析</div>
-                        <div class="template-desc">数据解读、可视化建议</div>
-                    </div>
-                    <div class="template-card" onclick="useTemplate('creative')">
-                        <div class="template-icon">🎨</div>
-                        <div class="template-name">创意生成</div>
-                        <div class="template-desc">头脑风暴、创意构思、故事创作</div>
-                    </div>
-                    <div class="template-card" onclick="useTemplate('learning')">
-                        <div class="template-icon">🎓</div>
-                        <div class="template-name">学习导师</div>
-                        <div class="template-desc">解释概念、制定学习计划</div>
-                    </div>
-                    <div class="template-card" onclick="useTemplate('translation')">
-                        <div class="template-icon">🌐</div>
-                        <div class="template-name">翻译优化</div>
-                        <div class="template-desc">多语言翻译、本地化润色</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Custom Prompt Section -->
-            <section class="card" id="custom-section" data-tutorial-target="custom" style="display: none;">
-                <div class="card-header">
-                    <h2 class="card-title">自定义提示词</h2>
-                    <button class="btn btn-ghost" onclick="backToTemplates()">返回模板</button>
-                </div>
+        <div class="main-grid">
+            <!-- Input Card -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-title-icon">✨</span>
+                    创建提示词
+                </h2>
+                
                 <div class="form-group">
-                    <label class="form-label">提示词名称</label>
-                    <input type="text" class="form-input" id="prompt-name" placeholder="给你的提示词起个名字">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">目标AI模型</label>
-                    <select class="form-select" id="ai-model">
-                        <option value="gpt4">GPT-4</option>
-                        <option value="gpt35">GPT-3.5</option>
-                        <option value="claude">Claude</option>
-                        <option value="gemini">Gemini</option>
-                        <option value="custom">其他</option>
+                    <label class="form-label">任务类型</label>
+                    <select class="form-select" id="taskType">
+                        <option value="writing">内容创作</option>
+                        <option value="coding">编程开发</option>
+                        <option value="analysis">数据分析</option>
+                        <option value="design">设计创意</option>
+                        <option value="translation">翻译润色</option>
                     </select>
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label">提示词内容</label>
-                    <textarea class="form-textarea" id="prompt-content" placeholder=
+                    <label class="form-label">目标描述</label>
+                    <textarea class="form-textarea" id="goalInput" placeholder="描述你想要AI完成的任务..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">约束条件（可选）</label>
+                    <input type="text" class="form-input" id="constraintsInput" placeholder="例如：字数限制、格式要求、语气风格等">
+                </div>
+
+                <button class="btn btn-primary" id="generateBtn" onclick="generatePrompt()">
+                    <span>🚀</span>
+                    生成提示词
+                </button>
+            </div>
+
+            <!-- Output Card -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-title-icon" style="background: linear-gradient(135deg, var(--accent) 0%, var(--success) 100%);">📝</span>
+                    生成结果
+                </h2>
+                
+                <div class="output-area">
+                    <div class="output-content" id="outputArea">
+                        点击"生成提示词"按钮，AI将为您创建专业的提示词...
+                    </div>
+                </div>
+
+                <div class="output-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="copyOutput()">
+                        <span>📋</span> 复制
+                    </button>
+                    <button class="btn btn-secondary btn-sm" onclick="clearOutput()">
+                        <span>🗑️</span> 清空
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Section -->
+        <section class="feedback-section">
+            <h2 class="card-title" style="justify-content: center; margin-bottom: var(--space-xl);">
+                <span class="card-title-icon" style="background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%);">💬</span>
+                用户反馈
+            </h2>
+
+            <div class="feedback-grid">
+                <!-- Feedback Form -->
+                <div class="card">
+                    <h3 class="card-title" style="font-size: 1.125rem;">
+                        <span style="font-size: 1.25rem;">⭐</span>
+                        评价体验
+                    </h3>
+
+                    <!-- Rating Summary -->
+                    <div class="rating-summary">
+                        <div class="rating-average" id="averageRating">0.0</div>
+                        <div class="rating-details">
+                            <div class="star-rating" style="margin-bottom: var(--space-xs);">
+                                <svg class="star active" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="star active" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="star active" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="star active" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="star active" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            </div>
+                            <div class="rating-count" id="totalReviews">共 0 条评价</div>
+                        </div>
+                    </div>
+
+                    <!-- Rating Distribution -->
+                    <div id="ratingDistribution">
+                        <div class="rating-bar">
+                            <span style="font-size: 0.75rem; color: var(--text-muted); width: 20px;">5★</span>
+                            <div class="rating-bar-track"><div class="rating-bar-fill" id="bar5" style="width: 0%"></div></div>
+                        </div>
+                        <div class="rating-bar">
+                            <span style="font-size: 0.75rem; color: var(--text-muted); width: 20px;">4★</span>
+                            <div class="rating-bar-track"><div class="rating-bar-fill" id="bar4" style="width: 0%"></div></div>
+                        </div>
+                        <div class="rating-bar">
+                            <span style="font-size: 0.75rem; color: var(--text-muted); width: 20px;">3★</span>
+                            <div class="rating-bar-track"><div class="rating-bar-fill" id="bar3" style="width: 0%"></div></div>
+                        </div>
+                        <div class="rating-bar">
+                            <span style="font-size: 0.75rem; color: var(--text-muted); width: 20px;">2★</span>
+                            <div class="rating-bar-track"><div class="rating-bar-fill" id="bar2" style="width: 0%"></div></div>
+                        </div>
+                        <div class="rating-bar">
+                            <span style="font-size: 0.75rem; color: var(--text-muted); width: 20px;">1★</span>
+                            <div class="rating-bar-track"><div class="rating-bar-fill" id="bar1" style="width: 0%"></div></div>
+                        </div>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px solid var(--border-light); margin: var(--space-lg) 0;">
+
+                    <!-- Feedback Form -->
+                    <form id="feedbackForm" onsubmit="submitFeedback(event)">
+                        <div class="form-group">
+                            <label class="form-label">您的评分</label>
+                            <div class="star-rating" id="starRating">
+                                <svg class="star" data-value="1" viewBox="0 0 24 24" onclick="setRating(1)" onmouseenter="hoverRating(1)" onmouseleave="resetHover()"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="star" data-value="2" viewBox="0 0 24 24" onclick="setRating(2)" onmouseenter="hoverRating(2)" onmouseleave="resetHover()"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="star" data-value="3" viewBox="0 0 24 24" onclick="setRating(3)" onmouseenter="hoverRating(3)" onmouseleave="resetHover()"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="star" data-value="4" viewBox="0 0 24 24" onclick="setRating(4)" onmouseenter="hoverRating(4)" onmouseleave="resetHover()"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                <svg class="star" data-value="5" viewBox="0 0 24 24" onclick="setRating(5)" onmouseenter="hoverRating(5)" onmouseleave="resetHover()"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            </div>
+                            <input type="hidden" id="ratingValue" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">您的评论</label>
+                            <textarea class="form-textarea" id="commentInput" placeholder="分享您的使用体验，帮助我们改进产品..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            <span>📤</span>
+                            提交反馈
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Feedback History -->
+                <div class="card">
+                    <h3 class="card-title" style="font-size: 1.125rem;">
+                        <span style="font-size: 1.25rem;">📜</span>
+                        反馈历史
+                    </h3>
+                    
+                    <div class="feedback-list" id="feedbackList">
+                        <div class="feedback-empty">
+                            <div style="font-size: 3rem; margin-bottom: var(--space-md);">📝</div>
+                            <p>暂无反馈记录</p>
+                            <p style="font-size: 0.875rem; margin-top: var(--space-sm);">成为第一个评价的用户吧！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">✓ 操作成功</div>
+
+    <script>
+        // ===== Feedback System =====
+        let currentRating = 0;
+        let feedbacks = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFeedbacks();
+            renderFeedbacks();
+            updateRatingSummary();
+        });
+
+        // Load from localStorage
+        function loadFeedbacks() {
+            const stored = localStorage.getItem('promptcraft_feedbacks');
+            if (stored) {
+                feedbacks = JSON.parse(stored);
+            }
+        }
+
+        // Save to localStorage
+        function saveFeedbacks() {
+            localStorage.setItem('promptcraft_feedbacks', JSON.stringify(feedbacks));
+        }
+
+        // Star Rating Functions
+        function setRating(value) {
+            currentRating = value;
+            document.getElementById('ratingValue').value = value;
+            updateStarDisplay(value);
+        }
+
+        function hoverRating(value) {
+            updateStarDisplay(value, true);
+        }
+
+        function resetHover() {
+            updateStarDisplay(currentRating);
+        }
+
+        function updateStarDisplay(value, isHover = false) {
+            const stars = document.querySelectorAll('#starRating .star');
+            stars.forEach((star, index) => {
+                if (index < value) {
+                    star.classList.add('active');
+                    if (isHover) {
+                        star.style.opacity = '0.8';
+                    } else {
+                        star.style.opacity = '1';
+                    }
+                } else {
+                    star.classList.remove('active');
+                    star.style.opacity = '1';
+                }
+            });
+        }
+
+        // Submit Feedback
+        function submitFeedback(event) {
+            event.preventDefault();
+            
+            const rating = parseInt(document.getElementById('ratingValue').value);
+            const comment = document.getElementById('commentInput').value.trim();
+            
+            if (!rating) {
+                showToast('请选择评分星级', 'error');
+                return;
+            }
+            
+            const feedback = {
+                id: Date.now(),
+                rating: rating,
+                comment: comment,
+                date: new Date().toISOString()
+            };
+            
+            feedbacks.unshift(feedback);
+            saveFeedbacks();
+            renderFeedbacks();
+            updateRatingSummary();
+            
+            // Reset form
+            document.getElementById('feedbackForm').reset();
+            setRating(0);
+            
+            showToast('感谢您的反馈！');
+        }
+
+        // Render Feedback List
+        function renderFeedbacks() {
+            const list = document.getElementById('feedbackList');
+            
+            if (feedbacks.length === 0) {
+                list.innerHTML = `
+                    <div class="feedback-empty">
+                        <div style="font-size: 3rem; margin-bottom: var(--space-md);">📝</div>
+                        <p>暂无反馈记录</p>
+                        <p style="font-size: 0.875rem; margin-top: var(--space-sm);">成为第一个评价的用户吧！</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = feedbacks.map(fb => `
+                <div class="feedback-item">
+                    <div class="feedback-header">
+                        <div class="feedback-stars">
+                            ${Array(5).fill(0).map((_, i) => `
+                                <svg class="feedback-star ${i < fb.rating ? '' : 'empty'}" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                            `).join('')}
+                        </div>
+                        <span class="feedback-date">${formatDate(fb.date)}</span>
+                    </div>
+                    <p class="feedback-comment">${escapeHtml(fb.comment)}</p>
+                </div>
+            `).join('');
+        }
+
+        // Update Rating Summary
+        function updateRatingSummary() {
+            const total = feedbacks.length;
+            if (total === 0) {
+                document.getElementById('averageRating').textContent = '0.0';
+                document.getElementById('totalReviews').textContent = '共 0 条评价';
+                for (let i = 1; i <= 5; i++) {
+                    document.getElementById(`bar${i}`).style.width = '0%';
+                }
+                return;
+            }
+            
+            const sum = feedbacks.reduce((acc, fb) => acc + fb.rating, 0);
+            const average = (sum / total).toFixed(1);
+            
+            document.getElementById('averageRating').textContent = average;
+            document.getElementById('totalReviews').textContent = `共 ${total} 条评价`;
+            
+            // Update distribution bars
+            const distribution = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+            feedbacks.forEach(fb => distribution[fb.rating]++);
+            
+            for (let i = 1; i <= 5; i++) {
+                const percentage = (distribution[i] / total * 100).toFixed(1);
+                document.getElementById(`bar${i}`).style.width = `${percentage}%`;
+            }
+        }
+
+        // Utility Functions
+        function formatDate(isoString) {
+            const date = new Date(isoString);
+            const now = new Date();
+            const diff = now - date;
+            
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            
+            if (minutes < 1) return '刚刚';
+            if (minutes < 60) return `${minutes}分钟前`;
+            if (hours < 24) return `${hours}小时前`;
+            if (days < 7) return `${days}天前`;
+            
+            return date.toLocaleDateString('zh-CN');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = type === 'success' ? `✓ ${message}` : `✗ ${message}`;
+            toast.style.borderColor = type === 'success' ? 'var(--success)' : 'var(--error)';
+            toast.style.color = type === 'success' ? 'var(--success)' : 'var(--error)';
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ===== Prompt Generator Functions =====
+        function generatePrompt() {
+            const taskType = document.getElementById('taskType').value;
+            const goal = document.getElementById('goalInput').value.trim();
+            const constraints = document.getElementById('constraintsInput').value.trim();
+            
+            if (!goal) {
+                showToast('请输入目标描述', 'error');
+                return;
+            }
+            
+            const outputArea = document.getElementById('outputArea');
+            outputArea.classList.add('loading');
+            
+            // Simulate generation
+            setTimeout(() => {
+                const prompt = generatePromptText(taskType, goal, constraints);
+                outputArea.textContent = prompt;
+                outputArea.classList.remove('loading');
+                showToast('提示词生成成功！');
+            }, 800);
+        }
+
+        function generatePromptText(type, goal, constraints) {
+            const templates = {
+                writing: `你是一位专业的内容创作者。请根据以下要求创作内容：\n\n【目标】${goal}\n${constraints ? `【约束条件】${constraints}\n` : ''}\n要求：\n1. 内容结构清晰，逻辑严谨\n2. 语言流畅自然，符合目标受众\n3. 提供有深度的见解和观点\n4. 适当使用修辞手法增强表现力`,
+                
+                coding: `你是一位资深软件工程师。请完成以下编程任务：\n\n【任务描述】${goal}\n${constraints ? `【技术要求】${constraints}\n` : ''}\n要求：\n1. 编写清晰、可维护的代码\n2. 添加必要的注释说明\n3. 考虑边界情况和错误处理\n4. 提供使用示例和测试用例`,
+                
+                analysis: `你是一位数据分析师。请对以下数据进行专业分析：\n\n【分析目标】${goal}\n${constraints ? `【分析要求】${constraints}\n` : ''}\n要求：\n1. 采用合适的分析方法和模型\n2. 数据可视化建议\n3. 提供可操作的洞察和建议\n4. 说明分析的局限性和假设`,
+                
+                design: `你是一位创意设计师。请为以下需求提供设计方案：\n\n【设计目标】${goal}\n${constraints ? `【设计约束】${constraints}\n` : ''}\n要求：\n1. 提供多个创意方向\n2. 详细描述视觉元素和风格\n3. 说明设计理念和用户价值\n4. 给出实现建议和工具推荐`,
+                
+                translation: `你是一位专业翻译。请完成以下翻译任务：\n\n【原文】${goal}\n${constraints ? `【翻译要求】${constraints}\n` : ''}\n要求：\n1. 准确传达原文含义\n2. 符合目标语言的表达习惯\n3. 保持原文的语气和风格\n4. 对专业术语提供解释说明`
+            };
+            
+            return templates[type] || templates.writing;
+        }
+
+        function copyOutput() {
