@@ -115,33 +115,51 @@
             overflow-y: auto;
         }
 
+        @media (max-width: 1024px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                width: 280px;
+                height: 100vh;
+                z-index: 100;
+                transition: left var(--transition-base);
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.7);
+                z-index: 99;
+            }
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
+
         .logo {
             display: flex;
             align-items: center;
-            gap: var(--space-md);
-            padding-bottom: var(--space-lg);
-            border-bottom: 1px solid var(--border-light);
+            gap: var(--space-sm);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-light), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .logo-icon {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            box-shadow: var(--shadow-glow);
-        }
-
-        .logo-text {
-            font-size: 20px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--text-primary), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            -webkit-text-fill-color: initial;
         }
 
         .nav-section {
@@ -151,28 +169,23 @@
         }
 
         .nav-title {
-            font-size: 11px;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--text-muted);
-            padding: 0 var(--space-md);
+            padding: 0 var(--space-sm);
         }
 
         .nav-item {
             display: flex;
             align-items: center;
-            gap: var(--space-md);
-            padding: var(--space-md);
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
             border-radius: var(--radius-md);
             color: var(--text-secondary);
             text-decoration: none;
             transition: all var(--transition-fast);
             cursor: pointer;
-            border: none;
-            background: transparent;
-            font-size: 14px;
-            width: 100%;
-            text-align: left;
         }
 
         .nav-item:hover, .nav-item.active {
@@ -181,16 +194,8 @@
         }
 
         .nav-item.active {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            color: var(--text-primary);
-        }
-
-        .nav-icon {
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
         }
 
         /* ===== Main Content ===== */
@@ -199,23 +204,34 @@
             overflow-y: auto;
         }
 
+        @media (max-width: 768px) {
+            .main-content {
+                padding: var(--space-md);
+            }
+        }
+
         .header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             margin-bottom: var(--space-xl);
             flex-wrap: wrap;
             gap: var(--space-md);
         }
 
-        .page-title {
-            font-size: 28px;
+        .header-title {
+            font-size: 1.875rem;
             font-weight: 700;
+        }
+
+        .header-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
         }
 
         .header-actions {
             display: flex;
-            gap: var(--space-md);
+            gap: var(--space-sm);
         }
 
         /* ===== Buttons ===== */
@@ -224,35 +240,34 @@
             align-items: center;
             justify-content: center;
             gap: var(--space-sm);
-            padding: var(--space-md) var(--space-lg);
+            padding: var(--space-sm) var(--space-md);
             border-radius: var(--radius-md);
-            font-size: 14px;
+            font-size: 0.875rem;
             font-weight: 500;
+            border: none;
             cursor: pointer;
             transition: all var(--transition-fast);
-            border: none;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-glow);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-glow);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
         }
 
         .btn-secondary {
             background: var(--bg-card);
-            color: var(--text-secondary);
+            color: var(--text-primary);
             border: 1px solid var(--border);
         }
 
         .btn-secondary:hover {
             background: var(--bg-card-hover);
-            color: var(--text-primary);
         }
 
         .btn-ghost {
@@ -264,57 +279,52 @@
             color: var(--text-primary);
         }
 
-        .btn-sm {
-            padding: var(--space-sm) var(--space-md);
-            font-size: 12px;
-        }
-
         /* ===== Cards ===== */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border-light);
             border-radius: var(--radius-lg);
-            padding: var(--space-xl);
+            padding: var(--space-lg);
             margin-bottom: var(--space-lg);
         }
 
         .card-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: var(--space-lg);
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
         }
 
         .card-title {
-            font-size: 18px;
+            font-size: 1.125rem;
             font-weight: 600;
         }
 
         /* ===== Form Elements ===== */
         .form-group {
-            margin-bottom: var(--space-lg);
+            margin-bottom: var(--space-md);
         }
 
         .form-label {
             display: block;
-            font-size: 14px;
+            font-size: 0.875rem;
             font-weight: 500;
-            margin-bottom: var(--space-sm);
+            margin-bottom: var(--space-xs);
             color: var(--text-secondary);
         }
 
-        .form-input, .form-textarea, .form-select {
+        .form-input, .form-select, .form-textarea {
             width: 100%;
-            padding: var(--space-md);
+            padding: var(--space-sm) var(--space-md);
             background: var(--bg-input);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
             color: var(--text-primary);
-            font-size: 14px;
+            font-size: 0.875rem;
             transition: all var(--transition-fast);
         }
 
-        .form-input:focus, .form-textarea:focus, .form-select:focus {
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none;
             border-color: var(--primary);
             background: var(--bg-input-focus);
@@ -323,54 +333,406 @@
         .form-textarea {
             min-height: 120px;
             resize: vertical;
-            font-family: var(--font-mono);
-            line-height: 1.6;
+            font-family: var(--font-sans);
         }
 
-        /* ===== Tags ===== */
-        .tag-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-sm);
-            margin-top: var(--space-sm);
-        }
-
-        .tag {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-xs);
-            padding: var(--space-xs) var(--space-md);
-            background: var(--bg-input);
+        /* ===== Prompt Output ===== */
+        .prompt-output {
+            background: var(--bg-darker);
             border: 1px solid var(--border);
-            border-radius: var(--radius-xl);
-            font-size: 12px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-
-        .tag:hover, .tag.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-
-        /* ===== Output Area ===== */
-        .output-area {
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            line-height: 1.7;
+            min-height: 200px;
             position: relative;
         }
 
-        .output-textarea {
-            min-height: 200px;
-            background: var(--bg-darker);
+        .prompt-output-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-sm);
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid var(--border-light);
         }
 
-        .output-actions {
-            position: absolute;
-            top: var(--space-md);
-            right: var(--space-md);
+        .prompt-output-actions {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        .prompt-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            background: var(--bg-input);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            color: var(--accent-light);
+        }
+
+        /* ===== Templates Grid ===== */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .template-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .template-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .template-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .template-name {
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+        }
+
+        .template-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* ===== Toast Notifications ===== */
+        .toast-container {
+            position: fixed;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .toast {
+            padding: var(--space-md);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            animation: slideIn 0.3s ease;
+            max-width: 320px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast-success {
+            border-color: var(--success);
+        }
+
+        .toast-error {
+            border-color: var(--error);
+        }
+
+        /* ===== Onboarding Overlay ===== */
+        .onboarding-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+        }
+
+        .onboarding-overlay.active {
+            display: flex;
+        }
+
+        .onboarding-modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .onboarding-header {
+            padding: var(--space-xl);
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .onboarding-header h2 {
+            font-size: 1.75rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .onboarding-header p {
+            opacity: 0.9;
+        }
+
+        .onboarding-content {
+            padding: var(--space-xl);
+            overflow-y: auto;
+        }
+
+        .onboarding-step {
+            display: none;
+        }
+
+        .onboarding-step.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .onboarding-step h3 {
+            font-size: 1.25rem;
+            margin-bottom: var(--space-md);
+            color: var(--primary-light);
+        }
+
+        .onboarding-step p {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-md);
+            line-height: 1.7;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .feature-item {
+            display: flex;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            background: var(--bg-input);
+            border-radius: var(--radius-md);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-content h4 {
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+        }
+
+        .feature-content p {
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .onboarding-footer {
+            padding: var(--space-lg) var(--space-xl);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .onboarding-progress {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: all var(--transition-fast);
+        }
+
+        .progress-dot.active {
+            background: var(--primary);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .onboarding-buttons {
             display: flex;
             gap: var(--space-sm);
+        }
+
+        /* ===== Tutorial Tooltip ===== */
+        .tutorial-tooltip {
+            position: absolute;
+            background: var(--bg-card);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            max-width: 320px;
+            z-index: 1500;
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            display: none;
+        }
+
+        .tutorial-tooltip.active {
+            display: block;
+            animation: tooltipPop 0.3s ease;
+        }
+
+        @keyframes tooltipPop {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .tutorial-tooltip::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--primary);
+            transform: rotate(45deg);
+        }
+
+        .tutorial-tooltip.top::before {
+            bottom: -9px;
+            left: 50%;
+            margin-left: -8px;
+            border-top: none;
+            border-left: none;
+        }
+
+        .tutorial-tooltip.bottom::before {
+            top: -9px;
+            left: 50%;
+            margin-left: -8px;
+            border-bottom: none;
+            border-right: none;
+        }
+
+        .tutorial-tooltip.left::before {
+            right: -9px;
+            top: 50%;
+            margin-top: -8px;
+            border-bottom: none;
+            border-left: none;
+        }
+
+        .tutorial-tooltip.right::before {
+            left: -9px;
+            top: 50%;
+            margin-top: -8px;
+            border-top: none;
+            border-right: none;
+        }
+
+        .tutorial-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
+        }
+
+        .tutorial-badge {
+            padding: var(--space-xs) var(--space-sm);
+            background: var(--primary);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .tutorial-title {
+            font-weight: 600;
+        }
+
+        .tutorial-text {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .tutorial-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .tutorial-highlight {
+            position: absolute;
+            border: 3px solid var(--primary);
+            border-radius: var(--radius-md);
+            box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.8), var(--shadow-glow);
+            z-index: 1400;
+            pointer-events: none;
+            display: none;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.8), 0 0 20px var(--primary); }
+            50% { box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.8), 0 0 40px var(--primary); }
+        }
+
+        .tutorial-highlight.active {
+            display: block;
+        }
+
+        /* ===== Skip Tutorial Button ===== */
+        .skip-tutorial {
+            position: fixed;
+            bottom: var(--space-lg);
+            right: var(--space-lg);
+            z-index: 1600;
+            display: none;
+        }
+
+        .skip-tutorial.active {
+            display: flex;
         }
 
         /* ===== Mobile Menu Toggle ===== */
@@ -379,7 +741,7 @@
             position: fixed;
             top: var(--space-md);
             left: var(--space-md);
-            z-index: 100;
+            z-index: 90;
             width: 44px;
             height: 44px;
             background: var(--bg-card);
@@ -394,675 +756,239 @@
             .mobile-menu-toggle {
                 display: flex;
             }
-
-            .sidebar {
-                position: fixed;
-                left: -280px;
-                z-index: 99;
-                transition: left var(--transition-base);
-            }
-
-            .sidebar.open {
-                left: 0;
-            }
-
-            .main-content {
-                padding-top: 60px;
-            }
-
-            .overlay {
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0, 0, 0, 0.7);
-                z-index: 98;
-            }
-
-            .overlay.active {
-                display: block;
-            }
         }
 
-        /* ===== Onboarding Overlay ===== */
-        .onboarding-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(2, 6, 23, 0.95);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: var(--space-md);
-        }
-
-        .onboarding-overlay.active {
+        /* ===== Saved Prompts ===== */
+        .saved-prompts {
             display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            max-height: 300px;
+            overflow-y: auto;
         }
 
-        .onboarding-container {
-            max-width: 600px;
-            width: 100%;
-            animation: slideUp 0.5s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .onboarding-step {
-            display: none;
-        }
-
-        .onboarding-step.active {
-            display: block;
-        }
-
-        .onboarding-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-xl);
-            padding: var(--space-2xl);
-            text-align: center;
-        }
-
-        .onboarding-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto var(--space-lg);
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: var(--radius-lg);
+        .saved-prompt-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            box-shadow: var(--shadow-glow);
-        }
-
-        .onboarding-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: var(--space-md);
-        }
-
-        .onboarding-desc {
-            color: var(--text-secondary);
-            margin-bottom: var(--space-xl);
-            line-height: 1.8;
-        }
-
-        .onboarding-features {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: var(--space-md);
-            margin-bottom: var(--space-xl);
-        }
-
-        .onboarding-feature {
-            padding: var(--space-lg);
+            justify-content: space-between;
+            padding: var(--space-sm) var(--space-md);
             background: var(--bg-input);
             border-radius: var(--radius-md);
-            text-align: left;
-        }
-
-        .onboarding-feature-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: var(--space-sm);
-            font-size: 20px;
-        }
-
-        .onboarding-feature-title {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: var(--space-xs);
-        }
-
-        .onboarding-feature-desc {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .onboarding-progress {
-            display: flex;
-            justify-content: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-lg);
-        }
-
-        .onboarding-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--border);
+            cursor: pointer;
             transition: all var(--transition-fast);
         }
 
-        .onboarding-dot.active {
-            width: 24px;
-            border-radius: var(--radius-xl);
-            background: var(--primary);
+        .saved-prompt-item:hover {
+            background: var(--bg-input-focus);
         }
 
-        .onboarding-buttons {
-            display: flex;
-            gap: var(--space-md);
-            justify-content: center;
+        .saved-prompt-name {
+            font-size: 0.875rem;
+            font-weight: 500;
         }
 
-        .onboarding-skip {
-            position: absolute;
-            top: var(--space-lg);
-            right: var(--space-lg);
+        .saved-prompt-date {
+            font-size: 0.75rem;
             color: var(--text-muted);
-            cursor: pointer;
-            transition: color var(--transition-fast);
         }
 
-        .onboarding-skip:hover {
-            color: var(--text-primary);
+        .empty-state {
+            text-align: center;
+            padding: var(--space-xl);
+            color: var(--text-muted);
         }
 
-        /* ===== Tutorial Tooltip ===== */
-        .tutorial-tooltip {
-            position: absolute;
-            background: var(--bg-card);
-            border: 1px solid var(--primary);
-            border-radius: var(--radius-lg);
-            padding: var(--space-lg);
-            max-width: 320px;
-            z-index: 999;
-            box-shadow: var(--shadow-lg), 0 0 40px rgba(99, 102, 241, 0.2);
-            display: none;
-        }
-
-        .tutorial-tooltip.active {
-            display: block;
-            animation: tooltipPop 0.3s ease;
-        }
-
-        @keyframes tooltipPop {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .tutorial-tooltip::before {
-            content: '';
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: var(--bg-card);
-            border: 1px solid var(--primary);
-            transform: rotate(45deg);
-        }
-
-        .tutorial-tooltip.top::before {
-            bottom: -7px;
-            left: 50%;
-            margin-left: -6px;
-            border-top: none;
-            border-left: none;
-        }
-
-        .tutorial-tooltip.bottom::before {
-            top: -7px;
-            left: 50%;
-            margin-left: -6px;
-            border-bottom: none;
-            border-right: none;
-        }
-
-        .tutorial-tooltip.left::before {
-            right: -7px;
-            top: 50%;
-            margin-top: -6px;
-            border-bottom: none;
-            border-left: none;
-        }
-
-        .tutorial-tooltip.right::before {
-            left: -7px;
-            top: 50%;
-            margin-top: -6px;
-            border-top: none;
-            border-right: none;
-        }
-
-        .tutorial-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: var(--space-sm);
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .tutorial-badge {
-            background: var(--primary);
-            color: white;
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: var(--radius-xl);
-        }
-
-        .tutorial-desc {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.7;
+        .empty-state-icon {
+            font-size: 3rem;
             margin-bottom: var(--space-md);
-        }
-
-        .tutorial-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .tutorial-step-count {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .tutorial-buttons {
-            display: flex;
-            gap: var(--space-sm);
-        }
-
-        /* ===== Spotlight Effect ===== */
-        .spotlight {
-            position: fixed;
-            border: 2px solid var(--primary);
-            border-radius: var(--radius-md);
-            box-shadow: 0 0 0 9999px rgba(2, 6, 23, 0.8), 0 0 40px rgba(99, 102, 241, 0.3);
-            z-index: 998;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            opacity: 0;
-        }
-
-        .spotlight.active {
-            opacity: 1;
-        }
-
-        /* ===== Help Button ===== */
-        .help-btn {
-            position: fixed;
-            bottom: var(--space-xl);
-            right: var(--space-xl);
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-            cursor: pointer;
-            box-shadow: var(--shadow-glow);
-            transition: all var(--transition-fast);
-            z-index: 100;
-            border: none;
-        }
-
-        .help-btn:hover {
-            transform: scale(1.1);
-        }
-
-        /* ===== Toast Notification ===== */
-        .toast {
-            position: fixed;
-            bottom: var(--space-xl);
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--bg-card);
-            border: 1px solid var(--success);
-            color: var(--success);
-            padding: var(--space-md) var(--space-xl);
-            border-radius: var(--radius-md);
-            font-size: 14px;
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 1001;
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
+            opacity: 0.5;
         }
 
         /* ===== Responsive ===== */
         @media (max-width: 640px) {
-            .main-content {
-                padding: var(--space-md);
-            }
-
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .onboarding-features {
+            .templates-grid {
                 grid-template-columns: 1fr;
             }
-
-            .onboarding-card {
-                padding: var(--space-lg);
+            
+            .header-title {
+                font-size: 1.5rem;
             }
-
-            .help-btn {
-                width: 48px;
-                height: 48px;
-                font-size: 20px;
+            
+            .onboarding-modal {
+                margin: var(--space-md);
+                max-height: calc(100vh - var(--space-xl));
             }
         }
     </style>
 </head>
 <body>
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" onclick="toggleSidebar()">☰</button>
-    
-    <!-- Overlay -->
-    <div class="overlay" onclick="toggleSidebar()"></div>
-
-    <!-- Onboarding Overlay -->
-    <div class="onboarding-overlay" id="onboarding">
-        <span class="onboarding-skip" onclick="skipOnboarding()">跳过引导</span>
-        <div class="onboarding-container">
-            <!-- Step 1: Welcome -->
-            <div class="onboarding-step active" data-step="1">
-                <div class="onboarding-card">
-                    <div class="onboarding-icon">✨</div>
-                    <h2 class="onboarding-title">欢迎来到 PromptCraft Pro</h2>
-                    <p class="onboarding-desc">
-                        专业的 AI 提示词生成与管理工具，帮助您快速创建高质量的 AI 提示词，提升与 AI 的交互效率。
-                    </p>
-                    <div class="onboarding-features">
-                        <div class="onboarding-feature">
-                            <div class="onboarding-feature-icon">🎯</div>
-                            <div class="onboarding-feature-title">智能生成</div>
-                            <div class="onboarding-feature-desc">一键生成结构化提示词</div>
-                        </div>
-                        <div class="onboarding-feature">
-                            <div class="onboarding-feature-icon">📚</div>
-                            <div class="onboarding-feature-title">模板库</div>
-                            <div class="onboarding-feature-desc">丰富的预设模板场景</div>
-                        </div>
-                        <div class="onboarding-feature">
-                            <div class="onboarding-feature-icon">💾</div>
-                            <div class="onboarding-feature-title">本地存储</div>
-                            <div class="onboarding-feature-desc">数据安全保存在本地</div>
-                        </div>
-                        <div class="onboarding-feature">
-                            <div class="onboarding-feature-icon">🎨</div>
-                            <div class="onboarding-feature-title">深色主题</div>
-                            <div class="onboarding-feature-desc">舒适的视觉体验</div>
-                        </div>
-                    </div>
-                    <div class="onboarding-progress">
-                        <span class="onboarding-dot active"></span>
-                        <span class="onboarding-dot"></span>
-                        <span class="onboarding-dot"></span>
-                    </div>
-                    <div class="onboarding-buttons">
-                        <button class="btn btn-primary" onclick="nextOnboardingStep()">开始了解 →</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 2: Quick Start -->
-            <div class="onboarding-step" data-step="2">
-                <div class="onboarding-card">
-                    <div class="onboarding-icon">🚀</div>
-                    <h2 class="onboarding-title">快速上手</h2>
-                    <p class="onboarding-desc">
-                        只需简单三步，即可生成专业级 AI 提示词：
-                    </p>
-                    <div style="text-align: left; margin-bottom: var(--space-xl);">
-                        <div style="display: flex; gap: var(--space-md); margin-bottom: var(--space-md);">
-                            <span style="width: 28px; height: 28px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0;">1</span>
-                            <div>
-                                <div style="font-weight: 500; margin-bottom: var(--space-xs);">选择场景模板</div>
-                                <div style="font-size: 13px; color: var(--text-muted);">从预设模板中选择适合的使用场景</div>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: var(--space-md); margin-bottom: var(--space-md);">
-                            <span style="width: 28px; height: 28px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0;">2</span>
-                            <div>
-                                <div style="font-weight: 500; margin-bottom: var(--space-xs);">填写关键信息</div>
-                                <div style="font-size: 13px; color: var(--text-muted);">输入主题、风格、要求等核心内容</div>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: var(--space-md);">
-                            <span style="width: 28px; height: 28px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0;">3</span>
-                            <div>
-                                <div style="font-weight: 500; margin-bottom: var(--space-xs);">生成并优化</div>
-                                <div style="font-size: 13px; color: var(--text-muted);">一键生成，支持复制和二次编辑</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="onboarding-progress">
-                        <span class="onboarding-dot"></span>
-                        <span class="onboarding-dot active"></span>
-                        <span class="onboarding-dot"></span>
-                    </div>
-                    <div class="onboarding-buttons">
-                        <button class="btn btn-ghost" onclick="prevOnboardingStep()">← 返回</button>
-                        <button class="btn btn-primary" onclick="nextOnboardingStep()">继续了解 →</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 3: Tips -->
-            <div class="onboarding-step" data-step="3">
-                <div class="onboarding-card">
-                    <div class="onboarding-icon">💡</div>
-                    <h2 class="onboarding-title">使用小贴士</h2>
-                    <p class="onboarding-desc">
-                        掌握这些技巧，让您的提示词更加出色：
-                    </p>
-                    <div style="text-align: left; margin-bottom: var(--space-xl);">
-                        <div style="padding: var(--space-md); background: var(--bg-input); border-radius: var(--radius-md); margin-bottom: var(--space-sm);">
-                            <div style="font-weight: 500; color: var(--accent-light); margin-bottom: var(--space-xs);">📝 具体明确</div>
-                            <div style="font-size: 13px; color: var(--text-secondary);">描述越具体，AI 输出越精准</div>
-                        </div>
-                        <div style="padding: var(--space-md); background: var(--bg-input); border-radius: var(--radius-md); margin-bottom: var(--space-sm);">
-                            <div style="font-weight: 500; color: var(--accent-light); margin-bottom: var(--space-xs);">🎭 设定角色</div>
-                            <div style="font-size: 13px; color: var(--text-secondary);">为 AI 指定专业角色提升效果</div>
-                        </div>
-                        <div style="padding: var(--space-md); background: var(--bg-input); border-radius: var(--radius-md);">
-                            <div style="font-weight: 500; color: var(--accent-light); margin-bottom: var(--space-xs);">🔧 迭代优化</div>
-                            <div style="font-size: 13px; color: var(--text-secondary);">根据结果持续调整提示词</div>
-                        </div>
-                    </div>
-                    <div class="onboarding-progress">
-                        <span class="onboarding-dot"></span>
-                        <span class="onboarding-dot"></span>
-                        <span class="onboarding-dot active"></span>
-                    </div>
-                    <div class="onboarding-buttons">
-                        <button class="btn btn-ghost" onclick="prevOnboardingStep()">← 返回</button>
-                        <button class="btn btn-primary" onclick="finishOnboarding()">开始使用 🎉</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Spotlight Effect -->
-    <div class="spotlight" id="spotlight"></div>
-
-    <!-- Tutorial Tooltip -->
-    <div class="tutorial-tooltip" id="tutorialTooltip">
-        <div class="tutorial-title">
-            <span id="tutorialTitle">标题</span>
-            <span class="tutorial-badge" id="tutorialBadge">步骤 1/5</span>
-        </div>
-        <p class="tutorial-desc" id="tutorialDesc">描述内容</p>
-        <div class="tutorial-actions">
-            <span class="tutorial-step-count" id="tutorialStepCount">1 / 5</span>
-            <div class="tutorial-buttons">
-                <button class="btn btn-ghost btn-sm" onclick="skipTutorial()">跳过</button>
-                <button class="btn btn-primary btn-sm" onclick="nextTutorialStep()" id="tutorialNextBtn">下一步</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- App Container -->
     <div class="app-container">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="logo">
-                <div class="logo-icon">⚡</div>
-                <span class="logo-text">PromptCraft</span>
+                <div class="logo-icon">✦</div>
+                PromptCraft Pro
             </div>
-            
+
             <nav class="nav-section">
-                <span class="nav-title">主要功能</span>
-                <button class="nav-item active" data-tutorial="generator">
-                    <span class="nav-icon">✨</span>
-                    <span>提示词生成</span>
-                </button>
-                <button class="nav-item" data-tutorial="templates">
-                    <span class="nav-icon">📋</span>
-                    <span>模板库</span>
-                </button>
-                <button class="nav-item" data-tutorial="history">
-                    <span class="nav-icon">📚</span>
-                    <span>历史记录</span>
-                </button>
-                <button class="nav-item" data-tutorial="favorites">
-                    <span class="nav-icon">⭐</span>
-                    <span>收藏夹</span>
-                </button>
+                <span class="nav-title">创建</span>
+                <a href="#" class="nav-item active" data-tutorial="templates">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    模板库
+                </a>
+                <a href="#" class="nav-item" data-tutorial="custom">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                    自定义提示词
+                </a>
+                <a href="#" class="nav-item" data-tutorial="history">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    历史记录
+                </a>
             </nav>
 
             <nav class="nav-section">
-                <span class="nav-title">设置</span>
-                <button class="nav-item" onclick="startTutorial()">
-                    <span class="nav-icon">❓</span>
-                    <span>重新引导</span>
-                </button>
-                <button class="nav-item">
-                    <span class="nav-icon">⚙️</span>
-                    <span>偏好设置</span>
-                </button>
+                <span class="nav-title">我的</span>
+                <a href="#" class="nav-item" onclick="showSavedPrompts()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    已保存
+                    <span id="saved-count" style="margin-left: auto; background: var(--primary); padding: 2px 8px; border-radius: 10px; font-size: 0.75rem;">0</span>
+                </a>
+                <a href="#" class="nav-item" onclick="startTutorial()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    重新引导
+                </a>
+                <a href="#" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    设置
+                </a>
             </nav>
+
+            <div class="nav-section" style="margin-top: auto;">
+                <div class="card" style="padding: var(--space-md);">
+                    <div style="font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-xs);">Pro 版本</div>
+                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: var(--space-sm);">解锁更多高级模板</div>
+                    <button class="btn btn-primary" style="width: 100%;">升级</button>
+                </div>
+            </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
             <header class="header">
                 <div>
-                    <h1 class="page-title">提示词生成器</h1>
-                    <p style="color: var(--text-secondary); font-size: 14px;">创建高质量的 AI 提示词</p>
+                    <h1 class="header-title">模板库</h1>
+                    <p class="header-subtitle">选择模板快速开始，或创建自定义提示词</p>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="clearForm()">
-                        <span>🗑️</span>
-                        <span>清空</span>
+                    <button class="btn btn-secondary" onclick="clearAllData()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        清除数据
                     </button>
-                    <button class="btn btn-primary" onclick="generatePrompt()" id="generateBtn">
-                        <span>⚡</span>
-                        <span>生成提示词</span>
+                    <button class="btn btn-primary" onclick="createCustomPrompt()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        新建提示词
                     </button>
                 </div>
             </header>
 
-            <!-- Generator Card -->
-            <div class="card" id="generatorCard">
+            <!-- Templates Section -->
+            <section class="card" id="templates-section" data-tutorial-target="templates">
                 <div class="card-header">
-                    <h3 class="card-title">配置参数</h3>
+                    <h2 class="card-title">热门模板</h2>
+                    <button class="btn btn-ghost">查看全部</button>
                 </div>
-                
+                <div class="templates-grid">
+                    <div class="template-card" onclick="useTemplate('code')">
+                        <div class="template-icon">💻</div>
+                        <div class="template-name">代码助手</div>
+                        <div class="template-desc">生成、解释、优化代码片段</div>
+                    </div>
+                    <div class="template-card" onclick="useTemplate('writing')">
+                        <div class="template-icon">✍️</div>
+                        <div class="template-name">写作助手</div>
+                        <div class="template-desc">撰写文章、邮件、营销文案</div>
+                    </div>
+                    <div class="template-card" onclick="useTemplate('analysis')">
+                        <div class="template-icon">📊</div>
+                        <div class="template-name">数据分析</div>
+                        <div class="template-desc">数据解读、可视化建议</div>
+                    </div>
+                    <div class="template-card" onclick="useTemplate('creative')">
+                        <div class="template-icon">🎨</div>
+                        <div class="template-name">创意生成</div>
+                        <div class="template-desc">头脑风暴、创意构思、故事创作</div>
+                    </div>
+                    <div class="template-card" onclick="useTemplate('learning')">
+                        <div class="template-icon">🎓</div>
+                        <div class="template-name">学习导师</div>
+                        <div class="template-desc">解释概念、制定学习计划</div>
+                    </div>
+                    <div class="template-card" onclick="useTemplate('translation')">
+                        <div class="template-icon">🌐</div>
+                        <div class="template-name">翻译优化</div>
+                        <div class="template-desc">多语言翻译、本地化润色</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Custom Prompt Section -->
+            <section class="card" id="custom-section" data-tutorial-target="custom" style="display: none;">
+                <div class="card-header">
+                    <h2 class="card-title">自定义提示词</h2>
+                    <button class="btn btn-ghost" onclick="backToTemplates()">返回模板</button>
+                </div>
                 <div class="form-group">
-                    <label class="form-label">使用场景</label>
-                    <select class="form-select" id="sceneSelect">
-                        <option value="">请选择场景...</option>
-                        <option value="writing">内容创作</option>
-                        <option value="coding">编程开发</option>
-                        <option value="analysis">数据分析</option>
-                        <option value="design">设计创意</option>
-                        <option value="education">教育培训</option>
-                        <option value="business">商业咨询</option>
+                    <label class="form-label">提示词名称</label>
+                    <input type="text" class="form-input" id="prompt-name" placeholder="给你的提示词起个名字">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">目标AI模型</label>
+                    <select class="form-select" id="ai-model">
+                        <option value="gpt4">GPT-4</option>
+                        <option value="gpt35">GPT-3.5</option>
+                        <option value="claude">Claude</option>
+                        <option value="gemini">Gemini</option>
+                        <option value="custom">其他</option>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label class="form-label">AI 角色设定</label>
-                    <input type="text" class="form-input" id="roleInput" placeholder="例如：资深前端开发工程师、专业文案策划...">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">任务描述</label>
-                    <textarea class="form-textarea" id="taskInput" placeholder="详细描述您需要 AI 完成的任务..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">输出要求</label>
-                    <div class="tag-container" id="requirementTags">
-                        <span class="tag" onclick="toggleTag(this)">详细步骤</span>
-                        <span class="tag" onclick="toggleTag(this)">代码示例</span>
-                        <span class="tag" onclick="toggleTag(this)">表格呈现</span>
-                        <span class="tag" onclick="toggleTag(this)">分点说明</span>
-                        <span class="tag" onclick="toggleTag(this)">专业术语</span>
-                        <span class="tag" onclick="toggleTag(this)">通俗易懂</span>
-                        <span class="tag" onclick="toggleTag(this)">中英双语</span>
-                        <span class="tag" onclick="toggleTag(this)">Markdown</span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">补充说明（可选）</label>
-                    <input type="text" class="form-input" id="extraInput" placeholder="任何额外的要求或背景信息...">
-                </div>
-            </div>
-
-            <!-- Output Card -->
-            <div class="card" id="outputCard">
-                <div class="card-header">
-                    <h3 class="card-title">生成结果</h3>
-                    <button class="btn btn-ghost btn-sm" onclick="copyOutput()">
-                        <span>📋</span>
-                        <span>复制</span>
-                    </button>
-                </div>
-                <div class="output-area">
-                    <textarea class="form-textarea output-textarea" id="outputTextarea" readonly placeholder="生成的提示词将显示在这里..."></textarea>
-                    <div class="output-actions">
-                        <button class="btn btn-ghost btn-sm" onclick="regeneratePrompt()" title="重新生成">🔄</button>
-                        <button class="btn btn-ghost btn-sm" onclick="saveToFavorites()" title="收藏">⭐</button>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Help Button -->
-    <button class="help-btn" onclick="startTutorial()" title="查看引导">?</button>
-
-    <!-- Toast -->
-    <div class="toast" id="toast">操作成功</div>
-
-    <script>
-        // ===== State Management =====
-        const STORAGE_KEYS = {
-            ONBOARDING_COMPLETED: 'promptcraft_onboarding_completed',
-            TUTO
+                    <label class="form-label">提示词内容</label>
+                    <textarea class="form-textarea" id="prompt-content" placeholder=
