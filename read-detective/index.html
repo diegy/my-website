@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ReadDetective - 阅读侦探</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=VT323&display=swap');
+        
+        :root {
+            --bg-primary: #0A0A0F;
+            --bg-secondary: #12121A;
+            --accent-cyan: #00F0FF;
+            --accent-pink: #FF006E;
+            --accent-yellow: #FFE66D;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8B8B9E;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Glitch Text Effect */
+        .glitch {
+            text-shadow: 2px 0 var(--accent-pink), -2px 0 var(--accent-cyan);
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% { text-shadow: 2px 0 var(--accent-pink), -2px 0 var(--accent-cyan); }
+            25% { text-shadow: -2px 0 var(--accent-pink), 2px 0 var(--accent-cyan); }
+            50% { text-shadow: 2px 0 var(--accent-cyan), -2px 0 var(--accent-pink); }
+            75% { text-shadow: -2px 0 var(--accent-cyan), 2px 0 var(--accent-pink); }
+        }
+
+        /* Scan Line Effect */
+        .scan-line::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 240, 255, 0.3);
+            animation: scan 3s linear infinite;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+
+        /* Pixel Button */
+        .pixel-btn {
+            font-family: 'VT323', monospace;
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 12px 32px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.1s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .pixel-btn:hover {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            animation: pixel-shake 0.3s infinite;
+        }
+
+        @keyframes pixel-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+
+        /* Card Style */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        /* Container */
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            font-family: 'VT323', monospace;
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* Tag Selection */
+        .tag-category {
+            margin: 24px 0;
+        }
+
+        .category-title {
+            font-family: 'VT323', monospace;
+            color: var(--accent-yellow);
+            font-size: 14px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .tag-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-option {
+            padding: 8px 16px;
+            border: 1px solid var(--text-secondary);
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .tag-option:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .tag-option.selected {
+            background: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            color: var(--bg-primary);
+        }
+
+        /* Avatar Preview */
+        .avatar-preview {
+            width: 120px;
+            height: 120px;
+            margin: 24px auto;
+            border: 2px solid var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Game Rounds */
+        .round-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .round-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+        }
+
+        .round-dot.active {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        /* Clue Card */
+        .clue-card {
+            background: var(--bg-secondary);
+            border-left: 3px solid var(--accent-yellow);
+            padding: 16px;
+            margin: 12px 0;
+            font-family: 'VT323', monospace;
+        }
+
+        .clue-number {
+            color: var(--accent-yellow);
+            font-size: 12px;
+        }
+
+        .clue-text {
+            color: var(--text-primary);
+            font-size: 16px;
+            margin-top: 4px;
+        }
+
+        /* Typewriter Effect */
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 2s steps(40, end);
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        /* Countdown */
+        .countdown {
+            font-family: 'VT323', monospace;
+            font-size: 48px;
+            color: var(--accent-cyan);
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        /* Suspect Grid */
+        .suspect-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        .suspect-card {
+            aspect-ratio: 1;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suspect-card:hover {
+            border-color: var(--accent-cyan);
+        }
+
+        .suspect-card.selected {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.1);
+        }
+
+        .suspect-avatar {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 8px;
+        }
+
+        /* Result Pages */
+        .result-success {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .result-success .icon {
+            font-size: 80px;
+            color: var(--accent-cyan);
+            margin-bottom: 24px;
+        }
+
+        .result-fail {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .result-fail .icon {
+            font-size: 80px;
+            color: var(--accent-pink);
+            margin-bottom: 24px;
+        }
+
+        .regret-index {
+            font-family: 'VT323', monospace;
+            font-size: 72px;
+            color: var(--accent-pink);
+            animation: shake 0.5s infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Hidden Pages */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Agent Text */
+        .agent-text {
+            font-family: 'VT323', monospace;
+            color: var(--accent-yellow);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-secondary);
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-cyan);
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body class="scan-line">
+    <div class="container">
+        <!-- Page 1: Onboarding -->
+        <div id="page-onboarding" class="page active">
+            <div class="header">
+                <h1 class="logo glitch">ReadDetective</h1>
+                <p class="tagline">你的书友正在现场流浪</p>
+            </div>
+
+            <div class="card">
+                <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.8;">
+                    欢迎来到阅读侦探游戏。<br><br>
+                    在这个现场，你的<span class="agent-text">Agent</span>正在寻找与你灵魂共鸣的书友。
+                    但不要透露现实身份——让阅读DNA成为你们唯一的线索。
+                </p>
+            </div>
+
+            <div class="tag-category">
+                <div class="category-title">世界观 / Worldview</div>
+                <div class="tag-options" id="worldview-tags">
+                    <button class="tag-option" data-value="sci-fi" data-category="worldview">科幻未来</button>
+                    <button class="tag-option" data-value="reality" data-category="worldview">现实主义</button>
+                    <button class="tag-option" data-value="history" data-category="worldview">历史人文</button>
+                    <button class="tag-option" data-value="fantasy" data-category="worldview">奇幻魔幻</button>
+                </div>
+            </div>
+
+            <div class="tag-category">
+                <div class="category-title">情感基调 / Emotion</div>
+                <div class="tag-options" id="emotion-tags">
+                    <button class="tag-option" data-value="heavy" data-category="emotion">沉重深刻</button>
+                    <button class="tag-option" data-value="light" data-category="emotion">轻松治愈</button>
+                    <button class="tag-option" data-value="healing" data-category="emotion">温暖疗愈</button>
+                    <button class="tag-option" data-value="dark" data-category="emotion">暗黑悬疑</button>
+                </div>
+            </div>
+
+            <div class="tag-category">
+                <div class="category-title">价值取向 / Value</div>
+                <div class="tag-options" id="value-tags">
+                    <button class="tag-option" data-value="collectivism" data-category="value">集体主义</button>
+                    <button class="tag-option" data-value="individualism" data-category="value">个人英雄</button>
+                    <button class="tag-option" data-value="existentialism" data-category="value">存在主义</button>
+                </div>
+            </div>
+
+            <div class="avatar-preview" id="avatar-preview">
+                <svg width="80" height="80" viewBox="0 0 80 80" id="avatar-svg">
+                    <rect x="20" y="20" width="40" height="40" fill="#00F0FF" opacity="0.3"/>
+                </svg>
+            </div>
+
+            <button class="pixel-btn" onclick="startGame()" style="width: 100%; margin-top: 24px;">
+                启动 Agent →
+            </button>
+        </div>
+
+        <!-- Page 2: Round 1 - Fog -->
+        <div id="page-fog" class="page">
+            <div class="header">
+                <h1 class="logo" style="font-size: 24px;">迷雾 / FOG</h1>
+                <p class="tagline">禁止提及现实身份</p>
+            </div>
+
+            <div class="round-indicator">
+                <div class="round-dot active"></div>
+                <div class="round-dot"></div>
+                <div class="round-dot"></div>
+            </div>
+
+            <div class="countdown" id="countdown">15:00</div>
+
+            <div class="card">
+                <p class="agent-text" style="margin-bottom: 12px;">> 系统提示</p>
+                <p style="color: var(--text-secondary); font-size: 14px;">
+                    本场有 <span style="color: var(--accent-cyan);">12</span> 位侦探在场。<br>
+                    观察书架，记录灵感。<br>
+                    你的 Agent 正在分析...
+                </p>
+            </div>
+
+            <div class="card">
+                <p class="agent-text" style="margin-bottom: 12px;">> 本场书架</p>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                    <div style="aspect-ratio: 2/3; background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 2px;"></div>
+                    <div style="aspect-ratio: 2/3; background: linear-gradient(135deg, #0f3460, #533483); border-radius: 2px;"></div>
+                    <div style="aspect-ratio: 2/3; background: linear-gradient(135deg, #e94560, #0f3460); border-radius: 2px;"></div>
+                    <div style="aspect-ratio: 2/3; background: linear-gradient(135deg, #16213e, #e94560); border-radius: 2px;"></div>
+                    <div style="aspect-ratio: 2/3; background: linear-gradient(135deg, #533483, #1a1a2e); border-radius: 2px;"></div>
+                    <div style="aspect-ratio: 2/3; background: linear-gradient(135deg, #0f3460, #16213e); border-radius: 2px;"></div>
+                    <div style="aspect-ratio: 2/3; background: linear-gradient(135deg, #e94560, #533483); border-radius: 2px;"></div>
+                    <div style="aspect-ratio: 2/3; background: linear-gradient(135deg, #1a1a2e, #0f3460); border-radius: 2px;"></div>
+                </div>
+            </div>
+
+            <button class="pixel-btn" onclick="goToDetective()" style="width: 100%;">
+                进入侦探模式 →
+            </button>
+        </div>
+
+        <!-- Page 3: Round 2 - Detective -->
+        <div id="page-detective" class="page">
+            <div class="header">
+                <h1 class="logo" style="font-size: 24px;">侦探 / DETECTIVE</h1>
+                <p class="tagline">接收线索，验证猜想</p>
+            </div>
+
+            <div class="round-indicator">
+                <div class="round-dot"></div>
+                <div class="round-dot active"></div>
+                <div class="round-dot"></div>
+            </div>
+
+            <div class="card">
+                <p class="agent-text" style="margin-bottom: 16px;">> 收到的线索</p>
+                
+                <div class="clue-card">
+                    <div class="clue-number">线索 A</div>
+                    <div class="clue-text typewriter">有人在讨论《三体》的黑暗森林法则...</div>
+                </div>
+                
+                <div class="clue-card">
+                    <div class="clue-number">线索 B</div>
+                    <div class="clue-text">TA 相信个人可以对抗整个系统</div>
+                </div>
+                
+                <div class="clue-card">
+                    <div class="clue-number">线索 C</div>
+                    <div class="clue-text">喜欢沉重但治愈的故事</div>
+                </div>
+            </div>
+
+            <button class="pixel-btn" onclick="goToAccusation()" style="width: 100%;">
+                开始指认 →
+            </button>
+        </div>
+
+        <!-- Page 4: Round 3 - Accusation -->
+        <div id="page-accusation" class="page">
+            <div class="header">
+                <h1 class="logo" style="font-size: 24px;">指认 / ACCUSATION</h1>
+                <p class="tagline">选择你的灵魂书友</p>
+            </div>
+
+            <div class="round-indicator">
+                <div class="round-dot"></div>
+                <div class="round-dot"></div>
+                <div class="round-dot active"></div>
+            </div>
+
+            <div class="card">
+                <p class="agent-text" style="margin-bottom: 16px;">> 嫌疑人列表</p>
+                <p style="color: var(--text-secondary); font-size: 12px; margin-bottom: 16px;">
+                    点击头像查看阅读DNA，选择你认为的灵魂书友
+                </p>
+                
+                <div class="suspect-grid" id="suspect-grid">
+                    <!-- Suspects will be generated by JS -->
+                </div>
+            </div>
+
+            <button class="pixel-btn" onclick="submitAccusation()" style="width: 100%;" id="submit-btn" disabled>
+                确认指认
+            </button>
+        </div>
+
+        <!-- Page 5: Result Success -->
+        <div id="page-success" class="page">
+            <div class="result-success">
+                <div class="icon">✦</div>
+                <h2 class="glitch" style="font-size: 28px; margin-bottom: 16px;">灵魂书友已确认</h2>
+                <p style="color: var(--accent-cyan); font-family: 'VT323', monospace; font-size: 18px;">
+                    系统匹配度: 87%
+                </p>
+                
+                <div class="card" style="margin-top: 32px;">
+                    <p class="agent-text" style="margin-bottom: 12px;">> 匹配分析</p>
+                    <div style="display: flex; justify-content: space-around; margin-top: 16px;">
+                        <div style="text-align: center;">
+                            <div style="color: var(--text-secondary); font-size: 12px;">你</div>
+                            <div style="color: var(--accent-cyan); font-size: 14px; margin-top: 4px;">科幻·沉重·个人</div>
+                        </div>
+                        <div style="color: var(--accent-cyan);">⇄</div>
+                        <div style="text-align: center;">
+                            <div style="color: var(--text-secondary); font-size: 12px;">TA</div>
+                            <div style="color: var(--accent-cyan); font-size: 14px; margin-top: 4px;">科幻·治愈·个人</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="pixel-btn" onclick="location.reload()" style="margin-top: 32px;">
+                    再次寻找 →
+                </button>
+            </div>
+        </div>
+
+        <!-- Page 6: Result Fail -->
+        <div id="page-fail" class="page">
+            <div class="result-fail">
+                <div class="icon">✦</div>
+                <h2 style="font-size: 24px; margin-bottom: 8px; color: var(--accent-pink);">遗憾指数</h2>
+                <div class="regret-index">87%</div>
+                
+                <p style="color: var(--text-secondary); margin: 24px 0; line-height: 1.8;">
+                    你的Agent在哭泣<br>
+                    Ta发现了真相但你视而不见<br>
+                    <span class="agent-text">你们曾相距0.5米，但灵魂错过了彼此</span>
+                </p>
+
+                <div class="card" style="border-color: var(--accent-pink);">
+                    <p class="agent-text" style="margin-bottom: 12px; color: var(--accent-pink);">> 真正的灵魂书友</p>
+                    <div style="display: flex; align-items: center; gap: 16px; opacity: 0.5;">
+                        <div style="width: 60px; height: 60px; background: var(--bg-secondary); border: 1px solid var(--accent-pink);"></div>
+                        <div>
+                            <div style="color: var(--text-secondary); font-size: 12px;">标签: 科幻·沉重·个人</div>
+                            <div style="color: var(--accent-pink); font-size: 12px; margin-top: 4px;">🔒 未解锁联系方式</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="pixel-btn" onclick="generatePoster()" style="margin-top: 24px; border-color: var(--accent-pink); color: var(--accent-pink);">
+                    生成寻友启事
+                </button>
+                
+                <button class="pixel-btn" onclick="location.reload()" style="margin-top: 12px;">
+                    再次寻找 →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        const state = {
+            tags: {
+                worldview: null,
+                emotion: null,
+                value: null
+            },
+            selectedSuspect: null,
+            suspects: [
+                { id: 1, tags: ['科幻', '沉重', '个人'], match: true },
+                { id: 2, tags: ['现实', '轻松', '集体'], match: false },
+                { id: 3, tags: ['历史', '治愈', '个人'], match: false },
+                { id: 4, tags: ['奇幻', '暗黑', '存在'], match: false },
+                { id: 5, tags: ['科幻', '治愈', '集体'], match: false },
+                { id: 6, tags: ['现实', '沉重', '存在'], match: false },
+                { id: 7, tags: ['历史', '轻松', '个人'], match: false },
+                { id: 8, tags: ['奇幻', '治愈', '集体'], match: false },
+                { id: 9, tags: ['科幻', '暗黑', '个人'], match: false },
+            ]
+        };
+
+        // Tag Selection
+        document.querySelectorAll('.tag-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const category = btn.dataset.category;
+                const value = btn.dataset.value;
+                
+                // Remove selected from same category
+                document.querySelectorAll(`[data-category="${category}"]`).forEach(b => {
+                    b.classList.remove('selected');
+                });
+                
+                // Add selected
+                btn.classList.add('selected');
+                state.tags[category] = value;
+                
+                // Update avatar
+                updateAvatar();
+            });
+        });
+
+        function updateAvatar() {
+            const svg = document.getElementById('avatar-svg');
+            const colors = {
+                'sci-fi': '#00F0FF',
+                'reality': '#8B8B9E',
+                'history': '#FFE66D',
+                'fantasy': '#FF006E',
+                'heavy': '#1a1a2e',
+                'light': '#FFFFFF',
+                'healing': '#00F0FF',
+                'dark': '#FF006E',
+                'collectivism': '#FFE66D',
+                'individualism': '#00F0FF',
+                'existentialism': '#FF006E'
+            };
+            
+            const w = colors[state.tags.worldview] || '#00F0FF';
+            const e = colors[state.tags.emotion] || '#FFFFFF';
+            const v = colors[state.tags.value] || '#FFE66D';
+            
+            svg.innerHTML = `
+                <rect x="10" y="10" width="60" height="60" fill="${w}" opacity="0.3"/>
+                <circle cx="40" cy="40" r="20" fill="${e}" opacity="0.5"/>
+                <rect x="30" y="30" width="20" height="20" fill="${v}"/>
+            `;
+        }
+
+        function startGame() {
+            if (!state.tags.worldview || !state.tags.emotion || !state.tags.value) {
+                alert('请选择完整的阅读DNA标签');
+                return;
+            }
+            showPage('page-fog');
+            startCountdown();
+        }
+
+        function startCountdown() {
+            let seconds = 15 * 60;
+            const countdownEl = document.getElementById('countdown');
+            
+            const timer = setInterval(() => {
+                seconds--;
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                countdownEl.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                
+                if (seconds <= 0) {
+                    clearInterval(timer);
+                }
+            }, 1000);
+        }
+
+        function goToDetective() {
+            showPage('page-detective');
+        }
+
+        function goToAccusation() {
+            showPage('page-accusation');
+            renderSuspects();
+        }
+
+        function renderSuspects() {
+            const grid = document.getElementById('suspect-grid');
+            grid.innerHTML = state.suspects.map(s => `
+                <div class="suspect-card ${state.selectedSuspect === s.id ? 'selected' : ''}" onclick="selectSuspect(${s.id})">
+                    <svg class="suspect-avatar" viewBox="0 0 48 48">
+                        <rect x="8" y="8" width="32" height="32" fill="#00F0FF" opacity="0.3"/>
+                        <circle cx="24" cy="24" r="8" fill="#FFFFFF" opacity="0.5"/>
+                    </svg>
+                    <div style="font-size: 10px; color: var(--text-secondary);">${s.tags.join('·')}</div>
+                </div>
+            `).join('');
+        }
+
+        function selectSuspect(id) {
+            state.selectedSuspect = id;
+            renderSuspects();
+            document.getElementById('submit-btn').disabled = false;
+        }
+
+        function submitAccusation() {
+            const suspect = state.suspects.find(s => s.id === state.selectedSuspect);
+            if (suspect && suspect.match) {
+                showPage('page-success');
+            } else {
+                showPage('page-fail');
+            }
+        }
+
+        function generatePoster() {
+            alert('寻友启事海报生成功能（演示版）\n\n实际版本将生成可分享的复古海报图片');
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
