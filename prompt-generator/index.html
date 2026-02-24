@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PromptCraft - AI提示词生成器 | 把模糊想法变成AI能懂的指令</title>
+    <title>AI协作架构师 - 需求诊断·智能选型·工作流编排</title>
     <style>
         * {
             margin: 0;
@@ -19,11 +19,16 @@
             --accent-light: #22d3ee;
             --success: #22c55e;
             --warning: #f59e0b;
+            --error: #ef4444;
             --dark: #0f172a;
             --gray-900: #1e293b;
+            --gray-800: #1e293b;
             --gray-700: #334155;
+            --gray-600: #475569;
             --gray-500: #64748b;
+            --gray-400: #94a3b8;
             --gray-300: #cbd5e1;
+            --gray-200: #e2e8f0;
             --gray-100: #f1f5f9;
             --white: #ffffff;
         }
@@ -37,7 +42,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -56,26 +61,27 @@
         }
 
         .logo-icon {
-            width: 48px;
-            height: 48px;
+            width: 56px;
+            height: 56px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border-radius: 12px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 28px;
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
         }
 
         .logo-text {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.75rem;
+            font-weight: 800;
             background: linear-gradient(90deg, var(--primary-light) 0%, var(--accent-light) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         header h1 {
-            font-size: 2.5rem;
+            font-size: 2.75rem;
             font-weight: 800;
             margin-bottom: 16px;
             line-height: 1.2;
@@ -86,674 +92,841 @@
         }
 
         header p {
-            font-size: 1.125rem;
-            color: var(--gray-300);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* 核心洞察展示 */
-        .insight-banner {
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 16px;
-            padding: 20px 24px;
-            margin: 30px auto;
-            max-width: 800px;
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-        }
-
-        .insight-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 20px;
-        }
-
-        .insight-content h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: var(--primary-light);
-        }
-
-        .insight-content p {
-            font-size: 0.875rem;
-            color: var(--gray-300);
-            line-height: 1.6;
-        }
-
-        /* 进度导航 - 三步闭环：模糊需求 → 意图澄清 → 结构化提示词 */
-        .progress-nav {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 40px 0;
-            gap: 0;
-        }
-
-        .progress-step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-        }
-
-        .progress-step .step-num {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            color: var(--gray-500);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
             font-size: 1.25rem;
-            border: 2px solid rgba(255,255,255,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .progress-step .step-label {
-            color: var(--gray-500);
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            text-align: center;
-            max-width: 100px;
-        }
-
-        .progress-step.active .step-num {
-            background: var(--primary);
-            border-color: var(--primary-light);
-            box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
-            color: white;
-        }
-
-        .progress-step.active .step-label {
-            color: var(--primary-light);
-            font-weight: 600;
-        }
-
-        .progress-step.completed .step-num {
-            background: var(--success);
-            border-color: var(--success);
-            color: white;
-        }
-
-        .progress-connector {
-            width: 100px;
-            height: 2px;
-            background: rgba(255,255,255,0.1);
-            margin: 0 15px;
-            position: relative;
-            top: -14px;
-        }
-
-        .progress-connector.active {
-            background: linear-gradient(90deg, var(--success) 0%, var(--primary) 100%);
-        }
-
-        /* 主工作区 */
-        .workspace {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            border: 1px solid rgba(255,255,255,0.08);
-            overflow: hidden;
-        }
-
-        /* 步骤1: 输入模糊需求 */
-        .step-panel {
-            padding: 40px;
-            display: none;
-        }
-
-        .step-panel.active {
-            display: block;
-            animation: fadeIn 0.4s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .step-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .step-header h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .step-header p {
-            color: var(--gray-500);
-            font-size: 0.9375rem;
-        }
-
-        /* 输入区域 */
-        .input-section {
+            color: var(--gray-300);
             max-width: 700px;
             margin: 0 auto;
         }
 
-        .input-hint {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 16px;
-            justify-content: center;
-        }
-
-        .hint-tag {
-            background: rgba(99, 102, 241, 0.15);
-            color: var(--primary-light);
-            padding: 6px 14px;
+        /* 核心洞察展示 - 重构定位说明 */
+        .insight-banner {
+            background: rgba(6, 182, 212, 0.08);
+            border: 1px solid rgba(6, 182, 212, 0.25);
             border-radius: 20px;
-            font-size: 0.8125rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-        }
-
-        .hint-tag:hover {
-            background: rgba(99, 102, 241, 0.25);
-            transform: translateY(-1px);
-        }
-
-        .main-input {
-            width: 100%;
-            min-height: 140px;
-            background: rgba(255,255,255,0.03);
-            border: 2px solid rgba(255,255,255,0.08);
-            border-radius: 16px;
-            padding: 20px;
-            color: var(--gray-100);
-            font-size: 1rem;
-            resize: vertical;
-            transition: all 0.3s;
-        }
-
-        .main-input::placeholder {
-            color: var(--gray-500);
-        }
-
-        .main-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: rgba(255,255,255,0.05);
-        }
-
-        .input-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 16px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .input-tips {
-            display: flex;
-            gap: 16px;
-            font-size: 0.8125rem;
-            color: var(--gray-500);
-        }
-
-        .input-tips span {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* 按钮 */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 14px 28px;
-            border-radius: 12px;
-            font-size: 0.9375rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-secondary {
-            background: rgba(255,255,255,0.05);
-            color: var(--gray-300);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        /* 步骤2: 意图澄清 - 交互式问诊 */
-        .clarification-chat {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .chat-messages {
-            min-height: 300px;
-            max-height: 500px;
-            overflow-y: auto;
-            padding: 20px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 16px;
-            margin-bottom: 20px;
-        }
-
-        .message {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .message-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            flex-shrink: 0;
-        }
-
-        .message.ai .message-avatar {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        }
-
-        .message.user .message-avatar {
-            background: var(--gray-700);
-        }
-
-        .message-content {
-            flex: 1;
-            padding: 16px 20px;
-            border-radius: 16px;
-            font-size: 0.9375rem;
-            line-height: 1.7;
-        }
-
-        .message.ai .message-content {
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.15);
-        }
-
-        .message.user .message-content {
-            background: rgba(255,255,255,0.05);
-        }
-
-        .message-content strong {
-            color: var(--accent-light);
-            font-weight: 600;
-        }
-
-        /* 快速选项 */
-        .quick-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 12px;
-        }
-
-        .quick-option {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: var(--gray-300);
-            padding: 10px 18px;
-            border-radius: 10px;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .quick-option:hover {
-            background: rgba(99, 102, 241, 0.2);
-            border-color: var(--primary);
-            color: var(--primary-light);
-        }
-
-        /* 用户输入区 */
-        .user-input-area {
-            display: flex;
-            gap: 12px;
-        }
-
-        .user-input-area input {
-            flex: 1;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 14px 18px;
-            color: var(--gray-100);
-            font-size: 0.9375rem;
-        }
-
-        .user-input-area input::placeholder {
-            color: var(--gray-500);
-        }
-
-        .user-input-area input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        /* 步骤3: 结构化提示词输出 */
-        .output-section {
+            padding: 24px 28px;
+            margin: 30px auto;
             max-width: 900px;
-            margin: 0 auto;
         }
 
-        .prompt-card {
-            background: rgba(0,0,0,0.3);
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.08);
-            overflow: hidden;
-        }
-
-        .prompt-header {
-            background: rgba(99, 102, 241, 0.1);
-            padding: 20px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .prompt-title {
+        .insight-header {
             display: flex;
             align-items: center;
             gap: 12px;
+            margin-bottom: 16px;
         }
 
-        .prompt-title-icon {
+        .insight-icon {
             width: 44px;
             height: 44px;
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 22px;
+            flex-shrink: 0;
         }
 
-        .prompt-title-text h3 {
+        .insight-title {
             font-size: 1.125rem;
-            font-weight: 600;
+            font-weight: 700;
+            color: var(--accent-light);
         }
 
-        .prompt-title-text p {
-            font-size: 0.8125rem;
-            color: var(--gray-500);
+        .insight-body {
+            color: var(--gray-300);
+            font-size: 0.95rem;
+            line-height: 1.7;
         }
 
-        .prompt-actions {
-            display: flex;
-            gap: 10px;
+        .insight-body strong {
+            color: var(--white);
         }
 
-        .btn-sm {
-            padding: 10px 18px;
-            font-size: 0.875rem;
-            border-radius: 10px;
-        }
-
-        /* 提示词结构展示 */
-        .prompt-body {
-            padding: 24px;
-        }
-
-        .prompt-structure {
+        /* 三维分析模型展示 */
+        .dimension-cards {
             display: grid;
-            gap: 16px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px auto;
+            max-width: 1100px;
         }
 
-        .structure-block {
-            background: rgba(255,255,255,0.03);
-            border-radius: 14px;
-            padding: 20px;
-            border-left: 4px solid;
+        @media (max-width: 900px) {
+            .dimension-cards {
+                grid-template-columns: 1fr;
+            }
         }
 
-        .structure-block.role {
+        .dimension-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .dimension-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .dimension-card.active {
             border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.08);
         }
 
-        .structure-block.task {
-            border-color: var(--accent);
-        }
-
-        .structure-block.context {
-            border-color: var(--warning);
-        }
-
-        .structure-block.constraints {
-            border-color: var(--success);
-        }
-
-        .structure-block.output {
-            border-color: #ec4899;
-        }
-
-        .block-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .block-icon {
-            width: 28px;
-            height: 28px;
+        .dimension-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 14px;
-        }
-
-        .role .block-icon { background: rgba(99, 102, 241, 0.2); }
-        .task .block-icon { background: rgba(6, 182, 212, 0.2); }
-        .context .block-icon { background: rgba(245, 158, 11, 0.2); }
-        .constraints .block-icon { background: rgba(34, 197, 94, 0.2); }
-        .output .block-icon { background: rgba(236, 72, 153, 0.2); }
-
-        .block-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--gray-500);
-        }
-
-        .block-content {
-            color: var(--gray-100);
-            font-size: 0.9375rem;
-            line-height: 1.7;
-        }
-
-        .block-content code {
-            background: rgba(0,0,0,0.3);
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 0.875rem;
-            color: var(--accent-light);
-        }
-
-        /* 完整提示词预览 */
-        .full-prompt {
-            margin-top: 20px;
-            padding: 20px;
-            background: rgba(0,0,0,0.4);
-            border-radius: 14px;
-        }
-
-        .full-prompt-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            font-weight: 700;
             margin-bottom: 16px;
         }
 
-        .full-prompt-header h4 {
+        .dimension-card h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--white);
+        }
+
+        .dimension-card p {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* 主工作区 */
+        .main-workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 40px 0;
+        }
+
+        @media (max-width: 1024px) {
+            .main-workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 输入面板 */
+        .input-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 28px;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .panel-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(99, 102, 241, 0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .panel-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .panel-subtitle {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+        }
+
+        /* 场景快速选择 */
+        .scene-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .scene-tag {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            color: var(--gray-300);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .scene-tag:hover, .scene-tag.active {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+            color: var(--primary-light);
+        }
+
+        /* 需求输入 */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
             font-size: 0.875rem;
             font-weight: 600;
+            color: var(--gray-300);
+            margin-bottom: 8px;
+        }
+
+        .input-hint {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--white);
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        textarea {
+            min-height: 140px;
+        }
+
+        /* 约束条件 */
+        .constraints-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .constraints-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .constraint-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .constraint-item:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .constraint-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 2px solid var(--gray-500);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .constraint-checkbox.checked {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .constraint-checkbox.checked::after {
+            content: '✓';
+            font-size: 12px;
+            color: white;
+        }
+
+        .constraint-info {
+            flex: 1;
+        }
+
+        .constraint-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-200);
+        }
+
+        .constraint-desc {
+            font-size: 0.75rem;
             color: var(--gray-500);
         }
 
-        .full-prompt-content {
+        /* 分析按钮 */
+        .analyze-btn {
+            width: 100%;
+            padding: 18px 32px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-size: 1.125rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .analyze-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .analyze-btn.loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* 输出面板 */
+        .output-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .output-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 24px;
+            opacity: 0.5;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .output-section.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .output-section.highlight {
+            border-color: var(--accent);
+            background: rgba(6, 182, 212, 0.05);
+        }
+
+        /* 需求诊断结果 */
+        .diagnosis-result {
+            display: none;
+        }
+
+        .diagnosis-result.show {
+            display: block;
+        }
+
+        .intent-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .intent-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-light);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .intent-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        .intent-meta {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .intent-tag {
+            padding: 6px 12px;
+            background: rgba(99, 102, 241, 0.15);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--primary-light);
+        }
+
+        /* AI选型推荐 */
+        .ai-recommendations {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .ai-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 14px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .ai-card:hover, .ai-card.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .ai-card.recommended {
+            border-color: var(--success);
+            background: rgba(34, 197, 94, 0.08);
+        }
+
+        .ai-rank {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .ai-rank.best {
+            background: var(--success);
+            color: white;
+        }
+
+        .ai-rank.alt {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--gray-400);
+        }
+
+        .ai-info {
+            flex: 1;
+        }
+
+        .ai-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-badge {
+            padding: 2px 8px;
+            background: var(--success);
+            border-radius: 4px;
+            font-size: 0.625rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .ai-desc {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+            margin-top: 4px;
+        }
+
+        .ai-score {
+            text-align: right;
+        }
+
+        .score-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent-light);
+        }
+
+        .score-label {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        /* 工作流编排 */
+        .workflow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .workflow-step::after {
+            content: '';
+            position: absolute;
+            left: 35px;
+            top: 56px;
+            width: 2px;
+            height: calc(100% + 12px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .workflow-step:last-child::after {
+            display: none;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 4px;
+        }
+
+        .step-desc {
+            font-size: 0.875rem;
+            color: var(--gray-400);
+            margin-bottom: 12px;
+        }
+
+        .step-tool {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: rgba(99, 102, 241, 0.15);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            color: var(--primary-light);
+        }
+
+        /* 执行方案输出 */
+        .execution-plan {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .plan-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .plan-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+
+        .plan-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            color: var(--gray-300);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--white);
+        }
+
+        .plan-content {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
             font-family: 'SF Mono', Monaco, monospace;
             font-size: 0.875rem;
             line-height: 1.8;
             color: var(--gray-300);
             white-space: pre-wrap;
-            word-break: break-word;
+            max-height: 400px;
+            overflow-y: auto;
         }
 
-        /* 使用指南 */
-        .usage-guide {
-            margin-top: 24px;
-            padding: 20px;
-            background: rgba(34, 197, 94, 0.05);
-            border: 1px solid rgba(34, 197, 94, 0.15);
-            border-radius: 14px;
+        .plan-content .highlight {
+            color: var(--accent-light);
         }
 
-        .usage-guide h4 {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9375rem;
+        .plan-content .param {
+            color: var(--primary-light);
+        }
+
+        /* 效果反馈 */
+        .feedback-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feedback-title {
+            font-size: 0.875rem;
             font-weight: 600;
-            color: var(--success);
+            color: var(--gray-300);
             margin-bottom: 12px;
         }
 
-        .usage-guide ol {
-            padding-left: 20px;
-            color: var(--gray-300);
-            font-size: 0.875rem;
-            line-height: 1.8;
-        }
-
-        .usage-guide li {
-            margin-bottom: 6px;
-        }
-
-        /* 底部导航 */
-        .step-footer {
+        .feedback-options {
             display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .feedback-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: var(--gray-400);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .feedback-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .feedback-btn.selected {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        /* 数据沉淀提示 */
+        .data-notice {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 12px;
+            margin-top: 16px;
+        }
+
+        .data-notice-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(34, 197, 94, 0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
             justify-content: center;
+            font-size: 16px;
+        }
+
+        .data-notice-text {
+            font-size: 0.875rem;
+            color: var(--gray-300);
+        }
+
+        .data-notice-text strong {
+            color: var(--success);
+        }
+
+        /* 历史记录 */
+        .history-section {
+            margin-top: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .history-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .history-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .history-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .history-scene {
+            padding: 4px 12px;
+            background: rgba(99, 102, 241, 0.15);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--primary-light);
+        }
+
+        .history-date {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .history-prompt {
+            font-size: 0.875rem;
+            color: var(--gray-300);
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .history-stats {
+            display: flex;
             gap: 16px;
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 1px solid rgba(255,255,255,0.06);
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .history-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .history-stat.success {
+            color: var(--success);
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray-500);
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 20px;
+        }
+
+        /* 加载动画 */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
         /* 响应式 */
         @media (max-width: 768px) {
             header h1 {
-                font-size: 1.75rem;
+                font-size: 1.875rem;
             }
-
-            .progress-connector {
-                width: 40px;
+            
+            .dimension-cards {
+                grid-template-columns: 1fr;
             }
-
-            .step-panel {
-                padding: 24px;
-            }
-
-            .progress-step .step-label {
-                font-size: 0.75rem;
-                max-width: 70px;
-            }
-        }
-
-        /* 加载动画 */
-        .typing-indicator {
-            display: flex;
-            gap: 6px;
-            padding: 16px 20px;
-        }
-
-        .typing-indicator span {
-            width: 8px;
-            height: 8px;
-            background: var(--primary-light);
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-10px); }
-        }
-
-        /* 成功提示 */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--success);
-            color: white;
-            padding: 14px 28px;
-            border-radius: 12px;
-            font-weight: 500;
-            opacity: 0;
-            transition: all 0.3s;
-            z-index: 1000;
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
         }
     </style>
 </head>
@@ -763,276 +936,214 @@
         <header>
             <div class="logo">
                 <div class="logo-icon">🎯</div>
-                <div class="logo-text">PromptCraft</div>
+                <span class="logo-text">AI协作架构师</span>
             </div>
-            <h1>把<span class="highlight">模糊想法</span>变成AI能懂的指令</h1>
-            <p>无需学习提示词工程，通过简单对话让AI理解你的真实需求</p>
+            <h1>从"想用AI"到<span class="highlight">"会用AI"</span></h1>
+            <p>不是生成提示词，而是诊断真实需求 · 匹配最优AI组合 · 设计可落地的工作流</p>
         </header>
 
-        <!-- 核心洞察 -->
+        <!-- 核心洞察：产品定位重构 -->
         <div class="insight-banner">
-            <div class="insight-icon">💡</div>
-            <div class="insight-content">
-                <h3>核心洞察：提示词工程的本质是"意图精确编码"</h3>
-                <p>人类表达充满隐含假设和上下文，而AI需要明确的约束条件。我们通过交互式问诊，帮你逐层拆解需求，将模糊想法翻译为AI可执行的结构化指令。</p>
+            <div class="insight-header">
+                <div class="insight-icon">💡</div>
+                <span class="insight-title">为什么不做"提示词生成器"？</span>
+            </div>
+            <div class="insight-body">
+                <p>现代AI（Claude/ChatGPT/Gemini）已能直接理解自然语言，<strong>提示词工程的价值正在快速衰减</strong>。</p>
+                <p style="margin-top: 8px;">真正的痛点是：<strong>不知道AI能做什么边界、该选哪个AI、如何让AI嵌入真实工作流程</strong>。我们帮你成为"AI时代的交互设计师"。</p>
             </div>
         </div>
 
-        <!-- 三步进度导航 -->
-        <nav class="progress-nav">
-            <div class="progress-step active" data-step="1">
-                <div class="step-num">1</div>
-                <div class="step-label">描述需求</div>
+        <!-- 三维分析模型 -->
+        <div class="dimension-cards">
+            <div class="dimension-card active" data-dimension="need">
+                <div class="dimension-number">1</div>
+                <h3>需求诊断</h3>
+                <p>解析你的真实意图，识别显性与隐性需求，区分"想要"和"需要"</p>
             </div>
-            <div class="progress-connector"></div>
-            <div class="progress-step" data-step="2">
-                <div class="step-num">2</div>
-                <div class="step-label">澄清意图</div>
+            <div class="dimension-card" data-dimension="capability">
+                <div class="dimension-number">2</div>
+                <h3>能力匹配</h3>
+                <p>基于任务特征，从20+AI模型中推荐最优组合，考虑成本、速度、质量三角</p>
             </div>
-            <div class="progress-connector"></div>
-            <div class="progress-step" data-step="3">
-                <div class="step-num">3</div>
-                <div class="step-label">生成提示词</div>
+            <div class="dimension-card" data-dimension="constraint">
+                <div class="dimension-number">3</div>
+                <h3>约束识别</h3>
+                <p>识别安全合规、预算限制、时效要求等隐性约束，输出可执行方案</p>
             </div>
-        </nav>
+        </div>
 
         <!-- 主工作区 -->
-        <main class="workspace">
-            <!-- 步骤1: 输入模糊需求 -->
-            <section class="step-panel active" id="step1">
-                <div class="step-header">
-                    <h2>📝 用一句话描述你想让AI做什么</h2>
-                    <p>不用担心表达是否清晰，我们会帮你完善</p>
-                </div>
-
-                <div class="input-section">
-                    <!-- 快捷提示 -->
-                    <div class="input-hint">
-                        <span class="hint-tag" onclick="fillExample('帮我写一份周报，总结本周工作进展')">📊 写周报</span>
-                        <span class="hint-tag" onclick="fillExample('做一个能计算房贷的Excel表格')">📱 做Excel工具</span>
-                        <span class="hint-tag" onclick="fillExample('给我一些适合程序员的副业建议')">💼 职业规划</span>
-                        <span class="hint-tag" onclick="fillExample('帮我分析这份销售数据，找出增长机会')">📈 数据分析</span>
-                        <span class="hint-tag" onclick="fillExample('写一个小红书文案，推广我的手工饰品')">✍️ 内容创作</span>
-                    </div>
-
-                    <!-- 主输入框 -->
-                    <textarea 
-                        class="main-input" 
-                        id="userIdea"
-                        placeholder="例如：我想让AI帮我写一封邮件，告诉客户项目延期了，但不知道怎么开口..."
-                    ></textarea>
-
-                    <div class="input-meta">
-                        <div class="input-tips">
-                            <span>💡 越具体越好，但不用完美</span>
-                            <span>🎯 描述目标而非方法</span>
-                        </div>
-                        <button class="btn btn-primary" onclick="startClarification()">
-                            开始澄清意图 →
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 步骤2: 交互式意图澄清 -->
-            <section class="step-panel" id="step2">
-                <div class="step-header">
-                    <h2>🔍 通过对话澄清你的真实需求</h2>
-                    <p>回答几个简单问题，让AI准确理解你的意图</p>
-                </div>
-
-                <div class="clarification-chat">
-                    <div class="chat-messages" id="chatMessages">
-                        <!-- 动态生成对话内容 -->
-                    </div>
-
-                    <div class="user-input-area" id="userInputArea">
-                        <input 
-                            type="text" 
-                            id="clarificationInput"
-                            placeholder="输入你的回答..."
-                            onkeypress="handleEnter(event)"
-                        >
-                        <button class="btn btn-primary" onclick="submitAnswer()">
-                            发送
-                        </button>
+        <div class="main-workspace">
+            <!-- 输入面板 -->
+            <div class="input-panel">
+                <div class="panel-header">
+                    <div class="panel-icon">🔍</div>
+                    <div>
+                        <div class="panel-title">需求输入</div>
+                        <div class="panel-subtitle">描述你想解决的问题，而非AI指令</div>
                     </div>
                 </div>
 
-                <div class="step-footer">
-                    <button class="btn btn-secondary" onclick="goBack(1)">← 修改需求</button>
-                    <button class="btn btn-primary" id="generateBtn" onclick="generatePrompt()" disabled>
-                        生成提示词 ✨
-                    </button>
-                </div>
-            </section>
-
-            <!-- 步骤3: 结构化提示词输出 -->
-            <section class="step-panel" id="step3">
-                <div class="step-header">
-                    <h2>✅ 你的专属提示词已生成</h2>
-                    <p>基于你的需求拆解，可直接复制使用</p>
+                <!-- 场景快速选择 -->
+                <div class="scene-tags" id="sceneTags">
+                    <span class="scene-tag active" data-scene="general">通用场景</span>
+                    <span class="scene-tag" data-scene="content">内容创作</span>
+                    <span class="scene-tag" data-scene="data">数据分析</span>
+                    <span class="scene-tag" data-scene="code">代码开发</span>
+                    <span class="scene-tag" data-scene="design">设计创意</span>
+                    <span class="scene-tag" data-scene="research">研究调研</span>
+                    <span class="scene-tag" data-scene="automation">流程自动化</span>
                 </div>
 
-                <div class="output-section">
-                    <div class="prompt-card">
-                        <div class="prompt-header">
-                            <div class="prompt-title">
-                                <div class="prompt-title-icon">🎯</div>
-                                <div class="prompt-title-text">
-                                    <h3 id="promptName">项目延期通知邮件生成器</h3>
-                                    <p>针对你的具体场景优化</p>
-                                </div>
-                            </div>
-                            <div class="prompt-actions">
-                                <button class="btn btn-secondary btn-sm" onclick="copyFullPrompt()">
-                                    📋 复制完整版
-                                </button>
-                                <button class="btn btn-primary btn-sm" onclick="copyForAI()">
-                                    🤖 去对话使用
-                                </button>
+                <!-- 需求描述 -->
+                <div class="input-group">
+                    <label class="input-label">
+                        你想解决什么问题？
+                        <span class="input-hint">用日常语言描述，不用考虑AI术语</span>
+                    </label>
+                    <textarea id="needInput" placeholder="例如：我需要每周给团队写一份产品周报，但收集信息很耗时，而且每次格式都不太一样，希望有个稳定又省事的办法..."></textarea>
+                </div>
+
+                <!-- 当前痛点 -->
+                <div class="input-group">
+                    <label class="input-label">
+                        现在的主要痛点是什么？
+                        <span class="input-hint">帮助我们理解约束条件</span>
+                    </label>
+                    <input type="text" id="painInput" placeholder="例如：时间不够、质量不稳定、需要多人协作、数据敏感不能外传...">
+                </div>
+
+                <!-- 约束条件 -->
+                <div class="input-group">
+                    <label class="input-label">关键约束条件</label>
+                    <div class="constraints-grid" id="constraintsGrid">
+                        <div class="constraint-item" data-constraint="budget">
+                            <div class="constraint-checkbox"></div>
+                            <div class="constraint-info">
+                                <div class="constraint-name">预算敏感</div>
+                                <div class="constraint-desc">希望控制API或订阅成本</div>
                             </div>
                         </div>
-
-                        <div class="prompt-body">
-                            <!-- 结构化展示 -->
-                            <div class="prompt-structure" id="promptStructure">
-                                <!-- 动态生成 -->
+                        <div class="constraint-item" data-constraint="privacy">
+                            <div class="constraint-checkbox"></div>
+                            <div class="constraint-info">
+                                <div class="constraint-name">数据隐私</div>
+                                <div class="constraint-desc">涉及敏感信息，需本地/私有部署</div>
                             </div>
-
-                            <!-- 完整预览 -->
-                            <div class="full-prompt">
-                                <div class="full-prompt-header">
-                                    <h4>完整提示词</h4>
-                                    <span style="color: var(--gray-500); font-size: 0.8125rem;">可直接复制到任何AI对话</span>
-                                </div>
-                                <pre class="full-prompt-content" id="fullPromptContent"></pre>
+                        </div>
+                        <div class="constraint-item" data-constraint="speed">
+                            <div class="constraint-checkbox"></div>
+                            <div class="constraint-info">
+                                <div class="constraint-name">实时响应</div>
+                                <div class="constraint-desc">需要秒级反馈，不能等待</div>
                             </div>
-
-                            <!-- 使用指南 -->
-                            <div class="usage-guide">
-                                <h4>📖 使用建议</h4>
-                                <ol id="usageTips">
-                                    <!-- 动态生成 -->
-                                </ol>
+                        </div>
+                        <div class="constraint-item" data-constraint="accuracy">
+                            <div class="constraint-checkbox"></div>
+                            <div class="constraint-info">
+                                <div class="constraint-name">高准确度</div>
+                                <div class="constraint-desc">容错率低，需要可验证的结果</div>
+                            </div>
+                        </div>
+                        <div class="constraint-item" data-constraint="integration">
+                            <div class="constraint-checkbox"></div>
+                            <div class="constraint-info">
+                                <div class="constraint-name">系统集成</div>
+                                <div class="constraint-desc">需要接入现有工具链（飞书/钉钉/企业微信）</div>
+                            </div>
+                        </div>
+                        <div class="constraint-item" data-constraint="multilingual">
+                            <div class="constraint-checkbox"></div>
+                            <div class="constraint-info">
+                                <div class="constraint-name">多语言</div>
+                                <div class="constraint-desc">需要处理中文、英文或其他语言</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="step-footer">
-                    <button class="btn btn-secondary" onclick="goBack(2)">← 重新澄清</button>
-                    <button class="btn btn-primary" onclick="startOver()">
-                        🔄 开始新的需求
-                    </button>
+                <button class="analyze-btn" id="analyzeBtn">
+                    <span>🔮</span>
+                    <span>开始三维分析</span>
+                </button>
+            </div>
+
+            <!-- 输出面板 -->
+            <div class="output-panel">
+                <!-- 需求诊断结果 -->
+                <div class="output-section" id="diagnosisSection">
+                    <div class="panel-header">
+                        <div class="panel-icon">🎯</div>
+                        <div>
+                            <div class="panel-title">需求诊断</div>
+                            <div class="panel-subtitle">AI理解的真实意图</div>
+                        </div>
+                    </div>
+                    <div class="diagnosis-result" id="diagnosisResult">
+                        <!-- 动态生成 -->
+                    </div>
                 </div>
-            </section>
-        </main>
-    </div>
 
-    <!-- Toast提示 -->
-    <div class="toast" id="toast">已复制到剪贴板！</div>
+                <!-- AI选型推荐 -->
+                <div class="output-section" id="aiSection">
+                    <div class="panel-header">
+                        <div class="panel-icon">🤖</div>
+                        <div>
+                            <div class="panel-title">智能选型</div>
+                            <div class="panel-subtitle">基于需求-能力-约束的最优匹配</div>
+                        </div>
+                    </div>
+                    <div class="ai-recommendations" id="aiRecommendations">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
 
-    <script>
-        // ==================== 状态管理 ====================
-        const state = {
-            currentStep: 1,
-            userIdea: '',
-            clarificationAnswers: [],
-            currentQuestionIndex: 0,
-            generatedPrompt: null
-        };
+                <!-- 工作流编排 -->
+                <div class="output-section" id="workflowSection">
+                    <div class="panel-header">
+                        <div class="panel-icon">⚡</div>
+                        <div>
+                            <div class="panel-title">工作流编排</div>
+                            <div class="panel-subtitle">端到端的可执行方案</div>
+                        </div>
+                    </div>
+                    <div class="workflow-steps" id="workflowSteps">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
 
-        // ==================== 意图澄清引擎 ====================
-        // 基于用户初始输入，动态生成澄清问题
-        const clarificationEngine = {
-            // 分析用户输入，确定场景类型
-            analyzeIntent: (input) => {
-                const lower = input.toLowerCase();
-                if (lower.includes('邮件') || lower.includes('写') && lower.includes('信')) return 'writing';
-                if (lower.includes('excel') || lower.includes('表格') || lower.includes('计算')) return 'tool';
-                if (lower.includes('分析') || lower.includes('数据')) return 'analysis';
-                if (lower.includes('建议') || lower.includes('规划') || lower.includes('选择')) return 'advisory';
-                if (lower.includes('文案') || lower.includes('小红书') || lower.includes('推广')) return 'marketing';
-                return 'general';
-            },
+                <!-- 执行方案 -->
+                <div class="output-section" id="planSection">
+                    <div class="execution-plan">
+                        <div class="plan-header">
+                            <span class="plan-title">📋 完整执行方案</span>
+                            <div class="plan-actions">
+                                <button class="btn-secondary" onclick="copyPlan()">📋 复制</button>
+                                <button class="btn-secondary" onclick="exportPlan()">⬇️ 导出</button>
+                            </div>
+                        </div>
+                        <div class="plan-content" id="planContent">
+                            <!-- 动态生成 -->
+                        </div>
+                        <div class="feedback-section" id="feedbackSection">
+                            <div class="feedback-title">这个方案对你有帮助吗？（帮助我们优化推荐算法）</div>
+                            <div class="feedback-options">
+                                <button class="feedback-btn" data-feedback="perfect">✅ 完全解决</button>
+                                <button class="feedback-btn" data-feedback="partial">⚠️ 部分有用</button>
+                                <button class="feedback-btn" data-feedback="irrelevant">❌ 不匹配</button>
+                            </div>
+                        </div>
+                        <div class="data-notice">
+                            <div class="data-notice-icon">📊</div>
+                            <div class="data-notice-text">
+                                你的反馈将加入<strong>场景-效果数据库</strong>，帮助更多用户获得更精准的AI协作方案
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            // 根据场景生成问题序列
-            generateQuestions: (input, type) => {
-                const baseQuestions = {
-                    writing: [
-                        { q: '这封邮件的收件人是谁？（上级/客户/同事）', key: 'audience', options: ['上级领导', '客户', '同事', '合作伙伴'] },
-                        { q: '你希望传达的核心信息是什么？（一句话概括）', key: 'coreMessage' },
-                        { q: '期望的语气风格是？', key: 'tone', options: ['正式专业', '诚恳道歉', '简洁直接', '委婉缓冲'] },
-                        { q: '有什么必须提及的关键信息点？', key: 'keyPoints' }
-                    ],
-                    tool: [
-                        { q: '这个工具的主要使用场景是什么？', key: 'scenario' },
-                        { q: '目标用户是谁？（你自己/团队/客户）', key: 'user', options: ['个人使用', '团队协作', '给客户展示'] },
-                        { q: '需要哪些核心功能？', key: 'features' },
-                        { q: '对界面复杂度有什么要求？', key: 'complexity', options: ['极简，一眼看懂', '功能完整，愿意学习'] }
-                    ],
-                    analysis: [
-                        { q: '数据来源和格式是什么？', key: 'dataSource' },
-                        { q: '分析的核心目的是？', key: 'purpose', options: ['发现增长机会', '找出问题原因', '预测未来趋势', '制作汇报材料'] },
-                        { q: '目标受众是谁？（你自己/需要向谁汇报）', key: 'audience' },
-                        { q: '需要输出什么形式的结论？', key: 'output', options: ['详细报告', '关键洞察清单', '可视化图表建议', '执行行动计划'] }
-                    ],
-                    advisory: [
-                        { q: '你当前的具体情况或背景是？', key: 'background' },
-                        { q: '做这个决策的主要约束条件有哪些？', key: 'constraints' },
-                        { q: '你倾向的方案方向是？', key: 'preference', options: ['保守稳健', '激进突破', '还没想法，想全面了解一下'] },
-                        { q: '期望的输出详细程度？', key: 'detail', options: ['快速概览（3-5条）', '深度分析（带执行步骤）'] }
-                    ],
-                    marketing: [
-                        { q: '产品/服务的核心卖点是什么？', key: 'sellingPoint' },
-                        { q: '目标受众画像？', key: 'targetAudience' },
-                        { q: '希望营造的品牌调性是？', key: 'brandTone', options: ['高端精致', '亲民实用', '年轻潮流', '专业可信'] },
-                        { q: '需要包含什么行动号召？', key: 'cta' }
-                    ],
-                    general: [
-                        { q: '这个任务的最终目标是什么？', key: 'goal' },
-                        { q: '有什么必须遵守的限制条件？', key: 'constraints' },
-                        { q: '期望的输出格式是？', key: 'format', options: ['详细说明', '步骤清单', '对比表格', '直接可用的内容'] },
-                        { q: '还有什么重要的背景信息我需要知道？', key: 'context' }
-                    ]
-                };
-
-                return baseQuestions[type] || baseQuestions.general;
-            }
-        };
-
-        // ==================== 提示词生成器 ====================
-        const promptGenerator = {
-            // 构建结构化提示词
-            build: (idea, answers, type) => {
-                const answerMap = {};
-                answers.forEach(a => answerMap[a.key] = a.value);
-
-                const structures = {
-                    writing: {
-                        role: `你是一位专业的商务沟通顾问，擅长根据场景和受众调整沟通策略。`,
-                        task: `请帮我撰写一封邮件，主题是：${idea}。核心信息：${answerMap.coreMessage || '见上下文'}`,
-                        context: `收件人：${answerMap.audience || '未指定'}；语气要求：${answerMap.tone || '根据场景判断'}；必须包含的信息点：${answerMap.keyPoints || '无特殊要求'}`,
-                        constraints: `1. 邮件结构完整（主题行+称呼+正文+结尾）；2. 语气符合双方关系；3. 信息清晰无歧义；4. 提供2-3个备选主题行`,
-                        output: `输出完整邮件正文，并简要说明选择该语气策略的理由`
-                    },
-                    tool: {
-                        role: `你是一位Excel/Google Sheets专家，擅长将业务需求转化为可操作的电子表格方案。`,
-                        task: `请设计一个满足以下需求的表格工具：${idea}`,
-                        context: `使用场景：${answerMap.scenario || '日常办公'}；目标用户：${answerMap.user || '个人'}；功能需求：${answerMap.features || '基础功能'}；复杂度偏好：${answerMap.complexity || '平衡'}`,
-                        constraints: `1. 提供完整的公式和设置步骤；2. 考虑数据验证和错误处理；3. 界面直观易懂；4. 说明如何维护和扩展`,
-                        output: `分步骤说明：①表格结构设计 ②关键公式详解 ③使用说明 ④扩展建议`
-                    },
-                    analysis: {
-                        role: `你是一位数据分析师，擅长从业务角度解读数据，发现可行动的洞察。`,
-                        task: `请针对以下数据进行分析：${idea}`,
-                        context: `数据来源：${answerMap.dataSource || '未说明'}；分析目的：${answerMap.purpose || '全面分析'}；汇报对象：${answerMap.audience || '自己'}；输出形式：${answerMap.output || '关键洞察'}`,
-                        constraints: `1. 先说明分析框架和方法论；2. 区分事实描述和推断建议；3. 标注数据局限性和置信度；4. 提供可执行的下一步行动`,
-                        output: `结构化报告：①分析框架 ②关键发现（附数据支撑） ③业务洞察 ④行动建议 ⑤所需补充数据`
-                    },
-                    advisory: {
-                        role: `你是一位经验丰富的职业顾问，擅长在信息不完全的情况下提供结构化思考框架。`,
-                        task: `请针对以下情况提供建议：${idea}`,
-                        context: `背景情况：${answerMap.background || '见原始描述'}；约束条件：${answerMap.constraints || '暂无'}；偏好方向：${answerMap.preference || '开放'}；详细程度：${answerMap.detail || '平衡'}`,
-                        constraints: `1. 提供多维度分析框架；2. 每个建议说明适用条件和风险；3.
+        <!-- 历史记录 -->
+        <div class
