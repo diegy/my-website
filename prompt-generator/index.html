@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -56,6 +57,13 @@
             /* Transitions */
             --transition-fast: 0.15s ease;
             --transition-base: 0.25s ease;
+            --transition-slow: 0.4s ease;
+            
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
         }
 
         /* ===== Reset & Base ===== */
@@ -80,93 +88,272 @@
         }
 
         /* ===== Layout ===== */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-dark);
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transition: transform var(--transition-base);
+        }
+
+        .sidebar-header {
             padding: var(--space-lg);
-        }
-
-        /* ===== Header ===== */
-        .header {
-            text-align: center;
-            padding: var(--space-2xl) 0;
-            position: relative;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
-            height: 400px;
-            background: radial-gradient(ellipse, rgba(99,102,241,0.15) 0%, transparent 70%);
-            pointer-events: none;
+            border-bottom: 1px solid var(--border-light);
         }
 
         .logo {
-            font-size: 3rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: var(--space-sm);
-            position: relative;
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
         }
 
-        .tagline {
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--text-primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: var(--space-md);
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: var(--space-lg);
+        }
+
+        .nav-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            padding: var(--space-sm) var(--space-md);
+            margin-bottom: var(--space-xs);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
             color: var(--text-secondary);
-            font-size: 1.125rem;
-            max-width: 600px;
-            margin: 0 auto;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-bottom: var(--space-xs);
+        }
+
+        .nav-item:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: var(--text-primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-item-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-footer {
+            padding: var(--space-lg);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .user-status {
+            font-size: 0.75rem;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .user-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
         }
 
         /* ===== Main Content ===== */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-xl);
-            margin-bottom: var(--space-2xl);
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: var(--space-xl);
+            max-width: calc(100vw - 280px);
         }
 
-        @media (max-width: 768px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .page-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--text-primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            margin-top: var(--space-xs);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        /* ===== Buttons ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--text-primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--primary-light);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .btn-ghost:hover {
+            color: var(--text-primary);
+            background: var(--bg-card);
+        }
+
+        .btn-sm {
+            padding: var(--space-sm) var(--space-md);
+            font-size: 0.8125rem;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: var(--radius-md);
         }
 
         /* ===== Cards ===== */
         .card {
             background: var(--bg-card);
-            border-radius: 16px;
-            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
             border: 1px solid var(--border-light);
-            transition: all var(--transition-base);
+            overflow: hidden;
         }
 
-        .card:hover {
-            border-color: var(--border);
-            box-shadow: var(--shadow-lg);
+        .card-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .card-title {
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             font-weight: 600;
-            margin-bottom: var(--space-lg);
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
         }
 
-        .card-title-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        .card-body {
+            padding: var(--space-lg);
         }
 
         /* ===== Form Elements ===== */
@@ -180,29 +367,28 @@
             font-weight: 500;
             color: var(--text-secondary);
             margin-bottom: var(--space-sm);
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
         }
 
         .form-input,
-        .form-textarea,
-        .form-select {
+        .form-select,
+        .form-textarea {
             width: 100%;
             padding: var(--space-md);
             background: var(--bg-input);
             border: 1px solid var(--border);
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             color: var(--text-primary);
             font-size: 0.9375rem;
             transition: all var(--transition-fast);
         }
 
         .form-input:focus,
-        .form-textarea:focus,
-        .form-select:focus {
+        .form-select:focus,
+        .form-textarea:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--primary-light);
             background: var(--bg-input-focus);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
         }
 
         .form-textarea {
@@ -210,676 +396,837 @@
             resize: vertical;
         }
 
-        /* ===== Buttons ===== */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-sm);
-            padding: var(--space-md) var(--space-xl);
-            border-radius: 10px;
-            font-size: 0.9375rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            border: none;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            box-shadow: var(--shadow-glow);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99,102,241,0.4);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background: var(--bg-input);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg-input-focus);
-            border-color: var(--primary-light);
-        }
-
-        .btn-sm {
-            padding: var(--space-sm) var(--space-md);
-            font-size: 0.875rem;
-        }
-
-        /* ===== Output Area ===== */
-        .output-area {
-            background: var(--bg-darker);
-            border-radius: 12px;
-            padding: var(--space-lg);
-            min-height: 200px;
-            border: 1px dashed var(--border);
-            position: relative;
-        }
-
-        .output-content {
-            font-family: 'SF Mono', Monaco, monospace;
-            font-size: 0.875rem;
-            line-height: 1.7;
-            color: var(--text-secondary);
-            white-space: pre-wrap;
-        }
-
-        .output-content:not(:empty) {
-            color: var(--text-primary);
-        }
-
-        .output-actions {
-            display: flex;
-            gap: var(--space-sm);
-            margin-top: var(--space-md);
-        }
-
-        /* ===== Feedback Section ===== */
-        .feedback-section {
-            margin-top: var(--space-2xl);
-        }
-
-        .feedback-grid {
+        /* ===== Generator Grid ===== */
+        .generator-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: var(--space-xl);
+            margin-bottom: var(--space-xl);
         }
 
-        @media (max-width: 768px) {
-            .feedback-grid {
-                grid-template-columns: 1fr;
+        .input-panel {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+
+        .output-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .output-area {
+            flex: 1;
+            background: var(--bg-darker);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.875rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            overflow-y: auto;
+            min-height: 300px;
+        }
+
+        .output-area.has-content {
+            color: var(--text-primary);
+        }
+
+        .output-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .output-stats {
+            display: flex;
+            gap: var(--space-lg);
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== Tags & Chips ===== */
+        .tag-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            padding: var(--space-sm);
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            min-height: 48px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-md);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-sm);
+            font-size: 0.8125rem;
+            font-weight: 500;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity var(--transition-fast);
+        }
+
+        .tag-remove:hover {
+            opacity: 1;
+        }
+
+        .tag-input-field {
+            flex: 1;
+            min-width: 120px;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+            padding: var(--space-xs);
+        }
+
+        .tag-input-field:focus {
+            outline: none;
+        }
+
+        /* ===== Presets ===== */
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .preset-card {
+            padding: var(--space-lg);
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .preset-card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .preset-card.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: transparent;
+        }
+
+        .preset-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto var(--space-md);
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .preset-card.active .preset-icon {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .preset-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* ===== History ===== */
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            background: var(--bg-input);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .history-item:hover {
+            background: var(--bg-input-focus);
+        }
+
+        .history-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-content {
+            flex: 1;
+        }
+
+        .history-title {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            margin-bottom: var(--space-xs);
+        }
+
+        .history-meta {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        .history-actions {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        /* ===== Onboarding Overlay ===== */
+        .onboarding-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .onboarding-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .onboarding-container {
+            width: 90%;
+            max-width: 560px;
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform var(--transition-base);
+        }
+
+        .onboarding-overlay.active .onboarding-container {
+            transform: scale(1);
+        }
+
+        .onboarding-header {
+            padding: var(--space-xl);
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .onboarding-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto var(--space-lg);
+            background: rgba(255,255,255,0.15);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .onboarding-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+        }
+
+        .onboarding-subtitle {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9375rem;
+        }
+
+        .onboarding-body {
+            padding: var(--space-xl);
+        }
+
+        /* Step Indicator */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-xl);
+        }
+
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--bg-input);
+            transition: all var(--transition-base);
+        }
+
+        .step-dot.active {
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .step-dot.completed {
+            background: var(--success);
+        }
+
+        .step-line {
+            width: 40px;
+            height: 2px;
+            background: var(--bg-input);
+            transition: background var(--transition-base);
+        }
+
+        .step-line.completed {
+            background: var(--success);
+        }
+
+        /* Step Content */
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
-        /* Star Rating */
-        .star-rating {
+        .step-feature {
             display: flex;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-md);
-        }
-
-        .star {
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            fill: var(--bg-input);
-        }
-
-        .star:hover,
-        .star.active {
-            fill: var(--warning);
-            transform: scale(1.1);
-        }
-
-        .star.active {
-            filter: drop-shadow(0 0 8px rgba(245,158,11,0.5));
-        }
-
-        /* Rating Summary */
-        .rating-summary {
-            display: flex;
-            align-items: center;
             gap: var(--space-lg);
-            padding: var(--space-lg);
-            background: var(--bg-darker);
-            border-radius: 12px;
             margin-bottom: var(--space-lg);
         }
 
-        .rating-average {
-            font-size: 3rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%);
+        .step-feature-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            flex-shrink: 0;
+        }
+
+        .step-feature-content h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+        }
+
+        .step-feature-content p {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.7;
+        }
+
+        .step-visual {
+            background: var(--bg-dark);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+
+        .step-visual-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: var(--space-md);
+        }
+
+        .mini-demo {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .mini-input {
+            padding: var(--space-md);
+            background: var(--bg-input);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .mini-output {
+            padding: var(--space-md);
+            background: var(--bg-darker);
+            border-radius: var(--radius-sm);
+            font-family: monospace;
+            font-size: 0.8125rem;
+            color: var(--accent-light);
+            border-left: 3px solid var(--accent);
+        }
+
+        /* Onboarding Footer */
+        .onboarding-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-lg) var(--space-xl);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .skip-btn {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: color var(--transition-fast);
+        }
+
+        .skip-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .step-nav {
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 3px;
+            background: var(--bg-input);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width var(--transition-base);
+        }
+
+        /* Tooltip Highlight */
+        .highlight-spot {
+            position: fixed;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 0 0 9999px rgba(2, 6, 23, 0.7), 0 0 0 4px var(--primary);
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0;
+            transition: all var(--transition-base);
+        }
+
+        .highlight-spot.active {
+            opacity: 1;
+        }
+
+        .highlight-tooltip {
+            position: fixed;
+            background: var(--bg-card);
+            border: 1px solid var(--primary-light);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            max-width: 320px;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .highlight-tooltip.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .highlight-tooltip::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--primary-light);
+            transform: rotate(45deg);
+        }
+
+        .highlight-tooltip.top::before {
+            bottom: -7px;
+            left: 50%;
+            margin-left: -6px;
+            border-top: none;
+            border-left: none;
+        }
+
+        .highlight-tooltip.bottom::before {
+            top: -7px;
+            left: 50%;
+            margin-left: -6px;
+            border-bottom: none;
+            border-right: none;
+        }
+
+        /* ===== Toast Notifications ===== */
+        .toast-container {
+            position: fixed;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+
+        .toast {
+            padding: var(--space-md) var(--space-lg);
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--primary);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ===== Mobile Responsive ===== */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: var(--space-lg);
+            left: var(--space-lg);
+            z-index: 200;
+            width: 44px;
+            height: 44px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                max-width: 100vw;
+                padding: var(--space-lg);
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .generator-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-md);
+                padding-left: 60px;
+            }
+
+            .presets-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .presets-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .step-feature {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .step-feature-icon {
+                margin: 0 auto;
+            }
+
+            .onboarding-container {
+                width: 95%;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            .onboarding-header {
+                padding: var(--space-lg);
+            }
+
+            .onboarding-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+            }
+
+            .onboarding-title {
+                font-size: 1.25rem;
+            }
+
+            .onboarding-body {
+                padding: var(--space-lg);
+            }
+        }
+
+        /* ===== Utility Classes ===== */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-gradient {
+            background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .rating-details {
-            flex: 1;
-        }
-
-        .rating-count {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        .rating-bar {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            margin-top: var(--space-xs);
-        }
-
-        .rating-bar-track {
-            flex: 1;
-            height: 6px;
-            background: var(--bg-input);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .rating-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--warning) 0%, #fbbf24 100%);
-            border-radius: 3px;
-            transition: width var(--transition-base);
-        }
-
-        /* Feedback History */
-        .feedback-list {
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: var(--space-sm);
-        }
-
-        .feedback-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .feedback-list::-webkit-scrollbar-track {
-            background: var(--bg-input);
-            border-radius: 3px;
-        }
-
-        .feedback-list::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 3px;
-        }
-
-        .feedback-item {
-            padding: var(--space-md);
-            background: var(--bg-darker);
-            border-radius: 10px;
-            margin-bottom: var(--space-md);
-            border: 1px solid var(--border-light);
-            transition: all var(--transition-fast);
-        }
-
-        .feedback-item:hover {
-            border-color: var(--border);
-        }
-
-        .feedback-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-sm);
-        }
-
-        .feedback-stars {
-            display: flex;
-            gap: 2px;
-        }
-
-        .feedback-star {
-            width: 14px;
-            height: 14px;
-            fill: var(--warning);
-        }
-
-        .feedback-star.empty {
-            fill: var(--bg-input);
-        }
-
-        .feedback-date {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .feedback-comment {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            line-height: 1.6;
-        }
-
-        .feedback-empty {
-            text-align: center;
-            padding: var(--space-2xl);
-            color: var(--text-muted);
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: var(--space-xl);
-            right: var(--space-xl);
-            padding: var(--space-md) var(--space-xl);
-            background: var(--bg-card);
-            border: 1px solid var(--success);
-            border-radius: 10px;
-            color: var(--success);
-            font-weight: 500;
-            transform: translateX(150%);
-            transition: transform var(--transition-base);
-            z-index: 1000;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        /* Utility Classes */
-        .text-center { text-align: center; }
-        .mt-md { margin-top: var(--space-md); }
-        .mb-md { margin-bottom: var(--space-md); }
-        .hidden { display: none; }
-
-        /* Animations */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .loading {
-            animation: pulse 1.5s ease-in-out infinite;
+        .glow-text {
+            text-shadow: 0 0 20px var(--primary);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <h1 class="logo">PromptCraft Pro</h1>
-            <p class="tagline">智能AI提示词生成器 — 释放你的创造力，让AI更懂你的需求</p>
-        </header>
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+    </button>
+
+    <!-- Sidebar Backdrop -->
+    <div class="sidebar-backdrop" onclick="toggleSidebar()" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99;" id="sidebarBackdrop"></div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">✨</div>
+                    <div class="logo-text">PromptCraft Pro</div>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">主要功能</div>
+                    <div class="nav-item active" data-tutorial="generator">
+                        <span class="nav-item-icon">🎯</span>
+                        <span>提示词生成器</span>
+                    </div>
+                    <div class="nav-item" data-tutorial="templates">
+                        <span class="nav-item-icon">📋</span>
+                        <span>模板库</span>
+                    </div>
+                    <div class="nav-item" data-tutorial="history">
+                        <span class="nav-item-icon">🕐</span>
+                        <span>历史记录</span>
+                    </div>
+                    <div class="nav-item" data-tutorial="favorites">
+                        <span class="nav-item-icon">⭐</span>
+                        <span>收藏夹</span>
+                    </div>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">工具</div>
+                    <div class="nav-item" data-tutorial="optimize">
+                        <span class="nav-item-icon">⚡</span>
+                        <span>优化工具</span>
+                    </div>
+                    <div class="nav-item" data-tutorial="translate">
+                        <span class="nav-item-icon">🌐</span>
+                        <span>翻译助手</span>
+                    </div>
+                    <div class="nav-item" data-tutorial="settings">
+                        <span class="nav-item-icon">⚙️</span>
+                        <span>设置</span>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">U</div>
+                    <div class="user-info">
+                        <div class="user-name">用户</div>
+                        <div class="user-status">在线</div>
+                    </div>
+                    <button class="btn btn-ghost btn-icon" onclick="restartTutorial()">❓</button>
+                </div>
+            </div>
+        </aside>
 
         <!-- Main Content -->
-        <div class="main-grid">
-            <!-- Input Card -->
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="card-title-icon">✨</span>
-                    创建提示词
-                </h2>
-                
-                <div class="form-group">
-                    <label class="form-label">任务类型</label>
-                    <select class="form-select" id="taskType">
-                        <option value="writing">内容创作</option>
-                        <option value="coding">编程开发</option>
-                        <option value="analysis">数据分析</option>
-                        <option value="design">设计创意</option>
-                        <option value="translation">翻译润色</option>
-                    </select>
+        <main class="main-content">
+            <!-- Page Header -->
+            <header class="page-header">
+                <div>
+                    <h1 class="page-title">提示词生成器</h1>
+                    <p class="page-subtitle">创建专业、高效的AI提示词</p>
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label">目标描述</label>
-                    <textarea class="form-textarea" id="goalInput" placeholder="描述你想要AI完成的任务..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">约束条件（可选）</label>
-                    <input type="text" class="form-input" id="constraintsInput" placeholder="例如：字数限制、格式要求、语气风格等">
-                </div>
-
-                <button class="btn btn-primary" id="generateBtn" onclick="generatePrompt()">
-                    <span>🚀</span>
-                    生成提示词
-                </button>
-            </div>
-
-            <!-- Output Card -->
-            <div class="card">
-                <h2 class="card-title">
-                    <span class="card-title-icon" style="background: linear-gradient(135deg, var(--accent) 0%, var(--success) 100%);">📝</span>
-                    生成结果
-                </h2>
-                
-                <div class="output-area">
-                    <div class="output-content" id="outputArea">
-                        点击"生成提示词"按钮，AI将为您创建专业的提示词...
-                    </div>
-                </div>
-
-                <div class="output-actions">
-                    <button class="btn btn-secondary btn-sm" onclick="copyOutput()">
-                        <span>📋</span> 复制
+                <div class="header-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="clearAll()">
+                        <span>🗑️</span>
+                        <span>清空</span>
                     </button>
-                    <button class="btn btn-secondary btn-sm" onclick="clearOutput()">
-                        <span>🗑️</span> 清空
+                    <button class="btn btn-primary" onclick="generatePrompt()">
+                        <span>✨</span>
+                        <span>生成提示词</span>
                     </button>
                 </div>
-            </div>
-        </div>
+            </header>
 
-        <!-- Feedback Section -->
-        <section class="feedback-section">
-            <h2 class="card-title" style="justify-content: center; margin-bottom: var(--space-xl);">
-                <span class="card-title-icon" style="background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%);">💬</span>
-                用户反馈
-            </h2>
-
-            <div class="feedback-grid">
-                <!-- Feedback Form -->
-                <div class="card">
-                    <h3 class="card-title" style="font-size: 1.125rem;">
-                        <span style="font-size: 1.25rem;">⭐</span>
-                        评价体验
-                    </h3>
-
-                    <!-- Rating Summary -->
-                    <div class="rating-summary">
-                        <div class="rating-average" id="averageRating">0.0</div>
-                        <div class="rating-details">
-                            <div class="star-rating" style="margin-bottom: var(--space-xs);">
-                                <svg class="star active" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                <svg class="star active" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                <svg class="star active" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                <svg class="star active" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                <svg class="star active" style="width: 20px; height: 20px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <!-- Generator Grid -->
+            <div class="generator-grid">
+                <!-- Input Panel -->
+                <div class="input-panel">
+                    <!-- Task Description -->
+                    <div class="card" data-tutorial="task">
+                        <div class="card-header">
+                            <h3 class="card-title">任务描述</h3>
+                            <span class="text-muted" style="font-size: 0.8125rem; color: var(--text-muted);">必填</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">你想让AI做什么？</label>
+                                <textarea class="form-textarea" id="taskInput" placeholder="例如：帮我写一封商务邮件，向客户介绍我们的新产品..."></textarea>
                             </div>
-                            <div class="rating-count" id="totalReviews">共 0 条评价</div>
                         </div>
                     </div>
 
-                    <!-- Rating Distribution -->
-                    <div id="ratingDistribution">
-                        <div class="rating-bar">
-                            <span style="font-size: 0.75rem; color: var(--text-muted); width: 20px;">5★</span>
-                            <div class="rating-bar-track"><div class="rating-bar-fill" id="bar5" style="width: 0%"></div></div>
+                    <!-- Context & Style -->
+                    <div class="card" data-tutorial="context">
+                        <div class="card-header">
+                            <h3 class="card-title">上下文与风格</h3>
                         </div>
-                        <div class="rating-bar">
-                            <span style="font-size: 0.75rem; color: var(--text-muted); width: 20px;">4★</span>
-                            <div class="rating-bar-track"><div class="rating-bar-fill" id="bar4" style="width: 0%"></div></div>
-                        </div>
-                        <div class="rating-bar">
-                            <span style="font-size: 0.75rem; color: var(--text-muted); width: 20px;">3★</span>
-                            <div class="rating-bar-track"><div class="rating-bar-fill" id="bar3" style="width: 0%"></div></div>
-                        </div>
-                        <div class="rating-bar">
-                            <span style="font-size: 0.75rem; color: var(--text-muted); width: 20px;">2★</span>
-                            <div class="rating-bar-track"><div class="rating-bar-fill" id="bar2" style="width: 0%"></div></div>
-                        </div>
-                        <div class="rating-bar">
-                            <span style="font-size: 0.75rem; color: var(--text-muted); width: 20px;">1★</span>
-                            <div class="rating-bar-track"><div class="rating-bar-fill" id="bar1" style="width: 0%"></div></div>
-                        </div>
-                    </div>
-
-                    <hr style="border: none; border-top: 1px solid var(--border-light); margin: var(--space-lg) 0;">
-
-                    <!-- Feedback Form -->
-                    <form id="feedbackForm" onsubmit="submitFeedback(event)">
-                        <div class="form-group">
-                            <label class="form-label">您的评分</label>
-                            <div class="star-rating" id="starRating">
-                                <svg class="star" data-value="1" viewBox="0 0 24 24" onclick="setRating(1)" onmouseenter="hoverRating(1)" onmouseleave="resetHover()"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                <svg class="star" data-value="2" viewBox="0 0 24 24" onclick="setRating(2)" onmouseenter="hoverRating(2)" onmouseleave="resetHover()"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                <svg class="star" data-value="3" viewBox="0 0 24 24" onclick="setRating(3)" onmouseenter="hoverRating(3)" onmouseleave="resetHover()"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                <svg class="star" data-value="4" viewBox="0 0 24 24" onclick="setRating(4)" onmouseenter="hoverRating(4)" onmouseleave="resetHover()"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                                <svg class="star" data-value="5" viewBox="0 0 24 24" onclick="setRating(5)" onmouseenter="hoverRating(5)" onmouseleave="resetHover()"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">背景信息（可选）</label>
+                                <input type="text" class="form-input" id="contextInput" placeholder="添加相关背景，如行业、场景等...">
                             </div>
-                            <input type="hidden" id="ratingValue" required>
+                            <div class="form-group">
+                                <label class="form-label">输出风格</label>
+                                <select class="form-select" id="styleSelect">
+                                    <option value="professional">专业正式</option>
+                                    <option value="casual">轻松随意</option>
+                                    <option value="creative">创意发散</option>
+                                    <option value="academic">学术严谨</option>
+                                    <option value="technical">技术详细</option>
+                                </select>
+                            </div>
                         </div>
+                    </div>
 
-                        <div class="form-group">
-                            <label class="form-label">您的评论</label>
-                            <textarea class="form-textarea" id="commentInput" placeholder="分享您的使用体验，帮助我们改进产品..." required></textarea>
+                    <!-- Keywords -->
+                    <div class="card" data-tutorial="keywords">
+                        <div class="card-header">
+                            <h3 class="card-title">关键词标签</h3>
                         </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">添加关键要求（按回车添加）</label>
+                                <div class="tag-input" id="tagInput">
+                                    <input type="text" class="tag-input-field" id="tagField" placeholder="输入关键词...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">
-                            <span>📤</span>
-                            提交反馈
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Feedback History -->
-                <div class="card">
-                    <h3 class="card-title" style="font-size: 1.125rem;">
-                        <span style="font-size: 1.25rem;">📜</span>
-                        反馈历史
-                    </h3>
-                    
-                    <div class="feedback-list" id="feedbackList">
-                        <div class="feedback-empty">
-                            <div style="font-size: 3rem; margin-bottom: var(--space-md);">📝</div>
-                            <p>暂无反馈记录</p>
-                            <p style="font-size: 0.875rem; margin-top: var(--space-sm);">成为第一个评价的用户吧！</p>
+                    <!-- Presets -->
+                    <div class="card" data-tutorial="presets">
+                        <div class="card-header">
+                            <h3 class="card-title">快速预设</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="presets-grid">
+                                <div class="preset-card" onclick="applyPreset('writing')">
+                                    <div class="preset-icon">✍️</div>
+                                    <div class="preset-name">文案写作</div>
+                                </div>
+                                <div class="preset-card" onclick="applyPreset('coding')">
+                                    <div class="preset-icon">💻</div>
+                                    <div class="preset-name">代码生成</div>
+                                </div>
+                                <div class="preset-card" onclick="applyPreset('analysis')">
+                                    <div class="preset-icon">📊</div>
+                                    <div class="preset-name">数据分析</div>
+                                </div>
+                                <div class="preset-card" onclick="applyPreset('creative')">
+                                    <div class="preset-icon">🎨</div>
+                                    <div class="preset-name">创意构思</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-    </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">✓ 操作成功</div>
-
-    <script>
-        // ===== Feedback System =====
-        let currentRating = 0;
-        let feedbacks = [];
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadFeedbacks();
-            renderFeedbacks();
-            updateRatingSummary();
-        });
-
-        // Load from localStorage
-        function loadFeedbacks() {
-            const stored = localStorage.getItem('promptcraft_feedbacks');
-            if (stored) {
-                feedbacks = JSON.parse(stored);
-            }
-        }
-
-        // Save to localStorage
-        function saveFeedbacks() {
-            localStorage.setItem('promptcraft_feedbacks', JSON.stringify(feedbacks));
-        }
-
-        // Star Rating Functions
-        function setRating(value) {
-            currentRating = value;
-            document.getElementById('ratingValue').value = value;
-            updateStarDisplay(value);
-        }
-
-        function hoverRating(value) {
-            updateStarDisplay(value, true);
-        }
-
-        function resetHover() {
-            updateStarDisplay(currentRating);
-        }
-
-        function updateStarDisplay(value, isHover = false) {
-            const stars = document.querySelectorAll('#starRating .star');
-            stars.forEach((star, index) => {
-                if (index < value) {
-                    star.classList.add('active');
-                    if (isHover) {
-                        star.style.opacity = '0.8';
-                    } else {
-                        star.style.opacity = '1';
-                    }
-                } else {
-                    star.classList.remove('active');
-                    star.style.opacity = '1';
-                }
-            });
-        }
-
-        // Submit Feedback
-        function submitFeedback(event) {
-            event.preventDefault();
-            
-            const rating = parseInt(document.getElementById('ratingValue').value);
-            const comment = document.getElementById('commentInput').value.trim();
-            
-            if (!rating) {
-                showToast('请选择评分星级', 'error');
-                return;
-            }
-            
-            const feedback = {
-                id: Date.now(),
-                rating: rating,
-                comment: comment,
-                date: new Date().toISOString()
-            };
-            
-            feedbacks.unshift(feedback);
-            saveFeedbacks();
-            renderFeedbacks();
-            updateRatingSummary();
-            
-            // Reset form
-            document.getElementById('feedbackForm').reset();
-            setRating(0);
-            
-            showToast('感谢您的反馈！');
-        }
-
-        // Render Feedback List
-        function renderFeedbacks() {
-            const list = document.getElementById('feedbackList');
-            
-            if (feedbacks.length === 0) {
-                list.innerHTML = `
-                    <div class="feedback-empty">
-                        <div style="font-size: 3rem; margin-bottom: var(--space-md);">📝</div>
-                        <p>暂无反馈记录</p>
-                        <p style="font-size: 0.875rem; margin-top: var(--space-sm);">成为第一个评价的用户吧！</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            list.innerHTML = feedbacks.map(fb => `
-                <div class="feedback-item">
-                    <div class="feedback-header">
-                        <div class="feedback-stars">
-                            ${Array(5).fill(0).map((_, i) => `
-                                <svg class="feedback-star ${i < fb.rating ? '' : 'empty'}" viewBox="0 0 24 24">
-                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                </svg>
-                            `).join('')}
+                <!-- Output Panel -->
+                <div class="output-panel">
+                    <div class="card" style="height: 100%;" data-tutorial="output">
+                        <div class="card-header">
+                            <h3 class="card-title">生成结果</h3>
+                            <div style="display: flex; gap: var(--space-sm);">
+                                <button class="btn btn-ghost btn-icon btn-sm" onclick="copyOutput()" title="复制">
+                                    📋
+                                </button>
+                                <button class="btn btn-ghost btn-icon btn-sm" onclick="saveToFavorites()" title="收藏">
+                                    ⭐
+                                </button>
+                            </div>
                         </div>
-                        <span class="feedback-date">${formatDate(fb.date)}</span>
-                    </div>
-                    <p class="feedback-comment">${escapeHtml(fb.comment)}</p>
-                </div>
-            `).join('');
-        }
-
-        // Update Rating Summary
-        function updateRatingSummary() {
-            const total = feedbacks.length;
-            if (total === 0) {
-                document.getElementById('averageRating').textContent = '0.0';
-                document.getElementById('totalReviews').textContent = '共 0 条评价';
-                for (let i = 1; i <= 5; i++) {
-                    document.getElementById(`bar${i}`).style.width = '0%';
-                }
-                return;
-            }
-            
-            const sum = feedbacks.reduce((acc, fb) => acc + fb.rating, 0);
-            const average = (sum / total).toFixed(1);
-            
-            document.getElementById('averageRating').textContent = average;
-            document.getElementById('totalReviews').textContent = `共 ${total} 条评价`;
-            
-            // Update distribution bars
-            const distribution = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
-            feedbacks.forEach(fb => distribution[fb.rating]++);
-            
-            for (let i = 1; i <= 5; i++) {
-                const percentage = (distribution[i] / total * 100).toFixed(1);
-                document.getElementById(`bar${i}`).style.width = `${percentage}%`;
-            }
-        }
-
-        // Utility Functions
-        function formatDate(isoString) {
-            const date = new Date(isoString);
-            const now = new Date();
-            const diff = now - date;
-            
-            const minutes = Math.floor(diff / 60000);
-            const hours = Math.floor(diff / 3600000);
-            const days = Math.floor(diff / 86400000);
-            
-            if (minutes < 1) return '刚刚';
-            if (minutes < 60) return `${minutes}分钟前`;
-            if (hours < 24) return `${hours}小时前`;
-            if (days < 7) return `${days}天前`;
-            
-            return date.toLocaleDateString('zh-CN');
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = type === 'success' ? `✓ ${message}` : `✗ ${message}`;
-            toast.style.borderColor = type === 'success' ? 'var(--success)' : 'var(--error)';
-            toast.style.color = type === 'success' ? 'var(--success)' : 'var(--error)';
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        // ===== Prompt Generator Functions =====
-        function generatePrompt() {
-            const taskType = document.getElementById('taskType').value;
-            const goal = document.getElementById('goalInput').value.trim();
-            const constraints = document.getElementById('constraintsInput').value.trim();
-            
-            if (!goal) {
-                showToast('请输入目标描述', 'error');
-                return;
-            }
-            
-            const outputArea = document.getElementById('outputArea');
-            outputArea.classList.add('loading');
-            
-            // Simulate generation
-            setTimeout(() => {
-                const prompt = generatePromptText(taskType, goal, constraints);
-                outputArea.textContent = prompt;
-                outputArea.classList.remove('loading');
-                showToast('提示词生成成功！');
-            }, 800);
-        }
-
-        function generatePromptText(type, goal, constraints) {
-            const templates = {
-                writing: `你是一位专业的内容创作者。请根据以下要求创作内容：\n\n【目标】${goal}\n${constraints ? `【约束条件】${constraints}\n` : ''}\n要求：\n1. 内容结构清晰，逻辑严谨\n2. 语言流畅自然，符合目标受众\n3. 提供有深度的见解和观点\n4. 适当使用修辞手法增强表现力`,
-                
-                coding: `你是一位资深软件工程师。请完成以下编程任务：\n\n【任务描述】${goal}\n${constraints ? `【技术要求】${constraints}\n` : ''}\n要求：\n1. 编写清晰、可维护的代码\n2. 添加必要的注释说明\n3. 考虑边界情况和错误处理\n4. 提供使用示例和测试用例`,
-                
-                analysis: `你是一位数据分析师。请对以下数据进行专业分析：\n\n【分析目标】${goal}\n${constraints ? `【分析要求】${constraints}\n` : ''}\n要求：\n1. 采用合适的分析方法和模型\n2. 数据可视化建议\n3. 提供可操作的洞察和建议\n4. 说明分析的局限性和假设`,
-                
-                design: `你是一位创意设计师。请为以下需求提供设计方案：\n\n【设计目标】${goal}\n${constraints ? `【设计约束】${constraints}\n` : ''}\n要求：\n1. 提供多个创意方向\n2. 详细描述视觉元素和风格\n3. 说明设计理念和用户价值\n4. 给出实现建议和工具推荐`,
-                
-                translation: `你是一位专业翻译。请完成以下翻译任务：\n\n【原文】${goal}\n${constraints ? `【翻译要求】${constraints}\n` : ''}\n要求：\n1. 准确传达原文含义\n2. 符合目标语言的表达习惯\n3. 保持原文的语气和风格\n4. 对专业术语提供解释说明`
-            };
-            
-            return templates[type] || templates.writing;
-        }
-
-        function copyOutput() {
+                        <div class="card-body" style="flex: 1; display: flex; flex-direction: column;">
+                            <div class="output-area" id="outputArea">
+                                <span style="color: var(--text-muted);">生成的提示词将显示在这里...</span>
+                            </div>
+                            <div class="output-toolbar">
+                                <div class="output-stats">
+                                    <span id="charCount">0 字符</span>
+                                    <span id="tokenCount">~0 tokens</span>
+                                </div>
+                                <button class="btn btn-secondary btn-sm" onclick="refinePrompt
