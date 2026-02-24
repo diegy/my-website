@@ -1,376 +1,157 @@
-```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PromptCraft Pro - AI提示词生成器 (社区版)</title>
+    <title>PromptCraft Pro - AI提示词生成器</title>
     <style>
-        /* ===== CSS Variables & Design Tokens ===== */
         :root {
-            /* Colors */
             --primary: #6366f1;
             --primary-dark: #4f46e5;
             --primary-light: #818cf8;
             --secondary: #8b5cf6;
             --accent: #06b6d4;
-            --accent-light: #22d3ee;
             --success: #10b981;
             --warning: #f59e0b;
             --error: #ef4444;
-            --info: #3b82f6;
-            
-            /* Backgrounds */
             --bg-dark: #0f172a;
             --bg-darker: #020617;
             --bg-card: #1e293b;
             --bg-card-hover: #263449;
             --bg-input: #334155;
-            --bg-input-focus: #3d4f66;
-            
-            /* Text */
             --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
-            
-            /* Borders */
             --border: #475569;
-            --border-light: #334155;
-            
-            /* Spacing */
-            --space-xs: 4px;
-            --space-sm: 8px;
-            --space-md: 16px;
-            --space-lg: 24px;
-            --space-xl: 32px;
-            --space-2xl: 48px;
-            
-            /* Typography */
-            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-            
-            /* Effects */
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
-            --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
-            
-            /* Transitions */
-            --transition-fast: 150ms ease;
-            --transition-base: 250ms ease;
-            --transition-slow: 350ms ease;
-            
-            /* Radius */
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 16px;
-            --radius-xl: 24px;
         }
 
-        /* ===== Reset & Base ===== */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
-            font-family: var(--font-sans);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-darker);
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
-            background-image: 
-                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 70%);
         }
 
-        /* ===== Layout ===== */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: var(--space-lg);
-        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
 
+        /* Header */
         header {
             text-align: center;
-            padding: var(--space-2xl) 0;
-            position: relative;
-        }
-
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent);
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            border-bottom: 1px solid var(--border);
         }
 
         .logo {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: var(--space-sm);
-            letter-spacing: -0.02em;
+            margin-bottom: 12px;
         }
 
-        .tagline {
-            color: var(--text-secondary);
-            font-size: 1.125rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
+        .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
 
-        /* ===== Navigation Tabs ===== */
-        .nav-tabs {
+        /* Stats Bar */
+        .stats-bar {
             display: flex;
             justify-content: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-xl);
-            flex-wrap: wrap;
-        }
-
-        .nav-tab {
-            padding: var(--space-sm) var(--space-lg);
-            border-radius: var(--radius-md);
+            gap: 48px;
+            padding: 20px;
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all var(--transition-base);
-            font-size: 0.9375rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .nav-tab:hover {
-            background: var(--bg-card-hover);
-            color: var(--text-primary);
-        }
-
-        .nav-tab.active {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-color: transparent;
-            color: white;
-            box-shadow: var(--shadow-glow);
-        }
-
-        .nav-tab .badge {
-            background: rgba(255,255,255,0.2);
-            padding: 2px 8px;
             border-radius: 12px;
-            font-size: 0.75rem;
+            margin: 24px 0;
         }
 
-        /* ===== Section Visibility ===== */
-        .section {
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary-light); }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); }
 
-        .section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ===== Main Grid ===== */
-        .main-grid {
+        /* Main Layout */
+        .main-layout {
             display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: var(--space-xl);
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 24px;
+            margin-top: 24px;
         }
 
         @media (max-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
+            .main-layout { grid-template-columns: 1fr; }
         }
 
-        /* ===== Cards ===== */
+        /* Cards */
         .card {
             background: var(--bg-card);
-            border-radius: var(--radius-lg);
             border: 1px solid var(--border);
-            overflow: hidden;
-            transition: all var(--transition-base);
-        }
-
-        .card:hover {
-            border-color: var(--border-light);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .card-header {
-            padding: var(--space-lg);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
         }
 
         .card-title {
-            font-size: 1.125rem;
+            font-size: 1.1rem;
             font-weight: 600;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
+            gap: 8px;
         }
 
-        .card-body {
-            padding: var(--space-lg);
-        }
-
-        /* ===== Form Elements ===== */
-        .form-group {
-            margin-bottom: var(--space-lg);
-        }
-
-        .form-label {
+        /* Form Elements */
+        .form-group { margin-bottom: 16px; }
+        
+        label {
             display: block;
-            margin-bottom: var(--space-sm);
             font-size: 0.875rem;
             font-weight: 500;
+            margin-bottom: 6px;
             color: var(--text-secondary);
         }
 
-        .form-label .required {
-            color: var(--error);
-            margin-left: 2px;
-        }
-
-        .form-input,
-        .form-select,
-        .form-textarea {
+        input, textarea, select {
             width: 100%;
-            padding: var(--space-md);
+            padding: 12px 16px;
             background: var(--bg-input);
             border: 1px solid var(--border);
-            border-radius: var(--radius-md);
+            border-radius: 8px;
             color: var(--text-primary);
             font-size: 0.9375rem;
-            transition: all var(--transition-fast);
+            transition: all 0.2s;
         }
 
-        .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
+        input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: var(--primary);
-            background: var(--bg-input-focus);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-            font-family: var(--font-sans);
-            line-height: 1.6;
-        }
+        textarea { min-height: 120px; resize: vertical; }
 
-        .form-select {
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 40px;
-        }
-
-        /* ===== Tags Input ===== */
-        .tags-input {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-sm);
-            padding: var(--space-sm);
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            min-height: 48px;
-        }
-
-        .tags-input:focus-within {
-            border-color: var(--primary);
-            background: var(--bg-input-focus);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        }
-
-        .tag {
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-            padding: 4px 12px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: var(--radius-sm);
-            font-size: 0.8125rem;
-            font-weight: 500;
-        }
-
-        .tag-remove {
-            cursor: pointer;
-            opacity: 0.7;
-            transition: opacity var(--transition-fast);
-        }
-
-        .tag-remove:hover {
-            opacity: 1;
-        }
-
-        .tags-input input {
-            flex: 1;
-            min-width: 100px;
-            background: transparent;
-            border: none;
-            color: var(--text-primary);
-            font-size: 0.9375rem;
-            padding: var(--space-sm);
-        }
-
-        .tags-input input:focus {
-            outline: none;
-        }
-
-        /* ===== Buttons ===== */
+        /* Buttons */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: var(--space-sm);
-            padding: var(--space-md) var(--space-lg);
-            border-radius: var(--radius-md);
-            font-size: 0.9375rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all var(--transition-fast);
+            gap: 8px;
+            padding: 12px 24px;
             border: none;
+            border-radius: 8px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            box-shadow: var(--shadow-md);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-glow);
-        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3); }
 
         .btn-secondary {
             background: var(--bg-input);
@@ -378,585 +159,836 @@
             border: 1px solid var(--border);
         }
 
-        .btn-secondary:hover {
-            background: var(--bg-input-focus);
-            border-color: var(--border-light);
-        }
+        .btn-secondary:hover { background: var(--bg-card-hover); }
 
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #059669;
-        }
-
-        .btn-icon {
-            width: 40px;
-            height: 40px;
-            padding: 0;
-            border-radius: var(--radius-md);
-        }
-
-        .btn-sm {
-            padding: var(--space-sm) var(--space-md);
-            font-size: 0.875rem;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: var(--space-sm);
-            flex-wrap: wrap;
-        }
-
-        /* ===== Output Area ===== */
-        .output-area {
+        /* Output Section */
+        .output-section {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
             position: relative;
         }
 
         .output-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: var(--space-md);
+            align-items: center;
+            margin-bottom: 12px;
         }
 
-        .output-tabs {
-            display: flex;
-            gap: var(--space-xs);
+        .output-title { font-weight: 600; color: var(--primary-light); }
+
+        .output-actions { display: flex; gap: 8px; }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.75rem;
         }
 
-        .output-tab {
-            padding: var(--space-sm) var(--space-md);
-            border-radius: var(--radius-sm);
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-
-        .output-tab:hover {
-            color: var(--text-primary);
-            background: var(--bg-input);
-        }
-
-        .output-tab.active {
-            color: white;
-            background: var(--primary);
-        }
-
-        .output-content {
+        pre {
             background: var(--bg-darker);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: var(--space-lg);
-            min-height: 200px;
-            font-family: var(--font-mono);
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'SF Mono', Monaco, monospace;
             font-size: 0.875rem;
-            line-height: 1.7;
-            color: var(--text-secondary);
+            line-height: 1.6;
             white-space: pre-wrap;
-            word-break: break-word;
+            word-wrap: break-word;
         }
 
-        .output-content .highlight {
-            color: var(--accent-light);
-        }
-
-        .output-content .keyword {
-            color: var(--primary-light);
-        }
-
-        .output-actions {
-            position: absolute;
-            top: 0;
-            right: 0;
+        /* Feedback Section */
+        .feedback-section { margin-top: 24px; }
+        
+        .star-rating {
             display: flex;
-            gap: var(--space-sm);
+            gap: 8px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .star { color: var(--text-muted); transition: color 0.2s; }
+        .star:hover, .star.active { color: var(--warning); }
+
+        .feedback-list { margin-top: 16px; }
+        
+        .feedback-item {
+            background: var(--bg-dark);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .feedback-stars { color: var(--warning); }
+        .feedback-time { font-size: 0.75rem; color: var(--text-muted); }
+        .feedback-text { font-size: 0.875rem; color: var(--text-secondary); }
+
+        /* Community Section */
+        .community-prompt {
+            background: var(--bg-dark);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .community-prompt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .community-prompt-title { font-weight: 600; }
+        
+        .community-prompt-actions {
+            display: flex;
+            gap: 12px;
         }
 
         .action-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-sm);
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all var(--transition-fast);
-        }
-
-        .action-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
-
-        /* ===== Stats ===== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-md);
-            margin-bottom: var(--space-lg);
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: var(--space-md);
-            background: var(--bg-input);
-            border-radius: var(--radius-md);
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-light);
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
+            background: none;
+            border: none;
             color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        /* ===== Community Section ===== */
-        .community-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-xl);
-            flex-wrap: wrap;
-            gap: var(--space-md);
-        }
-
-        .search-box {
-            position: relative;
-            flex: 1;
-            max-width: 400px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: var(--space-md) var(--space-md) var(--space-md) 44px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            color: var(--text-primary);
-            font-size: 0.9375rem;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .search-box::before {
-            content: '🔍';
-            position: absolute;
-            left: var(--space-md);
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .filter-tags {
-            display: flex;
-            gap: var(--space-sm);
-            flex-wrap: wrap;
-        }
-
-        .filter-tag {
-            padding: var(--space-sm) var(--space-md);
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-xl);
+            cursor: pointer;
             font-size: 0.875rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .filter-tag:hover, .filter-tag.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: white;
-        }
+        .action-btn:hover { color: var(--primary-light); }
 
-        /* Prompt Cards Grid */
-        .prompts-grid {
+        /* A/B Test Section */
+        .ab-test-section { margin-top: 16px; }
+        
+        .version-comparison {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-            gap: var(--space-lg);
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 12px;
         }
 
-        .prompt-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            transition: all var(--transition-base);
-            display: flex;
-            flex-direction: column;
+        @media (max-width: 768px) {
+            .version-comparison { grid-template-columns: 1fr; }
         }
 
-        .prompt-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--primary);
-            box-shadow: var(--shadow-glow);
+        .version-box {
+            background: var(--bg-dark);
+            padding: 16px;
+            border-radius: 8px;
+            border: 2px solid transparent;
         }
 
-        .prompt-card-header {
-            padding: var(--space-lg);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: var(--space-md);
-        }
-
-        .prompt-author {
-            display: flex;
-            align-items: center;
-            gap: var(--space-md);
-        }
-
-        .author-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 1.125rem;
-        }
-
-        .author-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .author-name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .author-meta {
-            font-size: 0.8125rem;
-            color: var(--text-muted);
-        }
-
-        .prompt-category {
-            padding: 4px 12px;
-            background: var(--bg-input);
-            border-radius: var(--radius-xl);
+        .version-box.selected { border-color: var(--primary); }
+        
+        .version-label {
             font-size: 0.75rem;
-            color: var(--accent-light);
-            font-weight: 500;
-        }
-
-        .prompt-card-body {
-            padding: var(--space-lg);
-            flex: 1;
-        }
-
-        .prompt-title {
-            font-size: 1.125rem;
             font-weight: 600;
-            margin-bottom: var(--space-sm);
-            color: var(--text-primary);
-        }
-
-        .prompt-preview {
-            color: var(--text-secondary);
-            font-size: 0.9375rem;
-            line-height: 1.6;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .prompt-tags {
-            display: flex;
-            gap: var(--space-sm);
-            flex-wrap: wrap;
-            margin-top: var(--space-md);
-        }
-
-        .prompt-tag {
-            padding: 4px 10px;
-            background: var(--bg-darker);
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .prompt-card-footer {
-            padding: var(--space-md) var(--space-lg);
-            border-top: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .prompt-stats {
-            display: flex;
-            gap: var(--space-lg);
-        }
-
-        .prompt-stat {
-            display: flex;
-            align-items: center;
-            gap: var(--space-xs);
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: color var(--transition-fast);
-            user-select: none;
-        }
-
-        .prompt-stat:hover {
             color: var(--primary-light);
+            margin-bottom: 8px;
         }
 
-        .prompt-stat.active {
-            color: var(--primary);
-        }
-
-        .prompt-stat.active .stat-icon {
-            transform: scale(1.1);
-        }
-
-        .stat-icon {
-            transition: transform var(--transition-fast);
-        }
-
-        .prompt-actions {
-            display: flex;
-            gap: var(--space-sm);
-        }
-
-        /* Share Modal */
+        /* Onboarding Modal */
         .modal-overlay {
             position: fixed;
-            inset: 0;
-            background: rgba(2, 6, 23, 0.8);
-            backdrop-filter: blur(8px);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transition: all var(--transition-base);
+            transition: all 0.3s;
         }
 
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
 
         .modal {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
             width: 90%;
-            max-width: 560px;
-            max-height: 90vh;
-            overflow: hidden;
-            transform: scale(0.95);
-            transition: transform var(--transition-base);
+            transform: scale(0.9);
+            transition: transform 0.3s;
         }
 
-        .modal-overlay.active .modal {
-            transform: scale(1);
-        }
-
-        .modal-header {
-            padding: var(--space-lg);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+        .modal-overlay.active .modal { transform: scale(1); }
 
         .modal-title {
-            font-size: 1.25rem;
-            font-weight: 600;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
         }
 
-        .modal-close {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-md);
-            background: var(--bg-input);
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
+        .modal-content { color: var(--text-secondary); margin-bottom: 24px; }
+
+        .modal-steps {
             display: flex;
-            align-items: center;
             justify-content: center;
-            transition: all var(--transition-fast);
+            gap: 8px;
+            margin-bottom: 24px;
         }
 
-        .modal-close:hover {
-            background: var(--error);
-            color: white;
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
         }
 
-        .modal-body {
-            padding: var(--space-lg);
-            max-height: 60vh;
-            overflow-y: auto;
-        }
+        .step-dot.active { background: var(--primary); }
 
-        .modal-footer {
-            padding: var(--space-lg);
-            border-top: 1px solid var(--border);
+        .modal-actions {
             display: flex;
-            justify-content: flex-end;
-            gap: var(--space-md);
+            justify-content: space-between;
+            gap: 12px;
         }
 
         /* Toast Notification */
-        .toast-container {
-            position: fixed;
-            bottom: var(--space-xl);
-            right: var(--space-xl);
-            z-index: 1100;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-md);
-        }
-
         .toast {
-            padding: var(--space-md) var(--space-lg);
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: var(--radius-md);
+            border-radius: 8px;
+            padding: 16px 24px;
             display: flex;
             align-items: center;
-            gap: var(--space-md);
-            box-shadow: var(--shadow-lg);
-            animation: slideIn 0.3s ease;
+            gap: 12px;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1001;
         }
 
-        .toast.success {
-            border-color: var(--success);
+        .toast.show { transform: translateX(0); }
+
+        .toast-success { border-left: 4px solid var(--success); }
+        .toast-error { border-left: 4px solid var(--error); }
+
+        /* Floating Feedback Button */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s;
+            z-index: 100;
         }
 
-        .toast.error {
-            border-color: var(--error);
+        .fab:hover { transform: scale(1.1); }
+
+        /* Tags */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
         }
 
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: var(--space-2xl);
-        }
-
-        .empty-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto var(--space-lg);
+        .tag {
+            padding: 4px 12px;
             background: var(--bg-input);
-            border-radius: var(--radius-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-        }
-
-        .empty-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: var(--space-sm);
-        }
-
-        .empty-desc {
+            border-radius: 16px;
+            font-size: 0.75rem;
             color: var(--text-secondary);
-            max-width: 400px;
-            margin: 0 auto;
         }
 
-        /* Loading Skeleton */
-        .skeleton {
-            background: linear-gradient(90deg, var(--bg-input) 25%, var(--bg-card-hover) 50%, var(--bg-input) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: var(--radius-md);
-        }
-
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                padding: var(--space-md);
-            }
-
-            .logo {
-                font-size: 2rem;
-            }
-
-            .prompts-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .community-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .search-box {
-                max-width: none;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-darker);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--border-light);
+        .tag-primary {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary-light);
         }
     </style>
 </head>
 <body>
-    <div class
+    <!-- Onboarding Modal -->
+    <div id="onboardingModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-title">👋 欢迎使用 PromptCraft Pro</div>
+            <div class="modal-content" id="onboardingContent">
+                我们将通过几个简单的步骤，帮您快速上手这个强大的AI提示词生成工具。
+            </div>
+            <div class="modal-steps">
+                <div class="step-dot active"></div>
+                <div class="step-dot"></div>
+                <div class="step-dot"></div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="skipOnboarding()">跳过</button>
+                <button class="btn btn-primary" onclick="nextOnboardingStep()">下一步</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedbackModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-title">💬 您的反馈对我们很重要</div>
+            <div class="modal-content">
+                <div class="form-group">
+                    <label>评分</label>
+                    <div class="star-rating" id="starRating">
+                        <span class="star" data-rating="1">⭐</span>
+                        <span class="star" data-rating="2">⭐</span>
+                        <span class="star" data-rating="3">⭐</span>
+                        <span class="star" data-rating="4">⭐</span>
+                        <span class="star" data-rating="5">⭐</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>您的建议</label>
+                    <textarea id="feedbackText" placeholder="请告诉我们您的使用体验..."></textarea>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeFeedbackModal()">取消</button>
+                <button class="btn btn-primary" onclick="submitFeedback()">提交反馈</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <span id="toastIcon">✅</span>
+        <span id="toastMessage">操作成功</span>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="logo">PromptCraft Pro</div>
+            <div class="subtitle">AI驱动的提示词生成与优化平台</div>
+        </div>
+    </header>
+
+    <!-- Stats Bar -->
+    <div class="container">
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="totalPrompts">0</div>
+                <div class="stat-label">生成提示词</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="avgRating">0.0</div>
+                <div class="stat-label">平均评分</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="communityPrompts">0</div>
+                <div class="stat-label">社区分享</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-layout">
+            <!-- Left Sidebar: Templates -->
+            <div class="left-sidebar">
+                <div class="card">
+                    <div class="card-title">📋 场景模板</div>
+                    <div class="form-group">
+                        <select id="templateSelect" onchange="loadTemplate()">
+                            <option value="">选择场景...</option>
+                            <option value="writing">✍️ 内容创作</option>
+                            <option value="coding">💻 代码生成</option>
+                            <option value="analysis">📊 数据分析</option>
+                            <option value="translation">🌐 翻译润色</option>
+                            <option value="learning">📚 学习辅导</option>
+                            <option value="business">💼 商业文案</option>
+                        </select>
+                    </div>
+                    <div id="templateDescription" style="font-size: 0.875rem; color: var(--text-secondary);"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">🏷️ 常用标签</div>
+                    <div class="tags">
+                        <span class="tag tag-primary">#小红书</span>
+                        <span class="tag">#电商</span>
+                        <span class="tag">#营销</span>
+                        <span class="tag">#技术</span>
+                        <span class="tag">#创意</span>
+                    </div>
+                </div>
+
+                <!-- Feedback Section -->
+                <div class="card">
+                    <div class="card-title">💬 用户反馈</div>
+                    <div class="feedback-list" id="feedbackList">
+                        <!-- Feedback items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center: Main Generator -->
+            <div class="center-content">
+                <div class="card">
+                    <div class="card-title">🎯 提示词生成器</div>
+                    
+                    <div class="form-group">
+                        <label>您的需求描述</label>
+                        <textarea id="userInput" placeholder="描述您想要实现的目标，例如：写一篇关于人工智能的小红书文案..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>风格调性</label>
+                        <select id="styleSelect">
+                            <option value="professional">专业严谨</option>
+                            <option value="casual">轻松随意</option>
+                            <option value="creative">创意发散</option>
+                            <option value="academic">学术规范</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>输出长度</label>
+                        <select id="lengthSelect">
+                            <option value="short">简短（100字内）</option>
+                            <option value="medium">适中（300字左右）</option>
+                            <option value="long">详细（500字以上）</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="generatePrompt()" style="width: 100%;">
+                        ✨ 生成提示词
+                    </button>
+
+                    <!-- A/B Test Section -->
+                    <div class="ab-test-section" id="abTestSection" style="display: none;">
+                        <div class="card-title">🔄 A/B 版本对比</div>
+                        <div class="version-comparison">
+                            <div class="version-box selected" id="versionA" onclick="selectVersion('A')">
+                                <div class="version-label">版本 A</div>
+                                <pre id="versionAContent"></pre>
+                            </div>
+                            <div class="version-box" id="versionB" onclick="selectVersion('B')">
+                                <div class="version-label">版本 B</div>
+                                <pre id="versionBContent"></pre>
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 12px;">
+                            <button class="btn btn-secondary btn-small" onclick="generateAlternative()">🔄 生成替代版本</button>
+                        </div>
+                    </div>
+
+                    <!-- Output Section -->
+                    <div class="output-section" id="outputSection" style="display: none;">
+                        <div class="output-header">
+                            <span class="output-title">📝 生成的提示词</span>
+                            <div class="output-actions">
+                                <button class="btn btn-secondary btn-small" onclick="copyOutput()">📋 复制</button>
+                                <button class="btn btn-secondary btn-small" onclick="shareToCommunity()">📤 分享</button>
+                            </div>
+                        </div>
+                        <pre id="outputContent"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar: Community -->
+            <div class="right-sidebar">
+                <div class="card">
+                    <div class="card-title">🌟 社区精选</div>
+                    <div id="communityList">
+                        <!-- Community prompts will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Feedback Button -->
+    <button class="fab" onclick="openFeedbackModal()">💬</button>
+
+    <script>
+        // Data Storage
+        const storage = {
+            get: (key) => {
+                try { return JSON.parse(localStorage.getItem(key)) || []; } 
+                catch { return []; }
+            },
+            set: (key, value) => localStorage.setItem(key, JSON.stringify(value))
+        };
+
+        // Initialize data
+        let feedbacks = storage.get('promptcraft_feedbacks');
+        let communityPrompts = storage.get('promptcraft_community');
+        let stats = storage.get('promptcraft_stats') || { total: 0, ratings: [] };
+
+        // Onboarding
+        let onboardingStep = 0;
+        const onboardingSteps = [
+            { title: '👋 欢迎使用', content: '我们将通过几个简单的步骤，帮您快速上手这个强大的AI提示词生成工具。' },
+            { title: '📝 输入需求', content: '在左侧选择场景模板，或在中间输入您的具体需求描述。' },
+            { title: '✨ 生成优化', content: '点击生成按钮，AI将为您创建专业的提示词。使用A/B测试对比不同版本。' },
+            { title: '🤝 社区互动', content: '将优秀的提示词分享到社区，或浏览他人的创意获取灵感。' }
+        ];
+
+        function checkOnboarding() {
+            if (!localStorage.getItem('promptcraft_onboarding')) {
+                document.getElementById('onboardingModal').classList.add('active');
+            }
+        }
+
+        function nextOnboardingStep() {
+            onboardingStep++;
+            if (onboardingStep >= onboardingSteps.length) {
+                completeOnboarding();
+                return;
+            }
+            updateOnboardingUI();
+        }
+
+        function updateOnboardingUI() {
+            const step = onboardingSteps[onboardingStep];
+            document.querySelector('.modal-title').textContent = step.title;
+            document.getElementById('onboardingContent').textContent = step.content;
+            document.querySelectorAll('.step-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i <= onboardingStep);
+            });
+        }
+
+        function skipOnboarding() {
+            completeOnboarding();
+        }
+
+        function completeOnboarding() {
+            localStorage.setItem('promptcraft_onboarding', 'true');
+            document.getElementById('onboardingModal').classList.remove('active');
+            showToast('✅', '欢迎使用 PromptCraft Pro！');
+        }
+
+        // Template System
+        const templates = {
+            writing: { desc: '适用于文章、文案、故事等内容创作场景', example: '写一篇关于[主题]的[类型]文章，风格[风格]，字数约[字数]字。' },
+            coding: { desc: '适用于代码生成、调试、优化等技术场景', example: '请用[语言]编写一个[功能]的代码，要求[要求]。' },
+            analysis: { desc: '适用于数据分析、报告生成等商业场景', example: '分析以下数据，给出[分析类型]结论：[数据内容]' },
+            translation: { desc: '适用于多语言翻译、润色等语言处理场景', example: '将以下内容翻译成[目标语言]，保持[风格]风格：[内容]' },
+            learning: { desc: '适用于知识学习、概念解释等教育场景', example: '用简单易懂的方式解释[概念]，适合[受众]理解。' },
+            business: { desc: '适用于商业计划、营销文案等商业场景', example: '为[产品/服务]撰写一份[类型]文案，突出[卖点]。' }
+        };
+
+        function loadTemplate() {
+            const template = document.getElementById('templateSelect').value;
+            if (templates[template]) {
+                document.getElementById('templateDescription').textContent = templates[template].desc;
+                document.getElementById('userInput').placeholder = `示例：${templates[template].example}`;
+            }
+        }
+
+        // Prompt Generation
+        function generatePrompt() {
+            const input = document.getElementById('userInput').value;
+            const style = document.getElementById('styleSelect').value;
+            const length = document.getElementById('lengthSelect').value;
+
+            if (!input.trim()) {
+                showToast('⚠️', '请输入需求描述');
+                return;
+            }
+
+            // Generate prompt based on inputs
+            const generatedPrompt = generatePromptText(input, style, length);
+            
+            document.getElementById('outputContent').textContent = generatedPrompt;
+            document.getElementById('outputSection').style.display = 'block';
+            
+            // Update stats
+            stats.total++;
+            storage.set('promptcraft_stats', stats);
+            updateStats();
+
+            showToast('✅', '提示词生成成功！');
+        }
+
+        function generatePromptText(input, style, length) {
+            const styleMap = {
+                professional: '专业、严谨、逻辑清晰',
+                casual: '轻松、自然、通俗易懂',
+                creative: '富有创意、生动形象、引人入胜',
+                academic: '学术规范、论证严密、引用准确'
+            };
+
+            const lengthMap = {
+                short: '简洁明了，控制在100字以内',
+                medium: '内容充实，约300字左右',
+                long: '详细全面，500字以上'
+            };
+
+            return `【角色设定】
+你是一位专业的AI助手，擅长根据用户需求生成高质量的提示词。
+
+【任务描述】
+${input}
+
+【输出要求】
+1. 风格要求：${styleMap[style] || styleMap.professional}
+2. 长度要求：${lengthMap[length] || lengthMap.medium}
+3. 结构清晰，重点突出
+4. 语言流畅，易于理解
+
+【参考框架】
+- 背景说明：简要介绍任务背景
+- 具体指令：详细描述需要完成的工作
+- 约束条件：列出任何限制或要求
+- 期望输出：说明预期的结果格式
+
+请根据以上要求，生成符合需求的提示词。`;
+        }
+
+        // A/B Testing
+        let currentVersion = 'A';
+        let versionAContent = '';
+        let versionBContent = '';
+
+        function generateAlternative() {
+            const input = document.getElementById('userInput').value;
+            const style = document.getElementById('styleSelect').value;
+            const length = document.getElementById('lengthSelect').value;
+
+            if (!input.trim()) {
+                showToast('⚠️', '请先生成第一个版本');
+                return;
+            }
+
+            // Generate alternative version
+            const altPrompt = generateAlternativeText(input, style, length);
+            
+            versionAContent = document.getElementById('outputContent').textContent;
+            versionBContent = altPrompt;
+
+            document.getElementById('versionAContent').textContent = versionAContent;
+            document.getElementById('versionBContent').textContent = versionBContent;
+            document.getElementById('abTestSection').style.display = 'block';
+
+            showToast('✅', '替代版本已生成！');
+        }
+
+        function generateAlternativeText(input, style, length) {
+            // Alternative generation logic
+            return `【优化版本B】
+基于您的需求：${input}
+
+【增强策略】
+1. 采用${style === 'creative' ? '更创新的' : '更系统的'}表达方式
+2. 增加具体示例和场景说明
+3. 优化结构，使其更易于AI理解和执行
+
+【详细指令】
+请根据以下优化后的提示词执行任务：
+
+背景：${input}
+目标：生成高质量、符合要求的输出
+方法：分步骤、结构化处理
+输出：确保${length === 'short' ? '简洁' : length === 'long' ? '详尽' : '平衡'}的内容呈现
+
+请开始生成。`;
+        }
+
+        function selectVersion(version) {
+            currentVersion = version;
+            document.getElementById('versionA').classList.toggle('selected', version === 'A');
+            document.getElementById('versionB').classList.toggle('selected', version === 'B');
+            
+            const selectedContent = version === 'A' ? versionAContent : versionBContent;
+            document.getElementById('outputContent').textContent = selectedContent;
+            
+            showToast('✅', `已选择版本 ${version}`);
+        }
+
+        // Feedback System
+        let currentRating = 0;
+
+        function openFeedbackModal() {
+            document.getElementById('feedbackModal').classList.add('active');
+            currentRating = 0;
+            updateStarDisplay();
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').classList.remove('active');
+        }
+
+        function updateStarDisplay() {
+            document.querySelectorAll('.star').forEach((star, i) => {
+                star.classList.toggle('active', i < currentRating);
+            });
+        }
+
+        document.querySelectorAll('.star').forEach(star => {
+            star.addEventListener('click', () => {
+                currentRating = parseInt(star.dataset.rating);
+                updateStarDisplay();
+            });
+        });
+
+        function submitFeedback() {
+            const text = document.getElementById('feedbackText').value;
+            
+            if (currentRating === 0) {
+                showToast('⚠️', '请选择评分');
+                return;
+            }
+
+            const feedback = {
+                rating: currentRating,
+                text: text,
+                time: new Date().toLocaleString('zh-CN')
+            };
+
+            feedbacks.unshift(feedback);
+            storage.set('promptcraft_feedbacks', feedbacks);
+            
+            stats.ratings.push(currentRating);
+            storage.set('promptcraft_stats', stats);
+
+            renderFeedbacks();
+            updateStats();
+            closeFeedbackModal();
+            
+            document.getElementById('feedbackText').value = '';
+            currentRating = 0;
+            updateStarDisplay();
+
+            showToast('✅', '感谢您的反馈！');
+        }
+
+        function renderFeedbacks() {
+            const list = document.getElementById('feedbackList');
+            const recent = feedbacks.slice(0, 3);
+            
+            list.innerHTML = recent.map(f => `
+                <div class="feedback-item">
+                    <div class="feedback-header">
+                        <span class="feedback-stars">${'⭐'.repeat(f.rating)}</span>
+                        <span class="feedback-time">${f.time}</span>
+                    </div>
+                    <div class="feedback-text">${f.text || '用户未填写文字反馈'}</div>
+                </div>
+            `).join('') || '<div style="color: var(--text-muted); font-size: 0.875rem;">暂无反馈</div>';
+        }
+
+        // Community System
+        function shareToCommunity() {
+            const content = document.getElementById('outputContent').textContent;
+            if (!content) {
+                showToast('⚠️', '请先生成提示词');
+                return;
+            }
+
+            const prompt = {
+                title: document.getElementById('userInput').value.slice(0, 30) + '...',
+                content: content,
+                author: '匿名用户',
+                likes: 0,
+                time: new Date().toLocaleString('zh-CN')
+            };
+
+            communityPrompts.unshift(prompt);
+            storage.set('promptcraft_community', communityPrompts);
+            
+            renderCommunity();
+            updateStats();
+            
+            showToast('✅', '已分享到社区！');
+        }
+
+        function renderCommunity() {
+            const list = document.getElementById('communityList');
+            const recent = communityPrompts.slice(0, 5);
+            
+            list.innerHTML = recent.map((p, i) => `
+                <div class="community-prompt">
+                    <div class="community-prompt-header">
+                        <span class="community-prompt-title">${p.title}</span>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">
+                        ${p.author} · ${p.time}
+                    </div>
+                    <div class="community-prompt-actions">
+                        <button class="action-btn" onclick="likePrompt(${i})">
+                            👍 ${p.likes}
+                        </button>
+                        <button class="action-btn" onclick="usePrompt(${i})">
+                            📋 使用
+                        </button>
+                    </div>
+                </div>
+            `).join('') || '<div style="color: var(--text-muted); font-size: 0.875rem;">暂无社区分享</div>';
+        }
+
+        function likePrompt(index) {
+            communityPrompts[index].likes++;
+            storage.set('promptcraft_community', communityPrompts);
+            renderCommunity();
+            showToast('❤️', '点赞成功！');
+        }
+
+        function usePrompt(index) {
+            const prompt = communityPrompts[index];
+            document.getElementById('outputContent').textContent = prompt.content;
+            document.getElementById('outputSection').style.display = 'block';
+            showToast('✅', '已加载到编辑器');
+        }
+
+        // Utility Functions
+        function copyOutput() {
+            const content = document.getElementById('outputContent').textContent;
+            navigator.clipboard.writeText(content).then(() => {
+                showToast('📋', '已复制到剪贴板');
+            });
+        }
+
+        function showToast(icon, message) {
+            document.getElementById('toastIcon').textContent = icon;
+            document.getElementById('toastMessage').textContent = message;
+            document.getElementById('toast').classList.add('show');
+            
+            setTimeout(() => {
+                document.getElementById('toast').classList.remove('show');
+            }, 3000);
+        }
+
+        function updateStats() {
+            document.getElementById('totalPrompts').textContent = stats.total;
+            document.getElementById('communityPrompts').textContent = communityPrompts.length;
+            
+            const avg = stats.ratings.length > 0 
+                ? (stats.ratings.reduce((a, b) => a + b, 0) / stats.ratings.length).toFixed(1)
+                : '0.0';
+            document.getElementById('avgRating').textContent = avg;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            checkOnboarding();
+            renderFeedbacks();
+            renderCommunity();
+            updateStats();
+        });
+    </script>
+</body>
+</html>
