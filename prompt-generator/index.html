@@ -3,1004 +3,1066 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PromptCraft - AI提示词生成器</title>
+    <title>PromptCraft Pro - AI提示词生成器</title>
     <style>
-        * {
+        /* ===== CSS Variables & Design Tokens ===== */
+        :root {
+            /* Colors */
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --accent-light: #22d3ee;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            
+            /* Backgrounds */
+            --bg-dark: #0f172a;
+            --bg-darker: #020617;
+            --bg-card: #1e293b;
+            --bg-card-hover: #263449;
+            --bg-input: #334155;
+            --bg-input-focus: #3d4f66;
+            
+            /* Text */
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            /* Borders */
+            --border: #475569;
+            --border-light: #334155;
+            
+            /* Spacing */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 48px;
+            
+            /* Typography */
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+            --transition-slow: 350ms ease;
+            
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        /* ===== Reset & Base ===== */
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #8b5cf6;
-            --accent: #06b6d4;
-            --bg-dark: #0f172a;
-            --bg-card: #1e293b;
-            --bg-input: #334155;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --border: #475569;
-            --success: #10b981;
-            --warning: #f59e0b;
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: var(--font-sans);
             background: var(--bg-dark);
             color: var(--text-primary);
             min-height: 100vh;
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            padding: 40px 0;
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-
-        header p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-        }
-
-        .badge {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--success), #059669);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: 10px;
-            vertical-align: middle;
-        }
-
-        .main-layout {
+        /* ===== Layout ===== */
+        .app-container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 20px;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
         }
 
-        @media (max-width: 968px) {
-            .main-layout {
+        @media (max-width: 1024px) {
+            .app-container {
                 grid-template-columns: 1fr;
             }
         }
 
-        .card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 24px;
-            border: 1px solid var(--border);
+        /* ===== Sidebar ===== */
+        .sidebar {
+            background: var(--bg-darker);
+            border-right: 1px solid var(--border-light);
+            padding: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
         }
 
-        .card-header {
+        .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: var(--space-md);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid var(--border-light);
         }
 
-        .card-header h2 {
-            font-size: 1.25rem;
-            color: var(--text-primary);
-        }
-
-        .icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            font-size: 24px;
+            box-shadow: var(--shadow-glow);
         }
 
-        .icon-input {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .icon-output {
-            background: linear-gradient(135deg, var(--accent), var(--primary));
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        textarea, select, input[type="text"] {
-            width: 100%;
-            padding: 12px 16px;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-
-        textarea {
-            min-height: 160px;
-            resize: vertical;
-        }
-
-        textarea:focus, select:focus, input[type="text"]:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-        }
-
-        .quick-tags {
+        .nav-section {
             display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
+            flex-direction: column;
+            gap: var(--space-sm);
         }
 
-        .tag {
-            background: var(--bg-input);
+        .nav-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            padding: 0 var(--space-md);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
             color: var(--text-secondary);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.875rem;
+            text-decoration: none;
+            transition: all var(--transition-fast);
             cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid var(--border);
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            width: 100%;
+            text-align: left;
         }
 
-        .tag:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+        .nav-item:hover, .nav-item.active {
+            background: var(--bg-card);
+            color: var(--text-primary);
         }
 
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: var(--text-primary);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ===== Main Content ===== */
+        .main-content {
+            padding: var(--space-xl);
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+            gap: var(--space-md);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        /* ===== Buttons ===== */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            padding: 14px 28px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all var(--transition-fast);
             border: none;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            width: 100%;
+            box-shadow: var(--shadow-md);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .output-container {
-            position: relative;
-        }
-
-        .output-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .output-meta {
-            display: flex;
-            gap: 16px;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        .output-meta span {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .output-box {
-            background: var(--bg-dark);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            min-height: 300px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.95rem;
-            line-height: 1.8;
-            white-space: pre-wrap;
-            word-break: break-word;
-            overflow-x: auto;
-        }
-
-        .output-box:empty::before {
-            content: "生成的提示词将显示在这里...";
-            color: var(--text-secondary);
-            font-style: italic;
-        }
-
-        .output-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 16px;
+            box-shadow: var(--shadow-glow);
         }
 
         .btn-secondary {
-            background: var(--bg-input);
-            color: var(--text-primary);
+            background: var(--bg-card);
+            color: var(--text-secondary);
             border: 1px solid var(--border);
-            flex: 1;
         }
 
         .btn-secondary:hover {
-            background: var(--border);
-        }
-
-        .section-label {
-            color: var(--accent);
-            font-weight: 600;
-            margin-top: 16px;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .section-label:first-of-type {
-            margin-top: 0;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 40px;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        @media (max-width: 1200px) {
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .feature-card {
-            background: var(--bg-input);
-            padding: 16px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-        }
-
-        .feature-card h4 {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .feature-card p {
-            font-size: 0.9375rem;
+            background: var(--bg-card-hover);
             color: var(--text-primary);
         }
 
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--success);
-            color: white;
-            padding: 16px 24px;
-            border-radius: 10px;
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .btn-ghost:hover {
+            color: var(--text-primary);
+        }
+
+        .btn-sm {
+            padding: var(--space-sm) var(--space-md);
+            font-size: 12px;
+        }
+
+        /* ===== Cards ===== */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-lg);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* ===== Form Elements ===== */
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
             font-weight: 500;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s;
-            z-index: 1000;
+            margin-bottom: var(--space-sm);
+            color: var(--text-secondary);
         }
 
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: var(--space-md);
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all var(--transition-fast);
         }
 
-        .analysis-badges {
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--bg-input-focus);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: var(--font-mono);
+            line-height: 1.6;
+        }
+
+        /* ===== Tags ===== */
+        .tag-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border);
+            gap: var(--space-sm);
+            margin-top: var(--space-sm);
         }
 
-        .analysis-badge {
-            background: rgba(99, 102, 241, 0.2);
-            color: var(--primary);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-        }
-
-        .tips-box {
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(99, 102, 241, 0.1));
-            border: 1px solid var(--primary);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 24px;
-        }
-
-        .tips-box h3 {
-            font-size: 1rem;
-            color: var(--accent);
-            margin-bottom: 12px;
-            display: flex;
+        .tag {
+            display: inline-flex;
             align-items: center;
-            gap: 8px;
-        }
-
-        .tips-box ul {
-            list-style: none;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-md);
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            font-size: 12px;
             color: var(--text-secondary);
-            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
         }
 
-        .tips-box li {
-            padding: 6px 0;
-            padding-left: 20px;
+        .tag:hover, .tag.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* ===== Output Area ===== */
+        .output-area {
             position: relative;
         }
 
-        .tips-box li::before {
-            content: "→";
-            position: absolute;
-            left: 0;
-            color: var(--primary);
+        .output-textarea {
+            min-height: 200px;
+            background: var(--bg-darker);
         }
 
-        .template-selector {
+        .output-actions {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        /* ===== Mobile Menu Toggle ===== */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: var(--space-md);
+            left: var(--space-md);
+            z-index: 100;
+            width: 44px;
+            height: 44px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                z-index: 99;
+                transition: left var(--transition-base);
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .main-content {
+                padding-top: 60px;
+            }
+
+            .overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.7);
+                z-index: 98;
+            }
+
+            .overlay.active {
+                display: block;
+            }
+        }
+
+        /* ===== Onboarding Overlay ===== */
+        .onboarding-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.95);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-md);
+        }
+
+        .onboarding-overlay.active {
+            display: flex;
+        }
+
+        .onboarding-container {
+            max-width: 600px;
+            width: 100%;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .onboarding-step {
+            display: none;
+        }
+
+        .onboarding-step.active {
+            display: block;
+        }
+
+        .onboarding-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            text-align: center;
+        }
+
+        .onboarding-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto var(--space-lg);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .onboarding-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+        }
+
+        .onboarding-desc {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-xl);
+            line-height: 1.8;
+        }
+
+        .onboarding-features {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
         }
 
-        .template-btn {
-            padding: 12px;
+        .onboarding-feature {
+            padding: var(--space-lg);
             background: var(--bg-input);
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-secondary);
+            border-radius: var(--radius-md);
+            text-align: left;
+        }
+
+        .onboarding-feature-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-sm);
+            font-size: 20px;
+        }
+
+        .onboarding-feature-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+        }
+
+        .onboarding-feature-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .onboarding-progress {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .onboarding-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: all var(--transition-fast);
+        }
+
+        .onboarding-dot.active {
+            width: 24px;
+            border-radius: var(--radius-xl);
+            background: var(--primary);
+        }
+
+        .onboarding-buttons {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+        }
+
+        .onboarding-skip {
+            position: absolute;
+            top: var(--space-lg);
+            right: var(--space-lg);
+            color: var(--text-muted);
             cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            font-size: 0.875rem;
+            transition: color var(--transition-fast);
         }
 
-        .template-btn.active, .template-btn:hover {
-            border-color: var(--primary);
+        .onboarding-skip:hover {
             color: var(--text-primary);
-            background: rgba(99, 102, 241, 0.1);
         }
 
-        .hidden {
-            display: none !important;
+        /* ===== Tutorial Tooltip ===== */
+        .tutorial-tooltip {
+            position: absolute;
+            background: var(--bg-card);
+            border: 1px solid var(--primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            max-width: 320px;
+            z-index: 999;
+            box-shadow: var(--shadow-lg), 0 0 40px rgba(99, 102, 241, 0.2);
+            display: none;
         }
 
-        /* 动画效果 */
-        .fade-in {
-            animation: fadeIn 0.5s ease;
+        .tutorial-tooltip.active {
+            display: block;
+            animation: tooltipPop 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes tooltipPop {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
-        .highlight {
-            background: rgba(99, 102, 241, 0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
+        .tutorial-tooltip::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--primary);
+            transform: rotate(45deg);
+        }
+
+        .tutorial-tooltip.top::before {
+            bottom: -7px;
+            left: 50%;
+            margin-left: -6px;
+            border-top: none;
+            border-left: none;
+        }
+
+        .tutorial-tooltip.bottom::before {
+            top: -7px;
+            left: 50%;
+            margin-left: -6px;
+            border-bottom: none;
+            border-right: none;
+        }
+
+        .tutorial-tooltip.left::before {
+            right: -7px;
+            top: 50%;
+            margin-top: -6px;
+            border-bottom: none;
+            border-left: none;
+        }
+
+        .tutorial-tooltip.right::before {
+            left: -7px;
+            top: 50%;
+            margin-top: -6px;
+            border-top: none;
+            border-right: none;
+        }
+
+        .tutorial-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .tutorial-badge {
+            background: var(--primary);
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: var(--radius-xl);
+        }
+
+        .tutorial-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: var(--space-md);
+        }
+
+        .tutorial-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tutorial-step-count {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .tutorial-buttons {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        /* ===== Spotlight Effect ===== */
+        .spotlight {
+            position: fixed;
+            border: 2px solid var(--primary);
+            border-radius: var(--radius-md);
+            box-shadow: 0 0 0 9999px rgba(2, 6, 23, 0.8), 0 0 40px rgba(99, 102, 241, 0.3);
+            z-index: 998;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .spotlight.active {
+            opacity: 1;
+        }
+
+        /* ===== Help Button ===== */
+        .help-btn {
+            position: fixed;
+            bottom: var(--space-xl);
+            right: var(--space-xl);
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            box-shadow: var(--shadow-glow);
+            transition: all var(--transition-fast);
+            z-index: 100;
+            border: none;
+        }
+
+        .help-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* ===== Toast Notification ===== */
+        .toast {
+            position: fixed;
+            bottom: var(--space-xl);
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-card);
+            border: 1px solid var(--success);
+            color: var(--success);
+            padding: var(--space-md) var(--space-xl);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 640px) {
+            .main-content {
+                padding: var(--space-md);
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .onboarding-features {
+                grid-template-columns: 1fr;
+            }
+
+            .onboarding-card {
+                padding: var(--space-lg);
+            }
+
+            .help-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>PromptCraft <span class="badge">内置引擎 无需API</span></h1>
-            <p>将模糊想法转化为AI可执行的结构化提示词</p>
-        </header>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">☰</button>
+    
+    <!-- Overlay -->
+    <div class="overlay" onclick="toggleSidebar()"></div>
 
-        <div class="main-layout">
-            <!-- 左侧输入区 -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="icon icon-input">✏️</div>
-                    <h2>描述你的需求</h2>
-                </div>
-
-                <div class="template-selector">
-                    <button class="template-btn active" data-template="general">通用场景</button>
-                    <button class="template-btn" data-template="coding">编程开发</button>
-                    <button class="template-btn" data-template="writing">内容创作</button>
-                    <button class="template-btn" data-template="analysis">数据分析</button>
-                </div>
-
-                <div class="input-group">
-                    <label>任务类型</label>
-                    <select id="taskType">
-                        <option value="generate">生成内容</option>
-                        <option value="analyze">分析处理</option>
-                        <option value="transform">转换格式</option>
-                        <option value="answer">回答问题</option>
-                        <option value="optimize">优化改进</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label>用日常语言描述你想让AI做什么</label>
-                    <textarea id="userInput" placeholder="例如：我想写一个程序来自动整理我的电脑文件，把不同类型的文件放到不同的文件夹里..."></textarea>
-                    <div class="quick-tags">
-                        <span class="tag" onclick="insertExample('writing')">📝 写一篇文章</span>
-                        <span class="tag" onclick="insertExample('coding')">💻 写代码</span>
-                        <span class="tag" onclick="insertExample('analysis')">📊 分析数据</span>
-                        <span class="tag" onclick="insertExample('explain')">❓ 解释概念</span>
+    <!-- Onboarding Overlay -->
+    <div class="onboarding-overlay" id="onboarding">
+        <span class="onboarding-skip" onclick="skipOnboarding()">跳过引导</span>
+        <div class="onboarding-container">
+            <!-- Step 1: Welcome -->
+            <div class="onboarding-step active" data-step="1">
+                <div class="onboarding-card">
+                    <div class="onboarding-icon">✨</div>
+                    <h2 class="onboarding-title">欢迎来到 PromptCraft Pro</h2>
+                    <p class="onboarding-desc">
+                        专业的 AI 提示词生成与管理工具，帮助您快速创建高质量的 AI 提示词，提升与 AI 的交互效率。
+                    </p>
+                    <div class="onboarding-features">
+                        <div class="onboarding-feature">
+                            <div class="onboarding-feature-icon">🎯</div>
+                            <div class="onboarding-feature-title">智能生成</div>
+                            <div class="onboarding-feature-desc">一键生成结构化提示词</div>
+                        </div>
+                        <div class="onboarding-feature">
+                            <div class="onboarding-feature-icon">📚</div>
+                            <div class="onboarding-feature-title">模板库</div>
+                            <div class="onboarding-feature-desc">丰富的预设模板场景</div>
+                        </div>
+                        <div class="onboarding-feature">
+                            <div class="onboarding-feature-icon">💾</div>
+                            <div class="onboarding-feature-title">本地存储</div>
+                            <div class="onboarding-feature-desc">数据安全保存在本地</div>
+                        </div>
+                        <div class="onboarding-feature">
+                            <div class="onboarding-feature-icon">🎨</div>
+                            <div class="onboarding-feature-title">深色主题</div>
+                            <div class="onboarding-feature-desc">舒适的视觉体验</div>
+                        </div>
                     </div>
-                </div>
-
-                <div class="input-group">
-                    <label>关键约束或要求（可选）</label>
-                    <input type="text" id="constraints" placeholder="如：预算限制、时间要求、特定格式等">
-                </div>
-
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <h4>🎯 目标受众</h4>
-                        <input type="text" id="audience" placeholder="如：初学者、专业人士" style="background: transparent; border: none; padding: 0; color: var(--text-primary);">
+                    <div class="onboarding-progress">
+                        <span class="onboarding-dot active"></span>
+                        <span class="onboarding-dot"></span>
+                        <span class="onboarding-dot"></span>
                     </div>
-                    <div class="feature-card">
-                        <h4>📏 输出长度</h4>
-                        <select id="length" style="background: transparent; border: none; padding: 0;">
-                            <option value="concise">简洁</option>
-                            <option value="medium" selected>适中</option>
-                            <option value="detailed">详细</option>
-                        </select>
+                    <div class="onboarding-buttons">
+                        <button class="btn btn-primary" onclick="nextOnboardingStep()">开始了解 →</button>
                     </div>
-                    <div class="feature-card">
-                        <h4>🎨 语气风格</h4>
-                        <select id="tone" style="background: transparent; border: none; padding: 0;">
-                            <option value="professional">专业正式</option>
-                            <option value="casual" selected>自然友好</option>
-                            <option value="humorous">轻松幽默</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button class="btn btn-primary" onclick="generatePrompt()" id="generateBtn">
-                    <span>✨</span> 生成结构化提示词
-                </button>
-
-                <div class="loading" id="loading">
-                    <div class="spinner"></div>
-                    <p>分析需求结构...</p>
-                    <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 8px;">基于内置规则引擎优化中</p>
                 </div>
             </div>
 
-            <!-- 右侧输出区 -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="icon icon-output">🎯</div>
-                    <h2>优化后的提示词</h2>
-                </div>
-
-                <div class="output-container" id="outputContainer" style="display: none;">
-                    <div class="output-header">
-                        <div class="output-meta">
-                            <span>📊 <span id="tokenEstimate">0</span> tokens</span>
-                            <span>🎯 匹配度: <span id="matchScore">0</span>%</span>
+            <!-- Step 2: Quick Start -->
+            <div class="onboarding-step" data-step="2">
+                <div class="onboarding-card">
+                    <div class="onboarding-icon">🚀</div>
+                    <h2 class="onboarding-title">快速上手</h2>
+                    <p class="onboarding-desc">
+                        只需简单三步，即可生成专业级 AI 提示词：
+                    </p>
+                    <div style="text-align: left; margin-bottom: var(--space-xl);">
+                        <div style="display: flex; gap: var(--space-md); margin-bottom: var(--space-md);">
+                            <span style="width: 28px; height: 28px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0;">1</span>
+                            <div>
+                                <div style="font-weight: 500; margin-bottom: var(--space-xs);">选择场景模板</div>
+                                <div style="font-size: 13px; color: var(--text-muted);">从预设模板中选择适合的使用场景</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: var(--space-md); margin-bottom: var(--space-md);">
+                            <span style="width: 28px; height: 28px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0;">2</span>
+                            <div>
+                                <div style="font-weight: 500; margin-bottom: var(--space-xs);">填写关键信息</div>
+                                <div style="font-size: 13px; color: var(--text-muted);">输入主题、风格、要求等核心内容</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: var(--space-md);">
+                            <span style="width: 28px; height: 28px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0;">3</span>
+                            <div>
+                                <div style="font-weight: 500; margin-bottom: var(--space-xs);">生成并优化</div>
+                                <div style="font-size: 13px; color: var(--text-muted);">一键生成，支持复制和二次编辑</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="analysis-badges" id="analysisBadges"></div>
-                    <div class="output-box" id="outputBox"></div>
-                    <div class="output-actions">
-                        <button class="btn btn-secondary" onclick="copyOutput()">
-                            <span>📋</span> 复制
-                        </button>
-                        <button class="btn btn-secondary" onclick="refinePrompt()">
-                            <span>🔧</span> 进一步优化
-                        </button>
-                        <button class="btn btn-secondary" onclick="savePrompt()">
-                            <span>💾</span> 保存
-                        </button>
+                    <div class="onboarding-progress">
+                        <span class="onboarding-dot"></span>
+                        <span class="onboarding-dot active"></span>
+                        <span class="onboarding-dot"></span>
+                    </div>
+                    <div class="onboarding-buttons">
+                        <button class="btn btn-ghost" onclick="prevOnboardingStep()">← 返回</button>
+                        <button class="btn btn-primary" onclick="nextOnboardingStep()">继续了解 →</button>
                     </div>
                 </div>
+            </div>
 
-                <div class="tips-box">
-                    <h3>💡 为什么这样优化？</h3>
-                    <ul id="tipsList">
-                        <li>清晰的角色定义让AI知道以什么身份回答</li>
-                        <li>具体的输出格式要求确保结果可用</li>
-                        <li>约束条件帮助AI聚焦重点，避免跑题</li>
-                    </ul>
+            <!-- Step 3: Tips -->
+            <div class="onboarding-step" data-step="3">
+                <div class="onboarding-card">
+                    <div class="onboarding-icon">💡</div>
+                    <h2 class="onboarding-title">使用小贴士</h2>
+                    <p class="onboarding-desc">
+                        掌握这些技巧，让您的提示词更加出色：
+                    </p>
+                    <div style="text-align: left; margin-bottom: var(--space-xl);">
+                        <div style="padding: var(--space-md); background: var(--bg-input); border-radius: var(--radius-md); margin-bottom: var(--space-sm);">
+                            <div style="font-weight: 500; color: var(--accent-light); margin-bottom: var(--space-xs);">📝 具体明确</div>
+                            <div style="font-size: 13px; color: var(--text-secondary);">描述越具体，AI 输出越精准</div>
+                        </div>
+                        <div style="padding: var(--space-md); background: var(--bg-input); border-radius: var(--radius-md); margin-bottom: var(--space-sm);">
+                            <div style="font-weight: 500; color: var(--accent-light); margin-bottom: var(--space-xs);">🎭 设定角色</div>
+                            <div style="font-size: 13px; color: var(--text-secondary);">为 AI 指定专业角色提升效果</div>
+                        </div>
+                        <div style="padding: var(--space-md); background: var(--bg-input); border-radius: var(--radius-md);">
+                            <div style="font-weight: 500; color: var(--accent-light); margin-bottom: var(--space-xs);">🔧 迭代优化</div>
+                            <div style="font-size: 13px; color: var(--text-secondary);">根据结果持续调整提示词</div>
+                        </div>
+                    </div>
+                    <div class="onboarding-progress">
+                        <span class="onboarding-dot"></span>
+                        <span class="onboarding-dot"></span>
+                        <span class="onboarding-dot active"></span>
+                    </div>
+                    <div class="onboarding-buttons">
+                        <button class="btn btn-ghost" onclick="prevOnboardingStep()">← 返回</button>
+                        <button class="btn btn-primary" onclick="finishOnboarding()">开始使用 🎉</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="toast" id="toast">已复制到剪贴板！</div>
+    <!-- Spotlight Effect -->
+    <div class="spotlight" id="spotlight"></div>
+
+    <!-- Tutorial Tooltip -->
+    <div class="tutorial-tooltip" id="tutorialTooltip">
+        <div class="tutorial-title">
+            <span id="tutorialTitle">标题</span>
+            <span class="tutorial-badge" id="tutorialBadge">步骤 1/5</span>
+        </div>
+        <p class="tutorial-desc" id="tutorialDesc">描述内容</p>
+        <div class="tutorial-actions">
+            <span class="tutorial-step-count" id="tutorialStepCount">1 / 5</span>
+            <div class="tutorial-buttons">
+                <button class="btn btn-ghost btn-sm" onclick="skipTutorial()">跳过</button>
+                <button class="btn btn-primary btn-sm" onclick="nextTutorialStep()" id="tutorialNextBtn">下一步</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <span class="logo-text">PromptCraft</span>
+            </div>
+            
+            <nav class="nav-section">
+                <span class="nav-title">主要功能</span>
+                <button class="nav-item active" data-tutorial="generator">
+                    <span class="nav-icon">✨</span>
+                    <span>提示词生成</span>
+                </button>
+                <button class="nav-item" data-tutorial="templates">
+                    <span class="nav-icon">📋</span>
+                    <span>模板库</span>
+                </button>
+                <button class="nav-item" data-tutorial="history">
+                    <span class="nav-icon">📚</span>
+                    <span>历史记录</span>
+                </button>
+                <button class="nav-item" data-tutorial="favorites">
+                    <span class="nav-icon">⭐</span>
+                    <span>收藏夹</span>
+                </button>
+            </nav>
+
+            <nav class="nav-section">
+                <span class="nav-title">设置</span>
+                <button class="nav-item" onclick="startTutorial()">
+                    <span class="nav-icon">❓</span>
+                    <span>重新引导</span>
+                </button>
+                <button class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span>偏好设置</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div>
+                    <h1 class="page-title">提示词生成器</h1>
+                    <p style="color: var(--text-secondary); font-size: 14px;">创建高质量的 AI 提示词</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="clearForm()">
+                        <span>🗑️</span>
+                        <span>清空</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="generatePrompt()" id="generateBtn">
+                        <span>⚡</span>
+                        <span>生成提示词</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Generator Card -->
+            <div class="card" id="generatorCard">
+                <div class="card-header">
+                    <h3 class="card-title">配置参数</h3>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">使用场景</label>
+                    <select class="form-select" id="sceneSelect">
+                        <option value="">请选择场景...</option>
+                        <option value="writing">内容创作</option>
+                        <option value="coding">编程开发</option>
+                        <option value="analysis">数据分析</option>
+                        <option value="design">设计创意</option>
+                        <option value="education">教育培训</option>
+                        <option value="business">商业咨询</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">AI 角色设定</label>
+                    <input type="text" class="form-input" id="roleInput" placeholder="例如：资深前端开发工程师、专业文案策划...">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">任务描述</label>
+                    <textarea class="form-textarea" id="taskInput" placeholder="详细描述您需要 AI 完成的任务..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">输出要求</label>
+                    <div class="tag-container" id="requirementTags">
+                        <span class="tag" onclick="toggleTag(this)">详细步骤</span>
+                        <span class="tag" onclick="toggleTag(this)">代码示例</span>
+                        <span class="tag" onclick="toggleTag(this)">表格呈现</span>
+                        <span class="tag" onclick="toggleTag(this)">分点说明</span>
+                        <span class="tag" onclick="toggleTag(this)">专业术语</span>
+                        <span class="tag" onclick="toggleTag(this)">通俗易懂</span>
+                        <span class="tag" onclick="toggleTag(this)">中英双语</span>
+                        <span class="tag" onclick="toggleTag(this)">Markdown</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">补充说明（可选）</label>
+                    <input type="text" class="form-input" id="extraInput" placeholder="任何额外的要求或背景信息...">
+                </div>
+            </div>
+
+            <!-- Output Card -->
+            <div class="card" id="outputCard">
+                <div class="card-header">
+                    <h3 class="card-title">生成结果</h3>
+                    <button class="btn btn-ghost btn-sm" onclick="copyOutput()">
+                        <span>📋</span>
+                        <span>复制</span>
+                    </button>
+                </div>
+                <div class="output-area">
+                    <textarea class="form-textarea output-textarea" id="outputTextarea" readonly placeholder="生成的提示词将显示在这里..."></textarea>
+                    <div class="output-actions">
+                        <button class="btn btn-ghost btn-sm" onclick="regeneratePrompt()" title="重新生成">🔄</button>
+                        <button class="btn btn-ghost btn-sm" onclick="saveToFavorites()" title="收藏">⭐</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Help Button -->
+    <button class="help-btn" onclick="startTutorial()" title="查看引导">?</button>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">操作成功</div>
 
     <script>
-        // 示例模板库
-        const examples = {
-            writing: '我需要写一篇关于"远程工作对团队协作的影响"的文章，用于发表在科技博客上。希望有数据支撑，结构清晰。',
-            coding: '帮我写一个Python脚本，能够批量重命名文件夹里的图片，按照拍摄日期排序并添加序号前缀。',
-            analysis: '我有一份销售数据，想分析哪些产品组合经常一起被购买，找出关联规则用于推荐系统。',
-            explain: '用通俗易懂的方式解释什么是区块链技术，让完全不懂技术的人也能理解它的作用和原理。'
-        };
-
-        // 提示词模板库
-        const promptTemplates = {
-            general: {
-                role: "你是一位专业的{task}助手，擅长将复杂问题转化为清晰可执行的方案。",
-                structure: [
-                    "【角色】{role}",
-                    "【任务】{task_desc}",
-                    "【背景】{context}",
-                    "【要求】\n{requirements}",
-                    "【输出格式】\n{format}",
-                    "【约束条件】\n{constraints}"
-                ]
-            },
-            coding: {
-                role: "你是一位经验丰富的软件工程师，精通多种编程语言和最佳实践。",
-                structure: [
-                    "# 编程任务",
-                    "",
-                    "## 需求描述",
-                    "{task_desc}",
-                    "",
-                    "## 技术规格",
-                    "- 语言/框架: {tech_stack}",
-                    "- 代码风格: {code_style}",
-                    "",
-                    "## 功能要求",
-                    "{requirements}",
-                    "",
-                    "## 约束条件",
-                    "{constraints}",
-                    "",
-                    "## 期望输出",
-                    "{format}",
-                    "",
-                    "请提供完整的、可直接运行的代码，并包含必要的注释。"
-                ]
-            },
-            writing: {
-                role: "你是一位资深内容创作者，擅长撰写引人入胜且结构严谨的文章。",
-                structure: [
-                    "# 内容创作任务",
-                    "",
-                    "## 主题",
-                    "{task_desc}",
-                    "",
-                    "## 目标受众",
-                    "{audience}",
-                    "",
-                    "## 风格要求",
-                    "- 语气: {tone}",
-                    "- 长度: {length}",
-                    "",
-                    "## 内容结构",
-                    "{structure}",
-                    "",
-                    "## 特殊要求",
-                    "{constraints}"
-                ]
-            },
-            analysis: {
-                role: "你是一位数据分析专家，善于从数据中发现洞察并提出 actionable 的建议。",
-                structure: [
-                    "# 数据分析任务",
-                    "",
-                    "## 分析目标",
-                    "{task_desc}",
-                    "",
-                    "## 数据背景",
-                    "{context}",
-                    "",
-                    "## 分析方法",
-                    "{methodology}",
-                    "",
-                    "## 期望输出",
-                    "{format}",
-                    "",
-                    "## 限制条件",
-                    "{constraints}"
-                ]
-            }
-        };
-
-        // 任务类型映射
-        const taskTypeMap = {
-            generate: "内容生成",
-            analyze: "分析处理",
-            transform: "格式转换",
-            answer: "问题解答",
-            optimize: "优化改进"
-        };
-
-        // 语气映射
-        const toneMap = {
-            professional: "专业正式，使用行业术语，结构严谨",
-            casual: "自然友好，通俗易懂，像朋友交谈",
-            humorous: "轻松幽默，适当使用比喻和俏皮话"
-        };
-
-        // 长度映射
-        const lengthMap = {
-            concise: "简洁精炼，突出重点，控制在300字以内",
-            medium: "内容充实，详略得当，约500-800字",
-            detailed: "全面详细，深入分析，1000字以上"
-        };
-
-        // 模板切换
-        document.querySelectorAll('.template-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.template-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        // 插入示例
-        function insertExample(type) {
-            document.getElementById('userInput').value = examples[type];
-            document.getElementById('userInput').focus();
-        }
-
-        // 核心生成逻辑 - 基于规则的提示词引擎
-        function generatePrompt() {
-            const input = document.getElementById('userInput').value.trim();
-            if (!input) {
-                showToast('请先描述你的需求', 'warning');
-                return;
-            }
-
-            const btn = document.getElementById('generateBtn');
-            const loading = document.getElementById('loading');
-            const outputContainer = document.getElementById('outputContainer');
-            
-            btn.disabled = true;
-            loading.classList.add('active');
-            outputContainer.style.display = 'none';
-
-            // 模拟处理时间，增强体验
-            setTimeout(() => {
-                const result = buildPrompt(input);
-                displayResult(result);
-                
-                loading.classList.remove('active');
-                btn.disabled = false;
-                outputContainer.style.display = 'block';
-                outputContainer.classList.add('fade-in');
-            }, 800);
-        }
-
-        // 提示词构建引擎
-        function buildPrompt(userInput) {
-            const templateType = document.querySelector('.template-btn.active').dataset.template;
-            const taskType = document.getElementById('taskType').value;
-            const constraints = document.getElementById('constraints').value;
-            const audience = document.getElementById('audience').value;
-            const length = document.getElementById('length').value;
-            const tone = document.getElementById('tone').value;
-
-            // 分析用户输入，提取关键信息
-            const analysis = analyzeInput(userInput);
-            
-            // 选择模板
-            const template = promptTemplates[templateType] || promptTemplates.general;
-            
-            // 构建变量映射
-            const variables = {
-                task: taskTypeMap[taskType],
-                task_desc: userInput,
-                role: template.role.replace('{task}', taskTypeMap[taskType]),
-                context: analysis.context || "用户需要完成一个" + taskTypeMap[taskType] + "任务",
-                requirements: buildRequirements(analysis, taskType),
-                format: buildFormat(taskType, length),
-                constraints: constraints || "无特殊约束",
-                tech_stack: analysis.techStack || "根据需求选择合适的技术栈",
-                code_style: "清晰、可读、遵循最佳实践",
-                audience: audience || "一般读者",
-                tone: toneMap[tone],
-                length: lengthMap[length],
-                structure: buildStructure(analysis),
-                methodology: "根据数据特征选择适当的统计或机器学习方法"
-            };
-
-            // 组装最终提示词
-            let output = template.structure.join('\n');
-            for (const [key, value] of Object.entries(variables)) {
-                output = output.replace(new RegExp(`{${key}}`, 'g'), value);
-            }
-
-            return {
-                prompt: output,
-                analysis: analysis,
-                stats: {
-                    tokens: estimateTokens(output),
-                    matchScore: calculateMatchScore(analysis)
-                }
-            };
-        }
-
-        // 输入分析引擎
-        function analyzeInput(input) {
-            const analysis = {
-                context: "",
-                keyPoints: [],
-                techStack: "",
-                hasData: false,
-                hasExample: false,
-                urgency: false
-            };
-
-            // 技术栈检测
-            const techPatterns = {
-                python: /python|py/i,
-                javascript: /javascript|js|node/i,
-                java: /\bjava\b/i,
-                react: /react/i,
-                sql: /sql|数据库/i,
-                api: /api|接口/i
-            };
-
-            for (const [tech, pattern] of Object.entries(techPatterns)) {
-                if (pattern.test(input)) {
-                    analysis.techStack = tech;
-                    break;
-                }
-            }
-
-            // 数据提及检测
-            if (/数据|表格|excel|csv|统计|分析/.test(input)) {
-                analysis.hasData = true;
-                analysis.keyPoints.push("涉及数据处理");
-            }
-
-            // 示例提及检测
-            if (/例如|比如|像|示例/.test(input)) {
-                analysis.hasExample = true;
-            }
-
-            // 时间紧迫性检测
-            if (/紧急|尽快|马上|今天|立刻/.test(input)) {
-                analysis.urgency = true;
-                analysis.keyPoints.push("时间敏感");
-            }
-
-            // 生成上下文描述
-            analysis.context = generateContext(input, analysis);
-
-            return analysis;
-        }
-
-        // 生成上下文
-        function generateContext(input, analysis) {
-            const contexts = [];
-            
-            if (analysis.techStack) {
-                contexts.push(`涉及${analysis.techStack}技术实现`);
-            }
-            if (analysis.hasData) {
-                contexts.push("需要处理和分析数据");
-            }
-            if (analysis.urgency) {
-                contexts.push("时间要求较紧");
-            }
-            
-            return contexts.length > 0 ? contexts.join("，") : "标准任务场景";
-        }
-
-        // 构建要求列表
-        function buildRequirements(analysis, taskType) {
-            const requirements = [];
-            
-            if (taskType === 'generate') {
-                requirements.push("- 内容原创，避免陈词滥调");
-                requirements.push("- 结构清晰，逻辑连贯");
-            } else if (taskType === 'analyze') {
-                requirements.push("- 提供深入的分析和洞察");
-                requirements.push("- 用数据或案例支撑观点");
-            } else if (taskType === 'coding') {
-                requirements.push("- 代码可读性强，命名规范");
-                requirements.push("- 包含必要的错误处理");
-            }
-            
-            if (analysis.hasData) {
-                requirements.push("- 基于提供的数据进行分析");
-            }
-            
-            return requirements.join('\n');
-        }
-
-        // 构建输出格式
-        function buildFormat(taskType, length) {
-            const formats = {
-                generate: "- 标题\n- 正文（分段）\n- 总结",
-                analyze: "- 执行摘要\n- 详细分析\n- 结论与建议",
-                transform: "- 输入示例\n- 输出格式\n- 转换规则",
-                answer: "- 核心观点\n- 详细解释\n- 相关案例",
-                optimize: "- 现状分析\n- 优化方案\n- 实施步骤"
-            };
-            
-            return formats[taskType] || formats.generate;
-        }
-
-        // 构建内容结构
-        function buildStructure(analysis) {
-            if (analysis.hasData) {
-                return "1. 引言/背景\n2. 数据概览\n3. 深度分析\n4. 结论与建议";
-            }
-            return "1. 引入/背景\n2. 主体内容\n3. 案例分析\n4. 总结升华";
-        }
-
-        // 估算token数量
-        function estimateTokens(text) {
-            // 中文按字计算，英文按词计算（简化算法）
-            const chineseChars = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
-            const englishWords = (text.match(/[a-zA-Z]+/g) || []).length;
-            return Math.ceil(chineseChars + englishWords * 0.5);
-        }
-
-        // 计算匹配度分数
-        function calculateMatchScore(analysis) {
-            let score = 85;
-            if (analysis.keyPoints.length > 0) score += 5;
-            if (analysis.techStack) score += 5;
-            if (analysis.hasData) score += 3;
-            return Math.min(score, 98);
-        }
-
-        // 显示结果
-        function displayResult(result) {
-            document.getElementById('outputBox').textContent = result.prompt;
-            document.getElementById('tokenEstimate').textContent = result.stats.tokens;
-            document.getElementById('matchScore').textContent = result.stats.matchScore;
-            
-            // 显示分析标签
-            const badgesContainer = document.getElementById('analysisBadges');
-            badgesContainer.innerHTML = '';
-            result.analysis.keyPoints.forEach(point => {
-                const badge = document.createElement('span');
-                badge.className = 'analysis-badge';
-                badge.textContent = point;
-                badgesContainer.appendChild(badge);
-            });
-            
-            // 更新提示
-            updateTips(result.analysis);
-        }
-
-        // 更新提示列表
-        function updateTips(analysis) {
-            const tips = [
-                "清晰的角色定义让AI知道以什么身份回答",
-                "具体的输出格式要求确保结果可用"
-            ];
-            
-            if (analysis.techStack) {
-                tips.push(`针对${analysis.techStack}技术栈提供了专业指导`);
-            }
-            if (analysis.hasData) {
-                tips.push("已添加数据分析相关的约束条件");
-            }
-            if (analysis.urgency) {
-                tips.push("针对时间紧迫性优化了输出优先级");
-            }
-            
-            const tipsList = document.getElementById('tipsList');
-            tipsList.innerHTML = tips.map(tip => `<li>${tip}</li>`).join('');
-        }
-
-        // 复制功能
-        function copyOutput() {
-            const output = document.getElementById('outputBox').textContent;
-            navigator.clipboard.writeText(output).then(() => {
-                showToast('已复制到剪贴板！');
-            });
-        }
-
-        // 进一步优化
-        function refinePrompt() {
-            const current = document.getElementById('outputBox').textContent;
-            const refined = current + '\n\n---\n\n补充说明：请在回答前确认是否理解需求，如有歧义请提出澄清问题。';
-            document.getElementById('outputBox').textContent = refined;
-            showToast('已添加优化建议');
-        }
-
-        // 保存功能（使用 localStorage）
-        function savePrompt() {
-            const output = document.getElementById('outputBox').textContent;
-            const saves = JSON.parse(localStorage.getItem('promptCraft_saves') || '[]');
-            saves.push({
-                content: output,
-                timestamp: new Date().toISOString(),
-                title: '提示词 ' + (saves.length + 1)
-            });
-            localStorage.setItem('promptCraft_saves', JSON.stringify(saves));
-            showToast('已保存到本地存储');
-        }
-
-        // 显示提示
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.style.background = type === 'warning' ? 'var(--warning)' : 'var(--success)';
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        // 回车快捷生成
-        document.getElementById('userInput').addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.key === 'Enter') {
-                generatePrompt();
-            }
-        });
-    </script>
-</body>
-</html>
+        // ===== State Management =====
+        const STORAGE_KEYS = {
+            ONBOARDING_COMPLETED: 'promptcraft_onboarding_completed',
+            TUTO
