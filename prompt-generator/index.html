@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小红书爆款内容DNA分析器 | 粘贴链接·自动解析·一键生成</title>
+    <title>PromptCraft - AI提示词生成器 | 把模糊想法变成AI能懂的指令</title>
     <style>
         * {
             margin: 0;
@@ -12,55 +12,130 @@
         }
 
         :root {
-            --xiaohongshu: #ff2442;
-            --xiaohongshu-light: #ff4d6d;
-            --xiaohongshu-dark: #e61e3a;
-            --dark: #1e293b;
-            --gray: #64748b;
-            --light-gray: #f1f5f9;
-            --border: #e2e8f0;
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --accent: #06b6d4;
+            --accent-light: #22d3ee;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --gray-900: #1e293b;
+            --gray-700: #334155;
+            --gray-500: #64748b;
+            --gray-300: #cbd5e1;
+            --gray-100: #f1f5f9;
+            --white: #ffffff;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #312e81 100%);
             min-height: 100vh;
-            padding: 20px;
+            color: var(--gray-100);
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
 
         /* Header */
         header {
             text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            padding-top: 20px;
+            padding: 40px 20px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary-light) 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         header h1 {
-            font-size: 2rem;
-            margin-bottom: 12px;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            line-height: 1.2;
         }
 
-        header h1 span {
-            color: #fbbf24;
+        header h1 .highlight {
+            color: var(--accent-light);
         }
 
         header p {
-            font-size: 1rem;
-            opacity: 0.9;
+            font-size: 1.125rem;
+            color: var(--gray-300);
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        /* 进度导航 - 三段式闭环 */
+        /* 核心洞察展示 */
+        .insight-banner {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin: 30px auto;
+            max-width: 800px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .insight-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 20px;
+        }
+
+        .insight-content h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--primary-light);
+        }
+
+        .insight-content p {
+            font-size: 0.875rem;
+            color: var(--gray-300);
+            line-height: 1.6;
+        }
+
+        /* 进度导航 - 三步闭环：模糊需求 → 意图澄清 → 结构化提示词 */
         .progress-nav {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 30px;
+            margin: 40px 0;
             gap: 0;
         }
 
@@ -68,2122 +143,896 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             position: relative;
         }
 
         .progress-step .step-num {
-            width: 44px;
-            height: 44px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            color: white;
+            background: rgba(255,255,255,0.05);
+            color: var(--gray-500);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1.1rem;
-            border: 3px solid rgba(255,255,255,0.3);
+            font-size: 1.25rem;
+            border: 2px solid rgba(255,255,255,0.1);
             transition: all 0.3s ease;
         }
 
         .progress-step .step-label {
-            color: rgba(255,255,255,0.8);
-            font-size: 0.85rem;
+            color: var(--gray-500);
+            font-size: 0.875rem;
             font-weight: 500;
             transition: all 0.3s ease;
+            text-align: center;
+            max-width: 100px;
         }
 
         .progress-step.active .step-num {
-            background: var(--xiaohongshu);
-            border-color: white;
-            box-shadow: 0 0 20px rgba(255, 36, 66, 0.5);
+            background: var(--primary);
+            border-color: var(--primary-light);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+            color: white;
         }
 
         .progress-step.active .step-label {
-            color: white;
-            font-weight: 700;
+            color: var(--primary-light);
+            font-weight: 600;
         }
 
         .progress-step.completed .step-num {
-            background: #22c55e;
-            border-color: #22c55e;
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
         }
 
         .progress-connector {
-            width: 80px;
-            height: 3px;
-            background: rgba(255,255,255,0.2);
-            margin: 0 10px;
-            margin-bottom: 28px;
+            width: 100px;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            margin: 0 15px;
             position: relative;
-            overflow: hidden;
+            top: -14px;
         }
 
-        .progress-connector.active::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(90deg, #22c55e, var(--xiaohongshu));
-            animation: connectorFill 0.5s ease forwards;
+        .progress-connector.active {
+            background: linear-gradient(90deg, var(--success) 0%, var(--primary) 100%);
         }
 
-        @keyframes connectorFill {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-
-        /* 主卡片 */
-        .main-card {
-            background: white;
+        /* 主工作区 */
+        .workspace {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
             border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-        }
-
-        /* 第一阶段：拆解 */
-        .decompose-stage {
-            text-align: center;
-        }
-
-        .decompose-stage h2 {
-            font-size: 1.5rem;
-            color: var(--dark);
-            margin-bottom: 12px;
-        }
-
-        .decompose-stage .subtitle {
-            color: var(--gray);
-            font-size: 0.95rem;
-            margin-bottom: 24px;
-        }
-
-        .url-input-wrapper {
-            position: relative;
-            margin-bottom: 16px;
-        }
-
-        .url-input {
-            width: 100%;
-            padding: 20px 60px 20px 24px;
-            border: 2px solid var(--border);
-            border-radius: 16px;
-            font-size: 1rem;
-            font-family: inherit;
-            transition: all 0.3s ease;
-            background: var(--light-gray);
-        }
-
-        .url-input:focus {
-            outline: none;
-            border-color: var(--xiaohongshu);
-            box-shadow: 0 0 0 4px rgba(255, 36, 66, 0.1);
-            background: white;
-        }
-
-        .url-input.parsed {
-            border-color: #22c55e;
-            background: #f0fdf4;
-        }
-
-        .url-clear {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: rgba(0,0,0,0.1);
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.1rem;
-            display: none;
-        }
-
-        .url-clear.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* 解析后的内容预览 */
-        .parsed-preview {
-            display: none;
-            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
-            border: 1px solid #86efac;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .parsed-preview.active {
-            display: block;
-            animation: slideDown 0.4s ease;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .parsed-preview h4 {
-            font-size: 0.9rem;
-            color: #166534;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .parsed-preview h4::before {
-            content: '✓';
-            width: 20px;
-            height: 20px;
-            background: #22c55e;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-        }
-
-        .parsed-data-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        @media (max-width: 600px) {
-            .parsed-data-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .parsed-item {
-            background: white;
-            padding: 12px 16px;
-            border-radius: 10px;
-            border-left: 3px solid var(--xiaohongshu);
-        }
-
-        .parsed-item .label {
-            font-size: 0.75rem;
-            color: var(--gray);
-            margin-bottom: 4px;
-        }
-
-        .parsed-item .value {
-            font-size: 0.9rem;
-            color: var(--dark);
-            font-weight: 500;
-        }
-
-        .parsed-item .value.truncated {
-            white-space: nowrap;
+            border: 1px solid rgba(255,255,255,0.08);
             overflow: hidden;
-            text-overflow: ellipsis;
         }
 
-        /* 手动输入切换 */
-        .manual-toggle {
-            margin-top: 16px;
-            padding: 12px;
-            background: transparent;
-            border: 1px dashed var(--border);
-            border-radius: 10px;
-            color: var(--gray);
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .manual-toggle:hover {
-            border-color: var(--xiaohongshu);
-            color: var(--xiaohongshu);
-        }
-
-        .manual-input-section {
-            display: none;
-            margin-top: 16px;
-            text-align: left;
-        }
-
-        .manual-input-section.active {
-            display: block;
-        }
-
-        .manual-input-section label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--gray);
-            margin-bottom: 8px;
-        }
-
-        .primary-input {
-            width: 100%;
-            padding: 16px 20px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 1rem;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 150px;
-            transition: all 0.3s ease;
-            text-align: left;
-            line-height: 1.6;
-        }
-
-        .primary-input:focus {
-            outline: none;
-            border-color: var(--xiaohongshu);
-            box-shadow: 0 0 0 4px rgba(255, 36, 66, 0.1);
-        }
-
-        .intent-hints {
-            margin-top: 16px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .hint-chip {
-            padding: 8px 16px;
-            background: var(--light-gray);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            color: var(--gray);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
-        }
-
-        .hint-chip:hover {
-            background: #fee2e2;
-            color: var(--xiaohongshu);
-        }
-
-        .analyze-btn {
-            margin-top: 24px;
-            padding: 16px 48px;
-            background: linear-gradient(135deg, var(--xiaohongshu) 0%, var(--xiaohongshu-dark) 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .analyze-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 36, 66, 0.4);
-        }
-
-        .analyze-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .analyze-btn.loading {
-            position: relative;
-            color: transparent;
-        }
-
-        .analyze-btn.loading::after {
-            content: 'AI分析中...';
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-        }
-
-        /* AI分析动画 */
-        .ai-analyzing {
-            display: none;
+        /* 步骤1: 输入模糊需求 */
+        .step-panel {
             padding: 40px;
-            text-align: center;
-        }
-
-        .ai-analyzing.active {
-            display: block;
-        }
-
-        .ai-brain {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 24px;
-            position: relative;
-        }
-
-        .ai-brain::before {
-            content: '🧠';
-            font-size: 60px;
-            display: block;
-            animation: brainPulse 1.5s ease infinite;
-        }
-
-        @keyframes brainPulse {
-            0%, 100% { transform: scale(1); filter: brightness(1); }
-            50% { transform: scale(1.1); filter: brightness(1.2); }
-        }
-
-        .analysis-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-width: 320px;
-            margin: 0 auto;
-        }
-
-        .analysis-step {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            background: var(--light-gray);
-            border-radius: 10px;
-            opacity: 0.5;
-            transition: all 0.3s ease;
-        }
-
-        .analysis-step.active {
-            opacity: 1;
-            background: #fef2f2;
-            border-left: 4px solid var(--xiaohongshu);
-        }
-
-        .analysis-step.completed {
-            opacity: 1;
-            background: #f0fdf4;
-            border-left: 4px solid #22c55e;
-        }
-
-        .analysis-step .step-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--gray);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            flex-shrink: 0;
-        }
-
-        .analysis-step.active .step-icon {
-            background: var(--xiaohongshu);
-        }
-
-        .analysis-step.completed .step-icon {
-            background: #22c55e;
-        }
-
-        .analysis-step .step-text {
-            font-size: 0.9rem;
-            color: var(--dark);
-        }
-
-        /* 第二阶段：提取 */
-        .extract-stage {
             display: none;
         }
 
-        .extract-stage.active {
+        .step-panel.active {
             display: block;
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.4s ease;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .stage-header {
+        .step-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .step-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .step-header p {
+            color: var(--gray-500);
+            font-size: 0.9375rem;
+        }
+
+        /* 输入区域 */
+        .input-section {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .input-hint {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid var(--light-gray);
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+            justify-content: center;
         }
 
-        .stage-header h3 {
-            font-size: 1.2rem;
-            color: var(--dark);
-        }
-
-        .back-btn {
-            margin-left: auto;
-            padding: 8px 16px;
-            background: var(--light-gray);
-            border: none;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            color: var(--gray);
+        .hint-tag {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary-light);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8125rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
+            border: 1px solid rgba(99, 102, 241, 0.2);
         }
 
-        .back-btn:hover {
-            background: var(--border);
+        .hint-tag:hover {
+            background: rgba(99, 102, 241, 0.25);
+            transform: translateY(-1px);
         }
 
-        /* 爆款指数评分卡 */
-        .viral-score-card {
-            background: linear-gradient(135deg, #fef2f2 0%, #fff5f5 100%);
+        .main-input {
+            width: 100%;
+            min-height: 140px;
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.08);
             border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
-            border: 1px solid #fecaca;
+            padding: 20px;
+            color: var(--gray-100);
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.3s;
         }
 
-        .viral-score-header {
+        .main-input::placeholder {
+            color: var(--gray-500);
+        }
+
+        .main-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .input-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .input-tips {
+            display: flex;
+            gap: 16px;
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+        }
+
+        .input-tips span {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 6px;
+        }
+
+        /* 按钮 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            color: var(--gray-300);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* 步骤2: 意图澄清 - 交互式问诊 */
+        .clarification-chat {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .chat-messages {
+            min-height: 300px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
             margin-bottom: 20px;
         }
 
-        .viral-score-header h4 {
-            font-size: 1rem;
-            color: var(--xiaohongshu);
+        .message {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            animation: slideIn 0.3s ease;
         }
 
-        .score-badge {
-            padding: 8px 16px;
-            background: var(--xiaohongshu);
-            color: white;
-            border-radius: 20px;
-            font-size: 1.2rem;
-            font-weight: 700;
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
-        .score-dimensions {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-        }
-
-        @media (max-width: 600px) {
-            .score-dimensions {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        .score-dimension {
-            text-align: center;
-            padding: 16px 12px;
-            background: white;
+        .message-avatar {
+            width: 40px;
+            height: 40px;
             border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
         }
 
-        .score-dimension .dim-label {
-            font-size: 0.75rem;
-            color: var(--gray);
-            margin-bottom: 8px;
+        .message.ai .message-avatar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
         }
 
-        .score-dimension .dim-bar {
-            height: 6px;
-            background: var(--light-gray);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-bottom: 8px;
+        .message.user .message-avatar {
+            background: var(--gray-700);
         }
 
-        .score-dimension .dim-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--xiaohongshu), #ff6b7d);
-            border-radius: 3px;
-            transition: width 1s ease;
+        .message-content {
+            flex: 1;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 0.9375rem;
+            line-height: 1.7;
         }
 
-        .score-dimension .dim-value {
-            font-size: 1rem;
-            color: var(--dark);
+        .message.ai .message-content {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+        }
+
+        .message.user .message-content {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .message-content strong {
+            color: var(--accent-light);
             font-weight: 600;
         }
 
-        /* 四要素提取卡片 */
-        .elements-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        @media (max-width: 600px) {
-            .elements-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .element-card {
-            background: var(--light-gray);
-            border-radius: 16px;
-            padding: 20px;
-            border-left: 4px solid var(--xiaohongshu);
-            transition: all 0.3s ease;
-        }
-
-        .element-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        .element-card.hook { border-left-color: #f59e0b; }
-        .element-card.pain { border-left-color: #ef4444; }
-        .element-card.solution { border-left-color: #22c55e; }
-        .element-card.cta { border-left-color: #3b82f6; }
-
-        .element-card h4 {
-            font-size: 0.85rem;
-            color: var(--gray);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .element-card .extracted-content {
-            font-size: 1rem;
-            color: var(--dark);
-            font-weight: 500;
-            min-height: 40px;
-            padding: 8px;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid transparent;
-            cursor: text;
-        }
-
-        .element-card .extracted-content:hover {
-            border-color: var(--border);
-        }
-
-        .element-card .extracted-content:focus {
-            outline: none;
-            border-color: var(--xiaohongshu);
-            background: #fff;
-        }
-
-        .element-card .tags {
+        /* 快速选项 */
+        .quick-options {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 10px;
             margin-top: 12px;
         }
 
-        .tag {
-            padding: 4px 10px;
-            background: white;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            color: var(--xiaohongshu);
+        .quick-option {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--gray-300);
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 0.875rem;
             cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
+            transition: all 0.2s;
         }
 
-        .tag:hover {
-            border-color: var(--xiaohongshu);
+        .quick-option:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+            color: var(--primary-light);
         }
 
-        /* 结构时间线 */
-        .structure-section {
-            margin-bottom: 24px;
-        }
-
-        .structure-section h4 {
-            font-size: 1rem;
-            color: var(--dark);
-            margin-bottom: 16px;
-        }
-
-        .timeline {
+        /* 用户输入区 */
+        .user-input-area {
             display: flex;
-            flex-direction: column;
-            gap: 0;
+            gap: 12px;
         }
 
-        .timeline-item {
+        .user-input-area input {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: var(--gray-100);
+            font-size: 0.9375rem;
+        }
+
+        .user-input-area input::placeholder {
+            color: var(--gray-500);
+        }
+
+        .user-input-area input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* 步骤3: 结构化提示词输出 */
+        .output-section {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .prompt-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+            overflow: hidden;
+        }
+
+        .prompt-header {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 20px 24px;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
             gap: 16px;
-            position: relative;
         }
 
-        .timeline-item:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            left: 15px;
-            top: 32px;
-            width: 2px;
-            height: calc(100% - 16px);
-            background: var(--border);
+        .prompt-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .timeline-dot {
-            width: 32px;
-            height: 32px;
-            background: var(--light-gray);
-            border-radius: 50%;
+        .prompt-title-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-            z-index: 1;
+            font-size: 22px;
         }
 
-        .timeline-item.active .timeline-dot {
-            background: var(--xiaohongshu);
-            color: white;
+        .prompt-title-text h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
         }
 
-        .timeline-content {
-            flex: 1;
-            padding-bottom: 20px;
+        .prompt-title-text p {
+            font-size: 0.8125rem;
+            color: var(--gray-500);
         }
 
-        .timeline-content .phase {
-            font-size: 0.85rem;
-            color: var(--gray);
-            margin-bottom: 4px;
+        .prompt-actions {
+            display: flex;
+            gap: 10px;
         }
 
-        .timeline-content .desc {
-            font-size: 0.95rem;
-            color: var(--dark);
-            font-weight: 500;
+        .btn-sm {
+            padding: 10px 18px;
+            font-size: 0.875rem;
+            border-radius: 10px;
         }
 
-        /* 第三阶段：生成 */
-        .generate-stage {
-            display: none;
+        /* 提示词结构展示 */
+        .prompt-body {
+            padding: 24px;
         }
 
-        .generate-stage.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
+        .prompt-structure {
+            display: grid;
+            gap: 16px;
         }
 
-        /* 一键生成结果区 */
-        .generated-results {
-            margin-bottom: 24px;
+        .structure-block {
+            background: rgba(255,255,255,0.03);
+            border-radius: 14px;
+            padding: 20px;
+            border-left: 4px solid;
         }
 
-        .results-header {
+        .structure-block.role {
+            border-color: var(--primary);
+        }
+
+        .structure-block.task {
+            border-color: var(--accent);
+        }
+
+        .structure-block.context {
+            border-color: var(--warning);
+        }
+
+        .structure-block.constraints {
+            border-color: var(--success);
+        }
+
+        .structure-block.output {
+            border-color: #ec4899;
+        }
+
+        .block-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .results-header h4 {
-            font-size: 1rem;
-            color: var(--dark);
-        }
-
-        .regenerate-btn {
-            padding: 8px 16px;
-            background: var(--light-gray);
-            border: none;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            color: var(--gray);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .regenerate-btn:hover {
-            background: var(--border);
-        }
-
-        /* 仿写标题卡片 */
-        .title-variants {
-            margin-bottom: 24px;
-        }
-
-        .title-variants h5 {
-            font-size: 0.9rem;
-            color: var(--gray);
+            gap: 10px;
             margin-bottom: 12px;
         }
 
-        .variant-cards {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .variant-card {
-            background: linear-gradient(135deg, #fef2f2 0%, #fff5f5 100%);
-            border: 1px solid #fecaca;
-            border-radius: 12px;
-            padding: 16px 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .variant-card:hover {
-            transform: translateX(8px);
-            border-color: var(--xiaohongshu);
-            box-shadow: 0 4px 12px rgba(255, 36, 66, 0.15);
-        }
-
-        .variant-card .variant-title {
-            font-size: 1rem;
-            color: var(--dark);
-            font-weight: 500;
-            margin-bottom: 8px;
-            padding-right: 80px;
-        }
-
-        .variant-card .variant-tags {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .variant-card .variant-tag {
-            font-size: 0.75rem;
-            padding: 4px 10px;
-            background: white;
-            border-radius: 12px;
-            color: var(--gray);
-        }
-
-        .variant-card .copy-hint {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.75rem;
-            color: var(--xiaohongshu);
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .variant-card:hover .copy-hint {
-            opacity: 1;
-        }
-
-        .variant-card.copied {
-            background: #f0fdf4;
-            border-color: #86efac;
-        }
-
-        .variant-card.copied .copy-hint {
-            opacity: 1;
-            color: #22c55e;
-        }
-
-        /* 配图建议 */
-        .visual-suggestions {
-            background: var(--light-gray);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-
-        .visual-suggestions h5 {
-            font-size: 0.9rem;
-            color: var(--gray);
-            margin-bottom: 16px;
-        }
-
-        .visual-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-
-        @media (max-width: 600px) {
-            .visual-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .visual-item {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-        }
-
-        .visual-item .visual-icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-
-        .visual-item .visual-type {
-            font-size: 0.85rem;
-            color: var(--dark);
-            font-weight: 500;
-            margin-bottom: 4px;
-        }
-
-        .visual-item .visual-desc {
-            font-size: 0.75rem;
-            color: var(--gray);
-        }
-
-        /* 发布时机建议 */
-        .timing-suggestion {
-            background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
-            border: 1px solid #93c5fd;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-
-        .timing-suggestion h5 {
-            font-size: 0.9rem;
-            color: var(--dark);
-            margin-bottom: 16px;
-        }
-
-        .timing-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        @media (max-width: 600px) {
-            .timing-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .timing-item {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-        }
-
-        .timing-item .timing-label {
-            font-size: 0.75rem;
-            color: var(--gray);
-            margin-bottom: 8px;
-        }
-
-        .timing-item .timing-value {
-            font-size: 1.1rem;
-            color: var(--dark);
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .timing-item .timing-score {
-            font-size: 0.75rem;
-            padding: 4px 12px;
-            background: #dcfce7;
-            color: #166534;
-            border-radius: 12px;
-            display: inline-block;
-        }
-
-        /* 数据飞轮 - 历史记录 */
-        .data-flywheel {
-            background: linear-gradient(135deg, #f3e8ff 0%, #faf5ff 100%);
-            border: 1px solid #d8b4fe;
-            border-radius: 16px;
-            padding: 20px;
-            margin-top: 24px;
-        }
-
-        .data-flywheel h4 {
-            font-size: 0.95rem;
-            color: var(--dark);
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .history-item {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .history-item:hover {
-            transform: translateX(4px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .history-item .history-score {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--xiaohongshu), #ff6b7d);
-            border-radius: 12px;
+        .block-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 1rem;
-            flex-shrink: 0;
+            font-size: 14px;
         }
 
-        .history-item .history-info {
-            flex: 1;
-        }
+        .role .block-icon { background: rgba(99, 102, 241, 0.2); }
+        .task .block-icon { background: rgba(6, 182, 212, 0.2); }
+        .context .block-icon { background: rgba(245, 158, 11, 0.2); }
+        .constraints .block-icon { background: rgba(34, 197, 94, 0.2); }
+        .output .block-icon { background: rgba(236, 72, 153, 0.2); }
 
-        .history-item .history-title {
-            font-size: 0.9rem;
-            color: var(--dark);
-            font-weight: 500;
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .history-item .history-meta {
+        .block-label {
             font-size: 0.75rem;
-            color: var(--gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--gray-500);
         }
 
-        .history-item .history-type {
-            padding: 4px 10px;
-            background: var(--light-gray);
-            border-radius: 12px;
-            font-size: 0.75rem;
-            color: var(--gray);
+        .block-content {
+            color: var(--gray-100);
+            font-size: 0.9375rem;
+            line-height: 1.7;
         }
 
-        /* Toast提示 */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            padding: 12px 24px;
-            background: var(--dark);
-            color: white;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            z-index: 1000;
-            opacity: 0;
-            transition: all 0.3s ease;
+        .block-content code {
+            background: rgba(0,0,0,0.3);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: var(--accent-light);
         }
 
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
+        /* 完整提示词预览 */
+        .full-prompt {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 14px;
         }
 
-        /* 步骤导航按钮 */
-        .stage-nav {
+        .full-prompt-header {
             display: flex;
             justify-content: space-between;
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border);
-        }
-
-        .nav-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
             align-items: center;
-            gap: 8px;
-        }
-
-        .nav-btn.prev {
-            background: var(--light-gray);
-            color: var(--gray);
-        }
-
-        .nav-btn.prev:hover {
-            background: var(--border);
-        }
-
-        .nav-btn.next {
-            background: var(--xiaohongshu);
-            color: white;
-        }
-
-        .nav-btn.next:hover {
-            background: var(--xiaohongshu-dark);
-        }
-
-        /* 空状态 */
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: var(--gray);
-        }
-
-        .empty-state .empty-icon {
-            font-size: 3rem;
             margin-bottom: 16px;
         }
 
-        .empty-state p {
-            font-size: 0.9rem;
+        .full-prompt-header h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-500);
+        }
+
+        .full-prompt-content {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.875rem;
+            line-height: 1.8;
+            color: var(--gray-300);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* 使用指南 */
+        .usage-guide {
+            margin-top: 24px;
+            padding: 20px;
+            background: rgba(34, 197, 94, 0.05);
+            border: 1px solid rgba(34, 197, 94, 0.15);
+            border-radius: 14px;
+        }
+
+        .usage-guide h4 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--success);
+            margin-bottom: 12px;
+        }
+
+        .usage-guide ol {
+            padding-left: 20px;
+            color: var(--gray-300);
+            font-size: 0.875rem;
+            line-height: 1.8;
+        }
+
+        .usage-guide li {
+            margin-bottom: 6px;
+        }
+
+        /* 底部导航 */
+        .step-footer {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.06);
         }
 
         /* 响应式 */
         @media (max-width: 768px) {
-            .main-card {
-                padding: 24px;
-            }
-
             header h1 {
-                font-size: 1.5rem;
+                font-size: 1.75rem;
             }
 
             .progress-connector {
                 width: 40px;
             }
 
+            .step-panel {
+                padding: 24px;
+            }
+
             .progress-step .step-label {
                 font-size: 0.75rem;
+                max-width: 70px;
             }
+        }
+
+        /* 加载动画 */
+        .typing-indicator {
+            display: flex;
+            gap: 6px;
+            padding: 16px 20px;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        /* 成功提示 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--success);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <header>
-            <h1>📕 小红书<span>爆款内容DNA分析器</span></h1>
-            <p>粘贴链接 → AI自动解析 → 一键生成可执行方案</p>
+            <div class="logo">
+                <div class="logo-icon">🎯</div>
+                <div class="logo-text">PromptCraft</div>
+            </div>
+            <h1>把<span class="highlight">模糊想法</span>变成AI能懂的指令</h1>
+            <p>无需学习提示词工程，通过简单对话让AI理解你的真实需求</p>
         </header>
 
-        <!-- 进度导航 -->
-        <div class="progress-nav">
-            <div class="progress-step active" id="step1">
+        <!-- 核心洞察 -->
+        <div class="insight-banner">
+            <div class="insight-icon">💡</div>
+            <div class="insight-content">
+                <h3>核心洞察：提示词工程的本质是"意图精确编码"</h3>
+                <p>人类表达充满隐含假设和上下文，而AI需要明确的约束条件。我们通过交互式问诊，帮你逐层拆解需求，将模糊想法翻译为AI可执行的结构化指令。</p>
+            </div>
+        </div>
+
+        <!-- 三步进度导航 -->
+        <nav class="progress-nav">
+            <div class="progress-step active" data-step="1">
                 <div class="step-num">1</div>
-                <div class="step-label">粘贴链接</div>
+                <div class="step-label">描述需求</div>
             </div>
-            <div class="progress-connector" id="conn1"></div>
-            <div class="progress-step" id="step2">
+            <div class="progress-connector"></div>
+            <div class="progress-step" data-step="2">
                 <div class="step-num">2</div>
-                <div class="step-label">DNA提取</div>
+                <div class="step-label">澄清意图</div>
             </div>
-            <div class="progress-connector" id="conn2"></div>
-            <div class="progress-step" id="step3">
+            <div class="progress-connector"></div>
+            <div class="progress-step" data-step="3">
                 <div class="step-num">3</div>
-                <div class="step-label">生成方案</div>
+                <div class="step-label">生成提示词</div>
             </div>
-        </div>
+        </nav>
 
-        <div class="main-card">
-            <!-- 第一阶段：粘贴链接自动解析 -->
-            <div class="decompose-stage" id="decomposeStage">
-                <h2>粘贴小红书爆款链接，AI自动解析内容</h2>
-                <p class="subtitle">支持 xiaohongshu.com/explore/ 链接格式，自动提取标题、正文、互动数据</p>
-
-                <div class="url-input-wrapper">
-                    <input
-                        type="text"
-                        class="url-input"
-                        id="urlInput"
-                        placeholder="粘贴小红书笔记链接，如：https://www.xiaohongshu.com/explore/xxx"
-                        oninput="handleUrlInput(this.value)"
-                    >
-                    <button class="url-clear" id="urlClear" onclick="clearUrl()">×</button>
+        <!-- 主工作区 -->
+        <main class="workspace">
+            <!-- 步骤1: 输入模糊需求 -->
+            <section class="step-panel active" id="step1">
+                <div class="step-header">
+                    <h2>📝 用一句话描述你想让AI做什么</h2>
+                    <p>不用担心表达是否清晰，我们会帮你完善</p>
                 </div>
 
-                <!-- 解析后的内容预览 -->
-                <div class="parsed-preview" id="parsedPreview">
-                    <h4>链接解析成功</h4>
-                    <div class="parsed-data-grid">
-                        <div class="parsed-item">
-                            <div class="label">笔记标题</div>
-                            <div class="value truncated" id="parsedTitle">-</div>
-                        </div>
-                        <div class="parsed-item">
-                            <div class="label">作者</div>
-                            <div class="value" id="parsedAuthor">-</div>
-                        </div>
-                        <div class="parsed-item">
-                            <div class="label">点赞/收藏</div>
-                            <div class="value" id="parsedEngagement">-</div>
-                        </div>
-                        <div class="parsed-item">
-                            <div class="label">内容类型</div>
-                            <div class="value" id="parsedType">-</div>
-                        </div>
+                <div class="input-section">
+                    <!-- 快捷提示 -->
+                    <div class="input-hint">
+                        <span class="hint-tag" onclick="fillExample('帮我写一份周报，总结本周工作进展')">📊 写周报</span>
+                        <span class="hint-tag" onclick="fillExample('做一个能计算房贷的Excel表格')">📱 做Excel工具</span>
+                        <span class="hint-tag" onclick="fillExample('给我一些适合程序员的副业建议')">💼 职业规划</span>
+                        <span class="hint-tag" onclick="fillExample('帮我分析这份销售数据，找出增长机会')">📈 数据分析</span>
+                        <span class="hint-tag" onclick="fillExample('写一个小红书文案，推广我的手工饰品')">✍️ 内容创作</span>
                     </div>
-                </div>
 
-                <!-- 手动输入切换 -->
-                <button class="manual-toggle" onclick="toggleManualInput()">
-                    没有链接？粘贴文案内容手动分析 →
-                </button>
-
-                <div class="manual-input-section" id="manualInputSection">
-                    <label>粘贴笔记文案内容</label>
-                    <textarea
-                        class="primary-input"
-                        id="contentInput"
-                        placeholder="将小红书的爆款笔记文案粘贴到这里...&#10;&#10;例如：&#10;🔥30块的面霜居然比300块的还好用！&#10;&#10;姐妹们我疯了！上周挖到的这个冷门面霜..."
+                    <!-- 主输入框 -->
+                    <textarea 
+                        class="main-input" 
+                        id="userIdea"
+                        placeholder="例如：我想让AI帮我写一封邮件，告诉客户项目延期了，但不知道怎么开口..."
                     ></textarea>
-                    <div class="intent-hints">
-                        <button class="hint-chip" onclick="fillExample('skincare')">💄 护肤类爆款</button>
-                        <button class="hint-chip" onclick="fillExample('food')">🍜 美食探店</button>
-                        <button class="hint-chip" onclick="fillExample('fashion')">👗 穿搭分享</button>
-                        <button class="hint-chip" onclick="fillExample('life')">📱 生活方式</button>
+
+                    <div class="input-meta">
+                        <div class="input-tips">
+                            <span>💡 越具体越好，但不用完美</span>
+                            <span>🎯 描述目标而非方法</span>
+                        </div>
+                        <button class="btn btn-primary" onclick="startClarification()">
+                            开始澄清意图 →
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 步骤2: 交互式意图澄清 -->
+            <section class="step-panel" id="step2">
+                <div class="step-header">
+                    <h2>🔍 通过对话澄清你的真实需求</h2>
+                    <p>回答几个简单问题，让AI准确理解你的意图</p>
+                </div>
+
+                <div class="clarification-chat">
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- 动态生成对话内容 -->
+                    </div>
+
+                    <div class="user-input-area" id="userInputArea">
+                        <input 
+                            type="text" 
+                            id="clarificationInput"
+                            placeholder="输入你的回答..."
+                            onkeypress="handleEnter(event)"
+                        >
+                        <button class="btn btn-primary" onclick="submitAnswer()">
+                            发送
+                        </button>
                     </div>
                 </div>
 
-                <button class="analyze-btn" id="analyzeBtn" onclick="startAnalysis()">
-                    🔍 AI智能解析
-                </button>
-            </div>
-
-            <!-- AI分析中 -->
-            <div class="ai-analyzing" id="analyzingStage">
-                <div class="ai-brain"></div>
-                <h3>AI正在深度解析内容DNA...</h3>
-                <div class="analysis-steps">
-                    <div class="analysis-step" id="analysisStep1">
-                        <div class="step-icon">1</div>
-                        <div class="step-text">抓取笔记元数据与互动数据</div>
-                    </div>
-                    <div class="analysis-step" id="analysisStep2">
-                        <div class="step-icon">2</div>
-                        <div class="step-text">提取四大结构要素（钩子/痛点/方案/CTA）</div>
-                    </div>
-                    <div class="analysis-step" id="analysisStep3">
-                        <div class="step-text">计算爆款指数评分</div>
-                        <div class="step-icon">3</div>
-                    </div>
-                    <div class="analysis-step" id="analysisStep4">
-                        <div class="step-icon">4</div>
-                        <div class="step-text">生成可执行仿写方案</div>
-                    </div>
+                <div class="step-footer">
+                    <button class="btn btn-secondary" onclick="goBack(1)">← 修改需求</button>
+                    <button class="btn btn-primary" id="generateBtn" onclick="generatePrompt()" disabled>
+                        生成提示词 ✨
+                    </button>
                 </div>
-            </div>
+            </section>
 
-            <!-- 第二阶段：提取公式 + 爆款指数 -->
-            <div class="extract-stage" id="extractStage">
-                <div class="stage-header">
-                    <h3>🧬 爆款DNA结构提取</h3>
-                    <button class="back-btn" onclick="resetAll()">↺ 重新开始</button>
+            <!-- 步骤3: 结构化提示词输出 -->
+            <section class="step-panel" id="step3">
+                <div class="step-header">
+                    <h2>✅ 你的专属提示词已生成</h2>
+                    <p>基于你的需求拆解，可直接复制使用</p>
                 </div>
 
-                <!-- 爆款指数评分卡 -->
-                <div class="viral-score-card">
-                    <div class="viral-score-header">
-                        <h4>📊 爆款指数评分</h4>
-                        <div class="score-badge" id="viralScore">85</div>
-                    </div>
-                    <div class="score-dimensions">
-                        <div class="score-dimension">
-                            <div class="dim-label">标题吸引力</div>
-                            <div class="dim-bar">
-                                <div class="dim-bar-fill" id="scoreHook" style="width: 90%"></div>
+                <div class="output-section">
+                    <div class="prompt-card">
+                        <div class="prompt-header">
+                            <div class="prompt-title">
+                                <div class="prompt-title-icon">🎯</div>
+                                <div class="prompt-title-text">
+                                    <h3 id="promptName">项目延期通知邮件生成器</h3>
+                                    <p>针对你的具体场景优化</p>
+                                </div>
                             </div>
-                            <div class="dim-value" id="scoreHookValue">9.0</div>
-                        </div>
-                        <div class="score-dimension">
-                            <div class="dim-label">情绪共鸣度</div>
-                            <div class="dim-bar">
-                                <div class="dim-bar-fill" id="scoreEmotion" style="width: 85%"></div>
+                            <div class="prompt-actions">
+                                <button class="btn btn-secondary btn-sm" onclick="copyFullPrompt()">
+                                    📋 复制完整版
+                                </button>
+                                <button class="btn btn-primary btn-sm" onclick="copyForAI()">
+                                    🤖 去对话使用
+                                </button>
                             </div>
-                            <div class="dim-value" id="scoreEmotionValue">8.5</div>
                         </div>
-                        <div class="score-dimension">
-                            <div class="dim-label">实用价值</div>
-                            <div class="dim-bar">
-                                <div class="dim-bar-fill" id="scoreValue" style="width: 80%"></div>
-                            </div>
-                            <div class="dim-value" id="scoreValueValue">8.0</div>
-                        </div>
-                        <div class="score-dimension">
-                            <div class="dim-label">传播潜力</div>
-                            <div class="dim-bar">
-                                <div class="dim-bar-fill" id="scoreViral" style="width: 88%"></div>
-                            </div>
-                            <div class="dim-value" id="scoreViralValue">8.8</div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- 四大结构要素 -->
-                <div class="elements-grid">
-                    <div class="element-card hook">
-                        <h4>🎣 钩子 (Hook)</h4>
-                        <div class="extracted-content" contenteditable="true" id="hookContent">黄金3秒吸引点 - 数字+反常识</div>
-                        <div class="tags" id="hookTags">
-                            <span class="tag">数字冲击</span>
-                            <span class="tag">反常识</span>
-                        </div>
-                    </div>
-                    <div class="element-card pain">
-                        <h4>💢 痛点 (Pain Point)</h4>
-                        <div class="extracted-content" contenteditable="true" id="painContent">用户共鸣的具体问题或焦虑</div>
-                        <div class="tags" id="painTags">
-                            <span class="tag">价格敏感</span>
-                            <span class="tag">效果焦虑</span>
-                        </div>
-                    </div>
-                    <div class="element-card solution">
-                        <h4>✅ 解决方案 (Solution)</h4>
-                        <div class="extracted-content" contenteditable="true" id="solutionContent">产品/方法的具体价值主张</div>
-                        <div class="tags" id="solutionTags">
-                            <span class="tag">平价替代</span>
-                            <span class="tag">亲测有效</span>
-                        </div>
-                    </div>
-                    <div class="element-card cta">
-                        <h4>📢 行动号召 (CTA)</h4>
-                        <div class="extracted-content" contenteditable="true" id="ctaContent">引导互动/收藏/关注的话术</div>
-                        <div class="tags" id="ctaTags">
-                            <span class="tag">限时福利</span>
-                            <span class="tag">评论区见</span>
-                        </div>
-                    </div>
-                </div>
+                        <div class="prompt-body">
+                            <!-- 结构化展示 -->
+                            <div class="prompt-structure" id="promptStructure">
+                                <!-- 动态生成 -->
+                            </div>
 
-                <!-- 结构时间线 -->
-                <div class="structure-section">
-                    <h4>📐 内容节奏拆解</h4>
-                    <div class="timeline" id="structureTimeline">
-                        <div class="timeline-item active">
-                            <div class="timeline-dot">1</div>
-                            <div class="timeline-content">
-                                <div class="phase">开头 (0-3秒)</div>
-                                <div class="desc">黄金钩子 - 数字+痛点双重吸引</div>
+                            <!-- 完整预览 -->
+                            <div class="full-prompt">
+                                <div class="full-prompt-header">
+                                    <h4>完整提示词</h4>
+                                    <span style="color: var(--gray-500); font-size: 0.8125rem;">可直接复制到任何AI对话</span>
+                                </div>
+                                <pre class="full-prompt-content" id="fullPromptContent"></pre>
                             </div>
-                        </div>
-                        <div class="timeline-item active">
-                            <div class="timeline-dot">2</div>
-                            <div class="timeline-content">
-                                <div class="phase">中段 (3-15秒)</div>
-                                <div class="desc">痛点共鸣 + 产品植入 + 使用场景</div>
-                            </div>
-                        </div>
-                        <div class="timeline-item active">
-                            <div class="timeline-dot">3</div>
-                            <div class="timeline-content">
-                                <div class="phase">高潮 (15-25秒)</div>
-                                <div class="desc">效果展示 + 对比验证 + 情感升华</div>
-                            </div>
-                        </div>
-                        <div class="timeline-item active">
-                            <div class="timeline-dot">4</div>
-                            <div class="timeline-content">
-                                <div class="phase">结尾 (25-30秒)</div>
-                                <div class="desc">行动号召 + 互动引导 + 话题标签</div>
+
+                            <!-- 使用指南 -->
+                            <div class="usage-guide">
+                                <h4>📖 使用建议</h4>
+                                <ol id="usageTips">
+                                    <!-- 动态生成 -->
+                                </ol>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="stage-nav">
-                    <button class="nav-btn prev" onclick="backToDecompose()">← 上一步</button>
-                    <button class="nav-btn next" onclick="goToGenerate()">生成仿写方案 →</button>
+                <div class="step-footer">
+                    <button class="btn btn-secondary" onclick="goBack(2)">← 重新澄清</button>
+                    <button class="btn btn-primary" onclick="startOver()">
+                        🔄 开始新的需求
+                    </button>
                 </div>
-            </div>
-
-            <!-- 第三阶段：生成可执行方案 -->
-            <div class="generate-stage" id="generateStage">
-                <div class="stage-header">
-                    <h3>✨ 一键生成可执行方案</h3>
-                    <button class="back-btn" onclick="backToExtract()">← 返回修改</button>
-                </div>
-
-                <!-- 仿写标题 -->
-                <div class="title-variants">
-                    <h5>📝 3条仿写标题（点击复制）</h5>
-                    <div class="variant-cards" id="variantCards">
-                        <div class="variant-card" onclick="copyVariant(this)">
-                            <div class="variant-title" id="variant1">🔥29.9元的面霜比300元的还好用！学生党必囤！</div>
-                            <div class="variant-tags">
-                                <span class="variant-tag">数字冲击</span>
-                                <span class="variant-tag">价格对比</span>
-                                <span class="variant-tag">人群定位</span>
-                            </div>
-                            <span class="copy-hint">点击复制</span>
-                        </div>
-                        <div class="variant-card" onclick="copyVariant(this)">
-                            <div class="variant-title" id="variant2">油皮姐妹听我说！这罐面霜让我戒掉了大牌...</div>
-                            <div class="variant-tags">
-                                <span class="variant-tag">痛点直击</span>
-                                <span class="variant-tag">悬念钩子</span>
-                                <span class="variant-tag">身份认同</span>
-                            </div>
-                            <span class="copy-hint">点击复制</span>
-                        </div>
-                        <div class="variant-card" onclick="copyVariant(this)">
-                            <div class="variant-title" id="variant3">被问了100遍的面霜！不好用你来打我👊</div>
-                            <div class="variant-tags">
-                                <span class="variant-tag">社交证明</span>
-                                <span class="variant-tag">强承诺</span>
-                                <span class="variant-tag">情绪感染</span>
-                            </div>
-                            <span class="copy-hint">点击复制</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 配图建议 -->
-                <div class="visual-suggestions">
-                    <h5>🎨 配图建议</h5>
-                    <div class="visual-grid" id="visualGrid">
-                        <div class="visual-item">
-                            <div class="visual-icon">📸</div>
-                            <div class="visual-type">封面图</div>
-                            <div class="visual-desc">产品实拍+价格标签<br>对比效果展示</div>
-                        </div>
-                        <div class="visual-item">
-                            <div class="visual-icon">🖼️</div>
-                            <div class="visual-type">内容图</div>
-                            <div class="visual-desc">使用前后对比<br>质地细节展示</div>
-                        </div>
-                        <div class="visual-item">
-                            <div class="visual-icon">📊</div>
-                            <div class="visual-type">数据图</div>
-                            <div class="visual-desc">成分表解读<br>性价比对比表</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 发布时机 -->
-                <div class="timing-suggestion">
-                    <h5>⏰ 最佳发布时机建议</h5>
-                    <div class="timing-grid" id="timingGrid">
-                        <div class="timing-item">
-                            <div class="timing-label">首选时段</div>
-                            <div class="timing-value">晚 20:00-22:00</div>
-                            <div class="timing-score">推荐度 95%</div>
-                        </div>
-                        <div class="timing-item">
-                            <div class="timing-label">次选时段</div>
-                            <div class="timing-value">午 12:00-13:30</div>
-                            <div class="timing-score">推荐度 78%</div>
-                        </div>
-                        <div class="timing-item">
-                            <div class="timing-label">最佳星期</div>
-                            <div class="timing-value">周三 / 周五</div>
-                            <div class="timing-score">推荐度 88%</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stage-nav">
-                    <button class="nav-btn prev" onclick="backToExtract()">← 返回上一步</button>
-                    <button class="nav-btn next" onclick="resetAll()">🔄 分析新笔记</button>
-                </div>
-
-                <!-- 数据飞轮 - 历史记录 -->
-                <div class="data-flywheel" id="dataFlywheel">
-                    <h4>📚 我的爆款库（数据沉淀）</h4>
-                    <div class="history-list" id="historyList">
-                        <!-- 动态生成 -->
-                    </div>
-                </div>
-            </div>
-        </div>
+            </section>
+        </main>
     </div>
 
-    <div class="toast" id="toast"></div>
+    <!-- Toast提示 -->
+    <div class="toast" id="toast">已复制到剪贴板！</div>
 
     <script>
-        // 状态管理
+        // ==================== 状态管理 ====================
         const state = {
-            currentStage: 1,
-            urlParsed: false,
-            inputContent: '',
-            parsedData: {
-                title: '',
-                author: '',
-                engagement: '',
-                contentType: ''
-            },
-            extractedData: {
-                hook: '',
-                pain: '',
-                solution: '',
-                cta: '',
-                tags: [],
-                contentType: '',
-                targetAudience: '',
-                emotionValue: '',
-                viralFactor: '',
-                structure: [],
-                scores: {
-                    hook: 0,
-                    emotion: 0,
-                    value: 0,
-                    viral: 0,
-                    total: 0
-                }
-            },
-            history: JSON.parse(localStorage.getItem('xhs_analyzer_history') || '[]')
+            currentStep: 1,
+            userIdea: '',
+            clarificationAnswers: [],
+            currentQuestionIndex: 0,
+            generatedPrompt: null
         };
 
-        // 示例文案库
-        const examples = {
-            skincare: `🔥30块的面霜居然比300块的还好用！油皮姐妹都给我冲！
-
-姐妹们我疯了！上周挖到的这个冷门面霜，真的绝绝子！
-
-先说我自己的情况：大油皮，T区下午必出油，之前用某大牌面霜，闷痘闷到怀疑人生...
-
-直到我遇到这个！质地是那种冰淇淋一样的，一抹化水，完全不油腻！
-
-用了快两周，最明显的感受：
-✅ 早上涂完，下午脸还是清爽的
-✅ 没有闷痘！没有闭口！
-✅ 妆前打底，底妆服帖到像第二层皮
-
-而且才30块钱...我直接囤了3罐😂
-
-真心建议油皮姐妹试试看！不好用你来打我！
-
-#油皮面霜 #平价好物 #护肤分享 #学生党护肤`,
-
-            food: `藏在巷子里的宝藏咖啡馆☕人均30吃到撑！
-
-周末和闺蜜逛街无意中发现的这家店！
-门口真的超级不起眼，差点就错过了...
-
-结果一进去！这也太温馨了吧！
-整面墙的书架 + 暖黄色的灯光 + 窗边的绿植
-拍照根本停不下来📸
-
-我们点了：
-🍰 提拉米苏（26r）- 一点都不腻！
-☕ 燕麦拿铁（28r）- 豆子很香
-🥪 牛油果三明治（32r）- 料超足
-
-两个人吃到撑才花了86！
-这个价格在这个地段真的感人了...
-
-老板人也超好，看我们拍照还帮忙打光😂
-
-📍地址：XX路XX号（近地铁X口）
-⏰ 营业时间：10:00-22:00
-💰 人均：30-50
-
-#探店 #咖啡馆 #周末去哪儿 #平价美食`,
-
-            fashion: `158cm小个子｜一周通勤穿搭不重样！显高显瘦！
-
-姐妹们催了很久的通勤穿搭来了！
-全部亲测显高显瘦，小个子直接抄作业👇
-
-LOOK 1 周一开会日
-白衬衫+高腰西装裤+尖头平底鞋
-✨ 腰线是关键！裤长选九分
-
-LOOK 2 周二见客户
-针织衫+A字半身裙+乐福鞋
-✨ 上紧下松，视觉拉长比例
-
-LOOK 3 周三赶项目
-条纹T+阔腿裤+小白鞋
-✨ 同色系延伸，显高5cm
-
-（更多look看图👆）
-
-小个子穿搭公式总结：
-📝 高腰！高腰！高腰！
-📝 裤长选九分或拖地
-📝 鞋子与裤子同色系
-📝 上短下长 or 上紧下松
-
-希望能帮到同是小个子的姐妹～
-有问题评论区见！
-
-#小个子穿搭 #通勤穿搭 #显高穿搭 #职场穿搭`,
-
-            life: `28岁才明白的5个道理，要是早点知道就好了😭
-
-前几天和大学室友聚会，聊到各自的近况
-突然发现，毕业这5年，我们走了完全不同的路...
-
-分享几个28岁才明白的道理，希望对你有帮助：
-
-1️⃣ 工作只是手段，不是目的
-不要为了"稳定"困在不喜欢的工作里
-
-2️⃣ 存钱要趁早
-越早开始复利效应越明显
-
-3️⃣ 健康是最大的复利
-熬夜换来的钱，迟早要还
-
-4️⃣ 圈子很重要
-和积极向上的人在一起，你也会变得积极
-
-5️⃣ 接受自己的平凡
-但平凡不等于平庸
-
-最后想对20多岁的自己说：
-别着急，你很好，真的❤️
-
-#个人成长 #自我提升 #28岁 #人生感悟`
-        };
-
-        // URL解析模拟数据库
-        const urlDatabase = {
-            'skincare': {
-                title: '🔥30块的面霜居然比300块的还好用！油皮姐妹都给我冲！',
-                author: '@护肤达人小王',
-                engagement: '1.2w赞 / 3.5w收藏',
-                contentType: '种草测评',
-                content: examples.skincare
+        // ==================== 意图澄清引擎 ====================
+        // 基于用户初始输入，动态生成澄清问题
+        const clarificationEngine = {
+            // 分析用户输入，确定场景类型
+            analyzeIntent: (input) => {
+                const lower = input.toLowerCase();
+                if (lower.includes('邮件') || lower.includes('写') && lower.includes('信')) return 'writing';
+                if (lower.includes('excel') || lower.includes('表格') || lower.includes('计算')) return 'tool';
+                if (lower.includes('分析') || lower.includes('数据')) return 'analysis';
+                if (lower.includes('建议') || lower.includes('规划') || lower.includes('选择')) return 'advisory';
+                if (lower.includes('文案') || lower.includes('小红书') || lower.includes('推广')) return 'marketing';
+                return 'general';
             },
-            'food': {
-                title: '藏在巷子里的宝藏咖啡馆☕人均30吃到撑！',
-                author: '@美食探索者',
-                engagement: '8.5k赞 / 2.1w收藏',
-                contentType: '探店分享',
-                content: examples.food
-            },
-            'fashion': {
-                title: '158cm小个子｜一周通勤穿搭不重样！显高显瘦！',
-                author: '@小个子穿搭Lisa',
-                engagement: '2.3w赞 / 5.6w收藏',
-                contentType: '穿搭教程',
-                content: examples.fashion
+
+            // 根据场景生成问题序列
+            generateQuestions: (input, type) => {
+                const baseQuestions = {
+                    writing: [
+                        { q: '这封邮件的收件人是谁？（上级/客户/同事）', key: 'audience', options: ['上级领导', '客户', '同事', '合作伙伴'] },
+                        { q: '你希望传达的核心信息是什么？（一句话概括）', key: 'coreMessage' },
+                        { q: '期望的语气风格是？', key: 'tone', options: ['正式专业', '诚恳道歉', '简洁直接', '委婉缓冲'] },
+                        { q: '有什么必须提及的关键信息点？', key: 'keyPoints' }
+                    ],
+                    tool: [
+                        { q: '这个工具的主要使用场景是什么？', key: 'scenario' },
+                        { q: '目标用户是谁？（你自己/团队/客户）', key: 'user', options: ['个人使用', '团队协作', '给客户展示'] },
+                        { q: '需要哪些核心功能？', key: 'features' },
+                        { q: '对界面复杂度有什么要求？', key: 'complexity', options: ['极简，一眼看懂', '功能完整，愿意学习'] }
+                    ],
+                    analysis: [
+                        { q: '数据来源和格式是什么？', key: 'dataSource' },
+                        { q: '分析的核心目的是？', key: 'purpose', options: ['发现增长机会', '找出问题原因', '预测未来趋势', '制作汇报材料'] },
+                        { q: '目标受众是谁？（你自己/需要向谁汇报）', key: 'audience' },
+                        { q: '需要输出什么形式的结论？', key: 'output', options: ['详细报告', '关键洞察清单', '可视化图表建议', '执行行动计划'] }
+                    ],
+                    advisory: [
+                        { q: '你当前的具体情况或背景是？', key: 'background' },
+                        { q: '做这个决策的主要约束条件有哪些？', key: 'constraints' },
+                        { q: '你倾向的方案方向是？', key: 'preference', options: ['保守稳健', '激进突破', '还没想法，想全面了解一下'] },
+                        { q: '期望的输出详细程度？', key: 'detail', options: ['快速概览（3-5条）', '深度分析（带执行步骤）'] }
+                    ],
+                    marketing: [
+                        { q: '产品/服务的核心卖点是什么？', key: 'sellingPoint' },
+                        { q: '目标受众画像？', key: 'targetAudience' },
+                        { q: '希望营造的品牌调性是？', key: 'brandTone', options: ['高端精致', '亲民实用', '年轻潮流', '专业可信'] },
+                        { q: '需要包含什么行动号召？', key: 'cta' }
+                    ],
+                    general: [
+                        { q: '这个任务的最终目标是什么？', key: 'goal' },
+                        { q: '有什么必须遵守的限制条件？', key: 'constraints' },
+                        { q: '期望的输出格式是？', key: 'format', options: ['详细说明', '步骤清单', '对比表格', '直接可用的内容'] },
+                        { q: '还有什么重要的背景信息我需要知道？', key: 'context' }
+                    ]
+                };
+
+                return baseQuestions[type] || baseQuestions.general;
             }
         };
 
-        // 处理URL输入
-        function handleUrlInput(value) {
-            const clearBtn = document.getElementById('urlClear');
-            const preview = document.getElementById('parsedPreview');
-
-            if (value.trim()) {
-                clearBtn.classList.add('show');
-
-                // 模拟URL解析（实际应用中会调用后端API）
-                if (value.includes('xiaohongshu.com') || value.length > 20) {
-                    setTimeout(() => parseUrl(value), 500);
-                }
-            } else {
-                clearBtn.classList.remove('show');
-                preview.classList.remove('active');
-                state.urlParsed = false;
-            }
-        }
-
-        // 模拟URL解析
-        function parseUrl(url) {
-            // 模拟根据URL特征识别内容类型
-            let mockData;
-            if (url.includes('skincare') || url.includes('beauty')) {
-                mockData = urlDatabase.skincare;
-            } else if (url.includes('food') || url.includes('cafe')) {
-                mockData = urlDatabase.food;
-            } else if (url.includes('fashion') || url.includes('style')) {
-                mockData = urlDatabase.fashion;
-            } else {
-                // 随机选择一个作为演示
-                const keys = Object.keys(urlDatabase);
-                mockData = urlDatabase[keys[Math.floor(Math.random() * keys.length)]];
-            }
-
-            state.parsedData = mockData;
-            state.inputContent = mockData.content;
-            state.urlParsed = true;
-
-            // 更新预览UI
-            document.getElementById('parsedTitle').textContent = mockData.title;
-            document.getElementById('parsedAuthor').textContent = mockData.author;
-            document.getElementById('parsedEngagement').textContent = mockData.engagement;
-            document.getElementById('parsedType').textContent = mockData.contentType;
-
-            document.getElementById('parsedPreview').classList.add('active');
-            document.getElementById('urlInput').classList.add('parsed');
-
-            showToast('链接解析成功！点击AI智能解析开始分析');
-        }
-
-        // 清除URL
-        function clearUrl() {
-            document.getElementById('urlInput').value = '';
-            document.getElementById('urlClear').classList.remove('show');
-            document.getElementById('parsedPreview').classList.remove('active');
-            document.getElementById('urlInput').classList.remove('parsed');
-            state.urlParsed = false;
-        }
-
-        // 切换手动输入
-        function toggleManualInput() {
-            const section = document.getElementById('manualInputSection');
-            section.classList.toggle('active');
-        }
-
-        // 填充示例
-        function fillExample(type) {
-            const content = examples[type] || '';
-            document.getElementById('contentInput').value = content;
-            // 切换到手动输入模式
-            document.getElementById('manualInputSection').classList.add('active');
-        }
-
-        // 更新进度导航
-        function updateProgress(stage) {
-            state.currentStage = stage;
-
-            for (let i = 1; i <= 3; i++) {
-                const step = document.getElementById(`step${i}`);
-                const conn = document.getElementById(`conn${i}`);
-
-                step.classList.remove('active', 'completed');
-                if (conn) conn.classList.remove('active');
-
-                if (i < stage) {
-                    step.classList.add('completed');
-                    if (conn) conn.classList.add('active');
-                } else if (i === stage) {
-                    step.classList.add('active');
-                }
-            }
-        }
-
-        // 开始AI分析
-        async function startAnalysis() {
-            let input;
-
-            if (state.urlParsed) {
-                input = state.inputContent;
-            } else {
-                input = document.getElementById('contentInput').value.trim();
-            }
-
-            if (!input) {
-                showToast('请先粘贴链接或输入文案内容');
-                return;
-            }
-
-            state.inputContent = input;
-
-            // 显示分析中
-            document.getElementById('decomposeStage').style.display = 'none';
-            document.getElementById('analyzingStage').classList.add('active');
-
-            // 模拟AI分析步骤
-            const steps = ['analysisStep1', 'analysisStep2', 'analysisStep3', 'analysisStep4'];
-            for (let i = 0; i < steps.length; i++) {
-                document.getElementById(steps[i]).classList.add('active');
-                await new Promise(resolve => setTimeout(resolve, 700));
-                document.getElementById(steps[i]).classList.remove('active');
-                document.getElementById(steps[i]).classList.add('completed');
-            }
-
-            // 执行AI分析
-            state.extractedData = analyzeContent(input);
-
-            // 填充提取结果
-            fillExtractedData();
-
-            // 切换到提取阶段
-            document.getElementById('analyzingStage').classList.remove('active');
-            document.getElementById('extractStage').classList.add('active');
-            updateProgress(2);
-        }
-
-        // AI分析内容
-        function analyzeContent(input) {
-            // 关键词识别
-            const isSkincare = /面霜|精华|防晒|护肤|油皮|干皮|痘痘|美白/i.test(input);
-            const isFood = /咖啡|美食|餐厅|探店|吃|菜|味道/i.test(input);
-            const isFashion = /穿搭|衣服|搭配|小个子|显瘦|显高/i.test(input);
-            const isLife = /道理|成长|感悟|生活|记录/i.test(input);
-
-            // 提取钩子
-            const lines = input.split('\n').filter(l => l.trim());
-            const hook = lines[0]?.slice(0, 50) || '黄金3秒吸引点';
-
-            // 提取痛点
-            const painPatterns = [/油皮|干皮|敏感/i, /贵|省钱|平价/i, /显矮|显胖/i, /焦虑|压力/i];
-            let pain = '用户核心痛点';
-            for (const pattern of painPatterns) {
-                const match = input.match(pattern);
-                if (match) {
-                    pain = `针对"${match[0]}"的精准痛点`;
-                    break;
-                }
-            }
-
-            // 提取解决方案
-            const solutionMatch = input.match(/(?:直到|发现|推荐|建议).*?(?:\n|$)/i);
-            const solution = solutionMatch ? solutionMatch[0].slice(0, 50) : '具体解决方案';
-
-            // 提取CTA
-            const ctaPatterns = [/评论区.*见/i, /不好用.*打/i, /直接.*抄作业/i, /囤了.*罐/i];
-            let cta = '引导互动/关注';
-            for (const pattern of ctaPatterns) {
-                const match = input.match(pattern);
-                if (match) {
-                    cta = match[0];
-                    break;
-                }
-            }
-
-            // 确定内容类型和评分
-            let contentType, targetAudience, emotionValue, viralFactor, tags, scores;
-
-            if (isSkincare) {
-                contentType = '种草测评';
-                targetAudience = '20-30岁护肤人群';
-                emotionValue = '惊喜+实用';
-                viralFactor = '高';
-                tags = ['数字冲击', '平价替代', '亲测有效', '成分党'];
-                scores = { hook: 9.0, emotion: 8.5, value: 8.0, viral: 8.8, total: 85 };
-            } else if (isFood) {
-                contentType = '探店分享';
-                targetAudience = '18-35岁年轻人';
-                emotionValue = '好奇+共鸣';
-                viralFactor = '中高';
-                tags = ['隐藏宝藏', '高性价比', '拍照打卡', '社交场景'];
-                scores = { hook: 8.5, emotion: 8.0, value: 8.5, viral: 8.2, total: 83 };
-            } else if (isFashion) {
-                contentType = '穿搭教程';
-                targetAudience = '职场女性/学生党';
-                emotionValue = '审美+实用';
-                viralFactor = '中';
-                tags = ['小个子', '显高显瘦', '通勤', '可复刻'];
-                scores = { hook: 8.0, emotion: 8.2, value: 9.0, viral: 7.5, total: 82 };
-            } else {
-                contentType = '生活感悟';
-                targetAudience = '泛用户群体';
-                emotionValue = '共鸣+启发';
-                viralFactor = '中';
-                tags = ['真实', '情绪价值', '成长', '共鸣'];
-                scores = { hook: 7.5, emotion: 9.0, value: 7.5, viral: 7.0, total: 78 };
-            }
-
-            return {
-                hook,
-                pain,
-                solution,
-                cta,
-                tags,
-                contentType,
-                targetAudience,
-                emotionValue,
-                viralFactor,
-                scores,
-                structure: [
-                    { phase: '开头 (0-3秒)', desc: '黄金钩子 - 数字+痛点双重吸引' },
-                    { phase: '中段 (3-15秒)', desc: '痛点共鸣 + 产品植入 + 使用场景' },
-                    { phase: '高潮 (15-25秒)', desc: '效果展示 + 对比验证 + 情感升华' },
-                    { phase: '结尾 (25-30秒)', desc: '行动号召 + 互动引导 + 话题标签' }
-                ]
-            };
-        }
-
-        // 填充提取的数据
-        function fillExtractedData() {
-            const data = state.extractedData;
-
-            // 填充爆款指数
-            document.getElementById('viralScore').textContent = data.scores.total;
-            document.getElementById('scoreHook').style.width = (data.scores.hook * 10) + '%';
-            document.getElementById('scoreHookValue').textContent = data.scores.hook.toFixed(1);
-            document.getElementById('scoreEmotion').style.width = (data.scores.emotion * 10) + '%';
-            document.getElementById('scoreEmotionValue').textContent = data.scores.emotion.toFixed(1);
-            document.getElementById('scoreValue').style.width = (data.scores.value * 10) + '%';
-            document.getElementById('scoreValueValue').textContent = data.scores.value.toFixed(1);
-            document.getElementById('scoreViral').style.width = (data.scores.viral * 10) + '%';
-            document.getElementById('scoreViralValue').textContent = data.scores.viral.toFixed(1);
-
-            // 填充四要素
-            document.getElementById('hookContent').textContent = data.hook;
-            document.getElementById('painContent').textContent = data.pain;
-            document.getElementById('solutionContent').textContent = data.solution;
-            document.getElementById('ctaContent').textContent = data.cta;
-
-            // 更新时间线
-            const timelineHtml = data.structure.map((item, i) => `
-                <div class="timeline-item active">
-                    <div class="timeline-dot">${i + 1}</div>
-                    <div class="timeline-content">
-                        <div class="phase">${item.phase}</div>
-                        <div class="desc">${item.desc}</div>
-                    </div>
-                </div>
-            `).join('');
-            document.getElementById('structureTimeline').innerHTML = timelineHtml;
-        }
-
-        // 导航函数
-        function backToDecompose() {
-            document.getElementById('extractStage').classList.remove('active');
-            document.getElementById('decomposeStage').style.display = 'block';
-            updateProgress(1);
-        }
-
-        function goToGenerate() {
-            // 保存到历史记录
-            saveToHistory();
-
-            // 生成仿写方案
-            generateResults();
-
-            // 渲染历史记录
-            renderHistory();
-
-            document.getElementById('extractStage').classList.remove('active');
-            document.getElementById('generateStage').classList.add('active');
-            updateProgress(3);
-        }
-
-        function backToExtract() {
-            document.getElementById('generateStage').classList.remove('active');
-            document.getElementById('extractStage').classList.add('active');
-            updateProgress(2);
-        }
-
-        function resetAll() {
-            document.getElementById('extractStage').classList.remove('active');
-            document.getElementById('generateStage').classList.remove('active');
-            document.getElementById('decomposeStage').style.display = 'block';
-            document.getElementById('contentInput').value = '';
-            document.getElementById('urlInput').value = '';
-            document.getElementById('parsedPreview').classList.remove('active');
-            document.getElementById('urlInput').classList.remove('parsed');
-            document.getElementById('urlClear').classList.remove('show');
-            document.getElementById('manualInputSection').classList.remove('active');
-
-            // 重置分析步骤
-            for (let i = 1; i <= 4; i++) {
-                document.getElementById(`analysisStep${i}`).classList.remove('active', 'completed');
-            }
-
-            state.urlParsed = false;
-            state.inputContent = '';
-            updateProgress(1);
-        }
-
-        // 生成仿写结果
-        function generateResults() {
-            const data = state.extractedData;
-            const contentType = data.contentType;
-
-            // 根据内容类型生成不同的标题变体
-            let variants = [];
-
-            if (contentType === '种草测评') {
-                variants = [
-                    { title: `🔥${Math.floor(Math.random() * 50 + 20)}元的面霜比${Math.floor(Math.random() * 5 + 3)}00元的还好用！学生党必囤！`, tags: ['数字冲击', '价格对比', '人群定位'] },
-                    { title: '油皮姐妹听我说！这罐面霜让我戒掉了大牌...', tags: ['痛点直击', '悬念钩子', '身份认同'] },
-                    { title: '被问了100遍的面霜！不好用你来打我👊', tags: ['社交证明', '强承诺', '情绪感染'] }
-                ];
-            } else if (contentType === '探店分享') {
-                variants = [
-                    { title: '藏在巷子里的宝藏店！人均30吃到撑😱', tags: ['神秘感', '价格冲击', '超预期'] },
-                    { title: '本地人私藏的咖啡馆！游客绝对找不到☕', tags: ['本地认证', '稀缺性', '优越感'] },
-                    { title: '挖到宝了！这家店的XX让我想搬来附近住', tags: ['惊喜发现', '情感投射', '极致推荐'] }
-                ];
-            } else if (contentType === '穿搭教程') {
-                variants = [
-                    { title: '158cm｜被问爆的显高穿搭公式！直接抄！', tags: ['数字精准', '需求明确', '低门槛'] },
-                    { title: '小个子进！这套穿搭让我看起来高了10cm', tags: ['人群筛选', '效果承诺', '视觉冲击'] },
-                    { title: '一周穿搭不重样！同事都问我要链接👔', tags: ['实用价值', '社交证明', '引发好奇'] }
-                ];
-            } else {
-                variants = [
-                    { title: `${Math.floor(Math.random() * 10 + 25)}岁才明白的道理，后悔没早点知道`, tags: ['年龄共鸣', '后悔情绪', '价值承诺'] },
-                    { title: '真心建议：女生一定要早点明白这5件事', tags: ['真诚人设', '性别认同', '实用导向'] },
-                    { title: '看完这篇，你会少走很多弯路', tags: ['效果承诺', '悬念设置', '利他定位'] }
-                ];
-            }
-
-            // 更新标题变体
-            document.getElementById('variant1').textContent = variants[0].title;
-            document.getElementById('variant2').textContent = variants[1].title;
-            document.getElementById('variant3').textContent = variants[2].title;
-
-            // 更新配图建议
-            const visualSuggestions = getVisualSuggestions(contentType);
-            document.getElementById('visualGrid').innerHTML = visualSuggestions;
-
-            // 更新发布时机
-            const timingSuggestions = getTimingSuggestions(contentType);
-            document.getElementById('timingGrid').innerHTML = timingSuggestions;
-        }
-
-        // 获取配图建议
-        function getVisualSuggestions(contentType) {
-            const suggestions = {
-                '种草测评': [
-                    { icon: '📸', type: '封面图', desc: '产品实拍+价格标签<br>前后对比展示' },
-                    { icon: '🖼️', type: '细节图', desc: '质地特写<br>成分表解读' },
-                    { icon: '📊', type: '对比图', desc: '与大牌对比<br>性价比分析' }
-                ],
-                '探店分享': [
-                    { icon: '📸', type: '封面图', desc: '店铺门头/环境<br>氛围感营造' },
-                    { icon: '🍽️', type: '菜品图', desc: '招牌菜品特写<br>摆盘精致' },
-                    { icon: '📍', type: '位置图', desc: '地图定位<br>交通指引' }
-                ],
-                '穿搭教程': [
-                    { icon: '📸', type: '封面图', desc: '全身穿搭展示<br>场景化呈现' },
-                    { icon: '👗', type: '细节图', desc: '单品特写<br>材质展示' },
-                    { icon: '📐', type: '对比图', desc: '穿搭前后对比<br>显高技巧标注' }
-                ],
-                '生活感悟': [
-                    { icon: '📸', type: '封面图', desc: '氛围感图片<br>情绪渲染' },
-                    { icon: '📝', type: '文字图', desc: '金句摘录<br>要点总结' },
-                    { icon: '🎨', type: '场景图', desc: '生活场景<br>共鸣营造' }
-                ]
-            };
-
-            const items = suggestions[contentType] || suggestions['生活感悟'];
-            return items.map(item => `
-                <div class="visual-item">
-                    <div class="visual-icon">${item.icon}</div>
-                    <div class="visual-type">${item.type}</div>
-                    <div class="visual-desc">${item.desc}</div>
-                </div>
-            `).join('');
-        }
-
-        // 获取发布时机建议
-        function getTimingSuggestions(contentType) {
-            const timings = {
-                '种草测评': [
-                    { label: '首选时段', value: '晚 20:00-22:00', score: '推荐度 95%' },
-                    { label: '次选时段', value: '午 12:00-13:30', score: '推荐度 78%' },
-                    { label: '最佳星期', value: '周三 / 周五', score: '推荐度 88%' }
-                ],
-                '探店分享': [
-                    { label: '首选时段', value: '晚 18:00-20:00', score: '推荐度 92%' },
-                    { label: '次选时段', value: '周末 10:00-12:00', score: '推荐度 85%' },
-                    { label: '最佳星期', value: '周五 / 周六', score: '推荐度 90%' }
-                ],
-                '穿搭教程': [
-                    { label: '首选时段', value: '早 7:00-9:00', score: '推荐度 88%' },
-                    { label: '次选时段', value: '晚 21:00-23:00', score: '推荐度 82%' },
-                    { label: '最佳星期', value: '周日 / 周一', score: '推荐度 85%' }
-                ],
-                '生活感悟': [
-                    { label: '首选时段', value: '晚 22:00-24:00', score: '推荐度 90%' },
-                    { label: '次选时段', value: '午 12:00-13:00', score: '推荐度 75%' },
-                    { label: '最佳星期', value: '周二 / 周四', score: '推荐度 80%' }
-                ]
-            };
-
-            const items = timings[contentType] || timings['生活感悟'];
-            return items.map(item => `
-                <div class="timing-item">
-                    <div class="timing-label">${item.label}</div>
-                    <div class="timing-value">${item.value}</div>
-                    <div class="timing-score">${item.score}</div>
-                </div>
-            `).join('');
-        }
-
-        // 复制变体标题
-        function copyVariant(card) {
-            const title = card.querySelector('.variant-title').textContent;
-            navigator.clipboard.writeText(title).then(() => {
-                card.classList.add('copied');
-                card.querySelector('.copy-hint').textContent = '已复制！';
-                showToast('标题已复制到剪贴板');
-
-                setTimeout(() => {
-                    card.classList.remove('copied');
-                    card.querySelector('.copy-hint').textContent = '点击复制';
-                }, 2000);
-            });
-        }
-
-        // 保存到历史记录
-        function saveToHistory() {
-            const historyItem = {
-                id: Date.now(),
-                timestamp: new Date().toISOString(),
-                title: state.parsedData.title || state.extractedData.hook.slice(0, 30) + '...',
-                contentType: state.extractedData.contentType,
-                score: state.extractedData.scores.total,
-                hook: state.extractedData.hook,
-                tags: state.extractedData.tags
-            };
-
-            state.history.unshift(historyItem);
-            if (state.history.length > 10) {
-                state.history = state.history.slice(0, 10);
-            }
-
-            localStorage.setItem('xhs_analyzer_history', JSON.stringify(state.history));
-        }
-
-        // 渲染历史记录
-        function renderHistory() {
-            const list = document.getElementById('historyList');
-
-            if (state.history.length === 0) {
-                list.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📭</div>
-                        <p>暂无历史记录，开始分析你的第一条爆款吧！</p>
-                    </div>
-                `;
-                return;
-            }
-
-            list.innerHTML = state.history.map(item => `
-                <div class="history-item" onclick="loadHistoryItem(${item.id})">
-                    <div class="history-score">${item.score}</div>
-                    <div class="history-info">
-                        <div class="history-title">${item.title}</div>
-                        <div class="history-meta">${new Date(item.timestamp).toLocaleDateString()} · ${item.contentType}</div>
-                    </div>
-                    <div class="history-type">${item.contentType}</div>
-                </div>
-            `).join('');
-        }
-
-        // 加载历史记录项
-        function loadHistoryItem(id) {
-            showToast('功能开发中：点击可加载该笔记的完整分析');
-        }
-
-        // Toast提示
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            updateProgress(1);
-            renderHistory();
-        });
-    </script>
-</body>
-</html>
-<!-- refresh 1771902253 -->
+        // ==================== 提示词生成器 ====================
+        const promptGenerator = {
+            // 构建结构化提示词
+            build: (idea, answers, type) => {
+                const answerMap = {};
+                answers.forEach(a => answerMap[a.key] = a.value);
+
+                const structures = {
+                    writing: {
+                        role: `你是一位专业的商务沟通顾问，擅长根据场景和受众调整沟通策略。`,
+                        task: `请帮我撰写一封邮件，主题是：${idea}。核心信息：${answerMap.coreMessage || '见上下文'}`,
+                        context: `收件人：${answerMap.audience || '未指定'}；语气要求：${answerMap.tone || '根据场景判断'}；必须包含的信息点：${answerMap.keyPoints || '无特殊要求'}`,
+                        constraints: `1. 邮件结构完整（主题行+称呼+正文+结尾）；2. 语气符合双方关系；3. 信息清晰无歧义；4. 提供2-3个备选主题行`,
+                        output: `输出完整邮件正文，并简要说明选择该语气策略的理由`
+                    },
+                    tool: {
+                        role: `你是一位Excel/Google Sheets专家，擅长将业务需求转化为可操作的电子表格方案。`,
+                        task: `请设计一个满足以下需求的表格工具：${idea}`,
+                        context: `使用场景：${answerMap.scenario || '日常办公'}；目标用户：${answerMap.user || '个人'}；功能需求：${answerMap.features || '基础功能'}；复杂度偏好：${answerMap.complexity || '平衡'}`,
+                        constraints: `1. 提供完整的公式和设置步骤；2. 考虑数据验证和错误处理；3. 界面直观易懂；4. 说明如何维护和扩展`,
+                        output: `分步骤说明：①表格结构设计 ②关键公式详解 ③使用说明 ④扩展建议`
+                    },
+                    analysis: {
+                        role: `你是一位数据分析师，擅长从业务角度解读数据，发现可行动的洞察。`,
+                        task: `请针对以下数据进行分析：${idea}`,
+                        context: `数据来源：${answerMap.dataSource || '未说明'}；分析目的：${answerMap.purpose || '全面分析'}；汇报对象：${answerMap.audience || '自己'}；输出形式：${answerMap.output || '关键洞察'}`,
+                        constraints: `1. 先说明分析框架和方法论；2. 区分事实描述和推断建议；3. 标注数据局限性和置信度；4. 提供可执行的下一步行动`,
+                        output: `结构化报告：①分析框架 ②关键发现（附数据支撑） ③业务洞察 ④行动建议 ⑤所需补充数据`
+                    },
+                    advisory: {
+                        role: `你是一位经验丰富的职业顾问，擅长在信息不完全的情况下提供结构化思考框架。`,
+                        task: `请针对以下情况提供建议：${idea}`,
+                        context: `背景情况：${answerMap.background || '见原始描述'}；约束条件：${answerMap.constraints || '暂无'}；偏好方向：${answerMap.preference || '开放'}；详细程度：${answerMap.detail || '平衡'}`,
+                        constraints: `1. 提供多维度分析框架；2. 每个建议说明适用条件和风险；3.
