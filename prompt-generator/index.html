@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI协作架构师 - 需求诊断·智能选型·工作流编排</title>
+    <title>AI提示词助手 - 说出你的想法，我帮你写提示词</title>
     <style>
         * {
             margin: 0;
@@ -18,18 +18,15 @@
             --accent: #06b6d4;
             --accent-light: #22d3ee;
             --success: #22c55e;
-            --warning: #f59e0b;
-            --error: #ef4444;
             --dark: #0f172a;
             --gray-900: #1e293b;
-            --gray-800: #1e293b;
-            --gray-700: #334155;
-            --gray-600: #475569;
-            --gray-500: #64748b;
-            --gray-400: #94a3b8;
-            --gray-300: #cbd5e1;
-            --gray-200: #e2e8f0;
-            --gray-100: #f1f5f9;
+            --gray-800: #334155;
+            --gray-700: #475569;
+            --gray-600: #64748b;
+            --gray-500: #94a3b8;
+            --gray-400: #cbd5e1;
+            --gray-300: #e2e8f0;
+            --gray-200: #f1f5f9;
             --white: #ffffff;
         }
 
@@ -37,54 +34,51 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #312e81 100%);
             min-height: 100vh;
-            color: var(--gray-100);
+            color: var(--gray-200);
             line-height: 1.6;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        /* Header */
+        /* Header - 极简友好 */
         header {
             text-align: center;
-            padding: 40px 20px;
+            padding: 60px 20px 40px;
         }
 
         .logo {
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 24px;
         }
 
         .logo-icon {
-            width: 56px;
-            height: 56px;
+            width: 48px;
+            height: 48px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border-radius: 16px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
-            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
+            font-size: 24px;
         }
 
         .logo-text {
-            font-size: 1.75rem;
-            font-weight: 800;
-            background: linear-gradient(90deg, var(--primary-light) 0%, var(--accent-light) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
         }
 
         header h1 {
-            font-size: 2.75rem;
-            font-weight: 800;
-            margin-bottom: 16px;
-            line-height: 1.2;
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--white);
         }
 
         header h1 .highlight {
@@ -92,1058 +86,543 @@
         }
 
         header p {
-            font-size: 1.25rem;
-            color: var(--gray-300);
-            max-width: 700px;
+            font-size: 1.125rem;
+            color: var(--gray-400);
+            max-width: 480px;
             margin: 0 auto;
         }
 
-        /* 核心洞察展示 - 重构定位说明 */
-        .insight-banner {
-            background: rgba(6, 182, 212, 0.08);
-            border: 1px solid rgba(6, 182, 212, 0.25);
-            border-radius: 20px;
-            padding: 24px 28px;
-            margin: 30px auto;
-            max-width: 900px;
-        }
-
-        .insight-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .insight-icon {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            flex-shrink: 0;
-        }
-
-        .insight-title {
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: var(--accent-light);
-        }
-
-        .insight-body {
-            color: var(--gray-300);
-            font-size: 0.95rem;
-            line-height: 1.7;
-        }
-
-        .insight-body strong {
-            color: var(--white);
-        }
-
-        /* 三维分析模型展示 */
-        .dimension-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin: 30px auto;
-            max-width: 1100px;
-        }
-
-        @media (max-width: 900px) {
-            .dimension-cards {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .dimension-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 24px;
-            transition: all 0.3s ease;
-        }
-
-        .dimension-card:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(99, 102, 241, 0.3);
-            transform: translateY(-4px);
-        }
-
-        .dimension-card.active {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.08);
-        }
-
-        .dimension-number {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-
-        .dimension-card h3 {
-            font-size: 1.125rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: var(--white);
-        }
-
-        .dimension-card p {
-            font-size: 0.875rem;
-            color: var(--gray-400);
-            line-height: 1.6;
-        }
-
-        /* 主工作区 */
-        .main-workspace {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin: 40px 0;
-        }
-
-        @media (max-width: 1024px) {
-            .main-workspace {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* 输入面板 */
-        .input-panel {
+        /* 核心输入区 - 三步极简交互 */
+        .input-section {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 24px;
-            padding: 28px;
-        }
-
-        .panel-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .panel-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(99, 102, 241, 0.15);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .panel-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-
-        .panel-subtitle {
-            font-size: 0.875rem;
-            color: var(--gray-400);
-        }
-
-        /* 场景快速选择 */
-        .scene-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .scene-tag {
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            font-size: 0.875rem;
-            color: var(--gray-300);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .scene-tag:hover, .scene-tag.active {
-            background: rgba(99, 102, 241, 0.2);
-            border-color: var(--primary);
-            color: var(--primary-light);
-        }
-
-        /* 需求输入 */
-        .input-group {
-            margin-bottom: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
         }
 
         .input-label {
-            display: block;
             font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--gray-300);
-            margin-bottom: 8px;
+            color: var(--gray-400);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .input-hint {
+        .input-label::before {
+            content: "1";
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 0.75rem;
-            color: var(--gray-500);
-            font-weight: 400;
-            margin-left: 8px;
+            font-weight: 600;
+            color: var(--white);
         }
 
-        textarea, input[type="text"] {
+        .input-wrapper {
+            position: relative;
+        }
+
+        #userInput {
             width: 100%;
-            padding: 16px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: var(--white);
+            min-height: 120px;
+            padding: 20px;
             font-size: 1rem;
+            line-height: 1.6;
+            color: var(--white);
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
             resize: vertical;
             transition: all 0.2s ease;
-            font-family: inherit;
         }
 
-        textarea:focus, input[type="text"]:focus {
+        #userInput::placeholder {
+            color: var(--gray-500);
+        }
+
+        #userInput:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: var(--primary-light);
             background: rgba(0, 0, 0, 0.3);
         }
 
-        textarea {
-            min-height: 140px;
-        }
-
-        /* 约束条件 */
-        .constraints-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 600px) {
-            .constraints-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .constraint-item {
+        /* 示例提示 */
+        .examples {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px;
-            background: rgba(0, 0, 0, 0.15);
-            border-radius: 10px;
-            border: 1px solid transparent;
-            transition: all 0.2s ease;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
         }
 
-        .constraint-item:hover {
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .constraint-checkbox {
-            width: 20px;
-            height: 20px;
-            border-radius: 6px;
-            border: 2px solid var(--gray-500);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .example-tag {
+            padding: 8px 14px;
+            font-size: 0.875rem;
+            color: var(--gray-400);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
             cursor: pointer;
             transition: all 0.2s ease;
-            flex-shrink: 0;
         }
 
-        .constraint-checkbox.checked {
-            background: var(--primary);
-            border-color: var(--primary);
+        .example-tag:hover {
+            color: var(--accent-light);
+            background: rgba(6, 182, 212, 0.1);
+            border-color: rgba(6, 182, 212, 0.3);
         }
 
-        .constraint-checkbox.checked::after {
-            content: '✓';
-            font-size: 12px;
-            color: white;
-        }
-
-        .constraint-info {
-            flex: 1;
-        }
-
-        .constraint-name {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--gray-200);
-        }
-
-        .constraint-desc {
-            font-size: 0.75rem;
-            color: var(--gray-500);
-        }
-
-        /* 分析按钮 */
-        .analyze-btn {
+        /* 生成按钮 */
+        .generate-btn {
             width: 100%;
+            margin-top: 20px;
             padding: 18px 32px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--white);
             background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             border: none;
-            border-radius: 14px;
-            color: white;
-            font-size: 1.125rem;
-            font-weight: 700;
+            border-radius: 16px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .analyze-btn:hover:not(:disabled) {
+        .generate-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 12px 40px rgba(99, 102, 241, 0.4);
         }
 
-        .analyze-btn:disabled {
+        .generate-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
 
-        .analyze-btn.loading {
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* 输出面板 */
-        .output-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .output-section {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            padding: 24px;
-            opacity: 0.5;
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-
-        .output-section.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .output-section.highlight {
-            border-color: var(--accent);
-            background: rgba(6, 182, 212, 0.05);
-        }
-
-        /* 需求诊断结果 */
-        .diagnosis-result {
-            display: none;
-        }
-
-        .diagnosis-result.show {
-            display: block;
-        }
-
-        .intent-card {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
-        }
-
-        .intent-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--accent-light);
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .intent-value {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--white);
-        }
-
-        .intent-meta {
-            display: flex;
-            gap: 16px;
-            margin-top: 12px;
-            flex-wrap: wrap;
-        }
-
-        .intent-tag {
-            padding: 6px 12px;
-            background: rgba(99, 102, 241, 0.15);
-            border-radius: 6px;
-            font-size: 0.75rem;
-            color: var(--primary-light);
-        }
-
-        /* AI选型推荐 */
-        .ai-recommendations {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .ai-card {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 14px;
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .ai-card:hover, .ai-card.selected {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        .ai-card.recommended {
-            border-color: var(--success);
-            background: rgba(34, 197, 94, 0.08);
-        }
-
-        .ai-rank {
-            width: 36px;
-            height: 36px;
+        .generate-btn .step-num {
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 0.875rem;
-            font-weight: 700;
-            flex-shrink: 0;
         }
 
-        .ai-rank.best {
-            background: var(--success);
-            color: white;
-        }
-
-        .ai-rank.alt {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--gray-400);
-        }
-
-        .ai-info {
-            flex: 1;
-        }
-
-        .ai-name {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .ai-badge {
-            padding: 2px 8px;
-            background: var(--success);
-            border-radius: 4px;
-            font-size: 0.625rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .ai-desc {
-            font-size: 0.875rem;
-            color: var(--gray-400);
-            margin-top: 4px;
-        }
-
-        .ai-score {
-            text-align: right;
-        }
-
-        .score-value {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--accent-light);
-        }
-
-        .score-label {
-            font-size: 0.75rem;
-            color: var(--gray-500);
-        }
-
-        /* 工作流编排 */
-        .workflow-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .workflow-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.15);
-            border-radius: 12px;
-            position: relative;
-        }
-
-        .workflow-step::after {
-            content: '';
-            position: absolute;
-            left: 35px;
-            top: 56px;
-            width: 2px;
-            height: calc(100% + 12px);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .workflow-step:last-child::after {
+        /* 输出结果区 */
+        .output-section {
             display: none;
         }
 
-        .step-number {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border-radius: 8px;
+        .output-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .output-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .output-header::before {
+            content: "2";
+            width: 24px;
+            height: 24px;
+            background: var(--success);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.875rem;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        .step-content {
-            flex: 1;
-        }
-
-        .step-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--white);
-            margin-bottom: 4px;
-        }
-
-        .step-desc {
-            font-size: 0.875rem;
-            color: var(--gray-400);
-            margin-bottom: 12px;
-        }
-
-        .step-tool {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 14px;
-            background: rgba(99, 102, 241, 0.15);
-            border-radius: 8px;
-            font-size: 0.875rem;
-            color: var(--primary-light);
-        }
-
-        /* 执行方案输出 */
-        .execution-plan {
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: 16px;
-            padding: 24px;
-        }
-
-        .plan-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .plan-title {
-            font-size: 1.125rem;
-            font-weight: 700;
-        }
-
-        .plan-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn-secondary {
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            color: var(--gray-300);
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.12);
-            color: var(--white);
-        }
-
-        .plan-content {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            padding: 20px;
-            font-family: 'SF Mono', Monaco, monospace;
-            font-size: 0.875rem;
-            line-height: 1.8;
-            color: var(--gray-300);
-            white-space: pre-wrap;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .plan-content .highlight {
-            color: var(--accent-light);
-        }
-
-        .plan-content .param {
-            color: var(--primary-light);
-        }
-
-        /* 效果反馈 */
-        .feedback-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .feedback-title {
             font-size: 0.875rem;
             font-weight: 600;
-            color: var(--gray-300);
-            margin-bottom: 12px;
-        }
-
-        .feedback-options {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .feedback-btn {
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            color: var(--gray-400);
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .feedback-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
             color: var(--white);
         }
 
-        .feedback-btn.selected {
-            background: var(--success);
-            border-color: var(--success);
-            color: white;
+        .output-header h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--gray-400);
         }
 
-        /* 数据沉淀提示 */
-        .data-notice {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 20px;
-            background: rgba(34, 197, 94, 0.08);
-            border: 1px solid rgba(34, 197, 94, 0.2);
-            border-radius: 12px;
-            margin-top: 16px;
-        }
-
-        .data-notice-icon {
-            width: 32px;
-            height: 32px;
-            background: rgba(34, 197, 94, 0.15);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-
-        .data-notice-text {
-            font-size: 0.875rem;
-            color: var(--gray-300);
-        }
-
-        .data-notice-text strong {
-            color: var(--success);
-        }
-
-        /* 历史记录 */
-        .history-section {
-            margin-top: 40px;
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .history-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
-        }
-
-        .history-card {
-            background: rgba(255, 255, 255, 0.03);
+        .result-box {
+            background: rgba(0, 0, 0, 0.25);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 20px;
-            transition: all 0.2s ease;
-        }
-
-        .history-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .history-meta {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .history-scene {
-            padding: 4px 12px;
-            background: rgba(99, 102, 241, 0.15);
-            border-radius: 6px;
-            font-size: 0.75rem;
-            color: var(--primary-light);
-        }
-
-        .history-date {
-            font-size: 0.75rem;
-            color: var(--gray-500);
-        }
-
-        .history-prompt {
-            font-size: 0.875rem;
-            color: var(--gray-300);
-            line-height: 1.6;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            border-radius: 20px;
             overflow: hidden;
         }
 
-        .history-stats {
-            display: flex;
-            gap: 16px;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        .result-content {
+            padding: 24px;
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--white);
+            white-space: pre-wrap;
         }
 
-        .history-stat {
+        /* 操作栏 */
+        .result-actions {
+            display: flex;
+            gap: 12px;
+            padding: 16px 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.75rem;
-            color: var(--gray-500);
+            gap: 8px;
         }
 
-        .history-stat.success {
-            color: var(--success);
+        .action-btn.primary {
+            color: var(--white);
+            background: var(--primary);
+            border: none;
         }
 
-        /* 空状态 */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--gray-500);
+        .action-btn.primary:hover {
+            background: var(--primary-light);
         }
 
-        .empty-icon {
-            width: 80px;
-            height: 80px;
+        .action-btn.secondary {
+            color: var(--gray-300);
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .action-btn.secondary:hover {
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
+        }
+
+        /* 解释区 - 轻量说明 */
+        .explanation-section {
+            margin-top: 20px;
+            padding: 20px 24px;
+            background: rgba(6, 182, 212, 0.06);
+            border: 1px solid rgba(6, 182, 212, 0.15);
+            border-radius: 16px;
+        }
+
+        .explanation-header {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            margin: 0 auto 20px;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.875rem;
+            color: var(--accent-light);
+            font-weight: 500;
         }
 
-        /* 加载动画 */
-        .skeleton {
-            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 8px;
+        .explanation-content {
+            font-size: 0.9375rem;
+            color: var(--gray-400);
+            line-height: 1.7;
         }
 
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+        .explanation-content strong {
+            color: var(--gray-300);
+            font-weight: 500;
+        }
+
+        /* 成功提示 */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 14px 28px;
+            background: var(--success);
+            color: var(--white);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(34, 197, 94, 0.3);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray-500);
+            font-size: 0.875rem;
         }
 
         /* 响应式 */
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.875rem;
+        @media (max-width: 640px) {
+            header {
+                padding: 40px 16px 32px;
             }
-            
-            .dimension-cards {
-                grid-template-columns: 1fr;
+
+            header h1 {
+                font-size: 1.75rem;
+            }
+
+            .input-section {
+                padding: 24px;
+            }
+
+            .result-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
+        <!-- 极简头部 -->
         <header>
             <div class="logo">
-                <div class="logo-icon">🎯</div>
-                <span class="logo-text">AI协作架构师</span>
+                <div class="logo-icon">✨</div>
+                <span class="logo-text">AI提示词助手</span>
             </div>
-            <h1>从"想用AI"到<span class="highlight">"会用AI"</span></h1>
-            <p>不是生成提示词，而是诊断真实需求 · 匹配最优AI组合 · 设计可落地的工作流</p>
+            <h1>说出你的想法，<span class="highlight">我帮你写提示词</span></h1>
+            <p>不会写提示词？没关系，描述你想做什么，我帮你翻译成AI能听懂的话</p>
         </header>
 
-        <!-- 核心洞察：产品定位重构 -->
-        <div class="insight-banner">
-            <div class="insight-header">
-                <div class="insight-icon">💡</div>
-                <span class="insight-title">为什么不做"提示词生成器"？</span>
+        <!-- 核心输入区：第一步 -->
+        <section class="input-section">
+            <div class="input-label">告诉我你想让AI帮你做什么</div>
+            <div class="input-wrapper">
+                <textarea 
+                    id="userInput" 
+                    placeholder="比如：我想让AI帮我写一份周报，总结这周完成了什么工作，遇到了什么问题"
+                ></textarea>
             </div>
-            <div class="insight-body">
-                <p>现代AI（Claude/ChatGPT/Gemini）已能直接理解自然语言，<strong>提示词工程的价值正在快速衰减</strong>。</p>
-                <p style="margin-top: 8px;">真正的痛点是：<strong>不知道AI能做什么边界、该选哪个AI、如何让AI嵌入真实工作流程</strong>。我们帮你成为"AI时代的交互设计师"。</p>
+            <!-- 快速示例 -->
+            <div class="examples">
+                <span class="example-tag" onclick="fillExample('帮我写一封请假邮件，因为家里有事需要请两天假')">写请假邮件</span>
+                <span class="example-tag" onclick="fillExample('帮我解释什么是区块链，用小学生能听懂的话')">解释概念</span>
+                <span class="example-tag" onclick="fillExample('帮我制定一个30天减肥计划，目标减5斤')">制定计划</span>
+                <span class="example-tag" onclick="fillExample('帮我检查这段代码有什么bug')">检查代码</span>
             </div>
-        </div>
+            <!-- 生成按钮：第二步 -->
+            <button class="generate-btn" id="generateBtn" onclick="generatePrompt()">
+                <span class="step-num">2</span>
+                生成提示词
+            </button>
+        </section>
 
-        <!-- 三维分析模型 -->
-        <div class="dimension-cards">
-            <div class="dimension-card active" data-dimension="need">
-                <div class="dimension-number">1</div>
-                <h3>需求诊断</h3>
-                <p>解析你的真实意图，识别显性与隐性需求，区分"想要"和"需要"</p>
+        <!-- 输出结果区：第三步 -->
+        <section class="output-section" id="outputSection">
+            <div class="output-header">
+                <h3>这是优化后的提示词，可以直接复制给AI用</h3>
             </div>
-            <div class="dimension-card" data-dimension="capability">
-                <div class="dimension-number">2</div>
-                <h3>能力匹配</h3>
-                <p>基于任务特征，从20+AI模型中推荐最优组合，考虑成本、速度、质量三角</p>
-            </div>
-            <div class="dimension-card" data-dimension="constraint">
-                <div class="dimension-number">3</div>
-                <h3>约束识别</h3>
-                <p>识别安全合规、预算限制、时效要求等隐性约束，输出可执行方案</p>
-            </div>
-        </div>
-
-        <!-- 主工作区 -->
-        <div class="main-workspace">
-            <!-- 输入面板 -->
-            <div class="input-panel">
-                <div class="panel-header">
-                    <div class="panel-icon">🔍</div>
-                    <div>
-                        <div class="panel-title">需求输入</div>
-                        <div class="panel-subtitle">描述你想解决的问题，而非AI指令</div>
-                    </div>
-                </div>
-
-                <!-- 场景快速选择 -->
-                <div class="scene-tags" id="sceneTags">
-                    <span class="scene-tag active" data-scene="general">通用场景</span>
-                    <span class="scene-tag" data-scene="content">内容创作</span>
-                    <span class="scene-tag" data-scene="data">数据分析</span>
-                    <span class="scene-tag" data-scene="code">代码开发</span>
-                    <span class="scene-tag" data-scene="design">设计创意</span>
-                    <span class="scene-tag" data-scene="research">研究调研</span>
-                    <span class="scene-tag" data-scene="automation">流程自动化</span>
-                </div>
-
-                <!-- 需求描述 -->
-                <div class="input-group">
-                    <label class="input-label">
-                        你想解决什么问题？
-                        <span class="input-hint">用日常语言描述，不用考虑AI术语</span>
-                    </label>
-                    <textarea id="needInput" placeholder="例如：我需要每周给团队写一份产品周报，但收集信息很耗时，而且每次格式都不太一样，希望有个稳定又省事的办法..."></textarea>
-                </div>
-
-                <!-- 当前痛点 -->
-                <div class="input-group">
-                    <label class="input-label">
-                        现在的主要痛点是什么？
-                        <span class="input-hint">帮助我们理解约束条件</span>
-                    </label>
-                    <input type="text" id="painInput" placeholder="例如：时间不够、质量不稳定、需要多人协作、数据敏感不能外传...">
-                </div>
-
-                <!-- 约束条件 -->
-                <div class="input-group">
-                    <label class="input-label">关键约束条件</label>
-                    <div class="constraints-grid" id="constraintsGrid">
-                        <div class="constraint-item" data-constraint="budget">
-                            <div class="constraint-checkbox"></div>
-                            <div class="constraint-info">
-                                <div class="constraint-name">预算敏感</div>
-                                <div class="constraint-desc">希望控制API或订阅成本</div>
-                            </div>
-                        </div>
-                        <div class="constraint-item" data-constraint="privacy">
-                            <div class="constraint-checkbox"></div>
-                            <div class="constraint-info">
-                                <div class="constraint-name">数据隐私</div>
-                                <div class="constraint-desc">涉及敏感信息，需本地/私有部署</div>
-                            </div>
-                        </div>
-                        <div class="constraint-item" data-constraint="speed">
-                            <div class="constraint-checkbox"></div>
-                            <div class="constraint-info">
-                                <div class="constraint-name">实时响应</div>
-                                <div class="constraint-desc">需要秒级反馈，不能等待</div>
-                            </div>
-                        </div>
-                        <div class="constraint-item" data-constraint="accuracy">
-                            <div class="constraint-checkbox"></div>
-                            <div class="constraint-info">
-                                <div class="constraint-name">高准确度</div>
-                                <div class="constraint-desc">容错率低，需要可验证的结果</div>
-                            </div>
-                        </div>
-                        <div class="constraint-item" data-constraint="integration">
-                            <div class="constraint-checkbox"></div>
-                            <div class="constraint-info">
-                                <div class="constraint-name">系统集成</div>
-                                <div class="constraint-desc">需要接入现有工具链（飞书/钉钉/企业微信）</div>
-                            </div>
-                        </div>
-                        <div class="constraint-item" data-constraint="multilingual">
-                            <div class="constraint-checkbox"></div>
-                            <div class="constraint-info">
-                                <div class="constraint-name">多语言</div>
-                                <div class="constraint-desc">需要处理中文、英文或其他语言</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <button class="analyze-btn" id="analyzeBtn">
-                    <span>🔮</span>
-                    <span>开始三维分析</span>
-                </button>
-            </div>
-
-            <!-- 输出面板 -->
-            <div class="output-panel">
-                <!-- 需求诊断结果 -->
-                <div class="output-section" id="diagnosisSection">
-                    <div class="panel-header">
-                        <div class="panel-icon">🎯</div>
-                        <div>
-                            <div class="panel-title">需求诊断</div>
-                            <div class="panel-subtitle">AI理解的真实意图</div>
-                        </div>
-                    </div>
-                    <div class="diagnosis-result" id="diagnosisResult">
-                        <!-- 动态生成 -->
-                    </div>
-                </div>
-
-                <!-- AI选型推荐 -->
-                <div class="output-section" id="aiSection">
-                    <div class="panel-header">
-                        <div class="panel-icon">🤖</div>
-                        <div>
-                            <div class="panel-title">智能选型</div>
-                            <div class="panel-subtitle">基于需求-能力-约束的最优匹配</div>
-                        </div>
-                    </div>
-                    <div class="ai-recommendations" id="aiRecommendations">
-                        <!-- 动态生成 -->
-                    </div>
-                </div>
-
-                <!-- 工作流编排 -->
-                <div class="output-section" id="workflowSection">
-                    <div class="panel-header">
-                        <div class="panel-icon">⚡</div>
-                        <div>
-                            <div class="panel-title">工作流编排</div>
-                            <div class="panel-subtitle">端到端的可执行方案</div>
-                        </div>
-                    </div>
-                    <div class="workflow-steps" id="workflowSteps">
-                        <!-- 动态生成 -->
-                    </div>
-                </div>
-
-                <!-- 执行方案 -->
-                <div class="output-section" id="planSection">
-                    <div class="execution-plan">
-                        <div class="plan-header">
-                            <span class="plan-title">📋 完整执行方案</span>
-                            <div class="plan-actions">
-                                <button class="btn-secondary" onclick="copyPlan()">📋 复制</button>
-                                <button class="btn-secondary" onclick="exportPlan()">⬇️ 导出</button>
-                            </div>
-                        </div>
-                        <div class="plan-content" id="planContent">
-                            <!-- 动态生成 -->
-                        </div>
-                        <div class="feedback-section" id="feedbackSection">
-                            <div class="feedback-title">这个方案对你有帮助吗？（帮助我们优化推荐算法）</div>
-                            <div class="feedback-options">
-                                <button class="feedback-btn" data-feedback="perfect">✅ 完全解决</button>
-                                <button class="feedback-btn" data-feedback="partial">⚠️ 部分有用</button>
-                                <button class="feedback-btn" data-feedback="irrelevant">❌ 不匹配</button>
-                            </div>
-                        </div>
-                        <div class="data-notice">
-                            <div class="data-notice-icon">📊</div>
-                            <div class="data-notice-text">
-                                你的反馈将加入<strong>场景-效果数据库</strong>，帮助更多用户获得更精准的AI协作方案
-                            </div>
-                        </div>
-                    </div>
+            <div class="result-box">
+                <div class="result-content" id="resultContent"></div>
+                <div class="result-actions">
+                    <button class="action-btn primary" onclick="copyResult()">
+                        <span>📋</span> 复制提示词
+                    </button>
+                    <button class="action-btn secondary" onclick="regenerate()">
+                        <span>🔄</span> 重新生成
+                    </button>
                 </div>
             </div>
-        </div>
+            <!-- 轻量解释：帮助用户理解 -->
+            <div class="explanation-section">
+                <div class="explanation-header">
+                    <span>💡</span> 为什么这样写
+                </div>
+                <div class="explanation-content" id="explanationContent"></div>
+            </div>
+        </section>
 
-        <!-- 历史记录 -->
-        <div class
+        <footer>
+            让每个人都能轻松用好AI · 无需学习提示词工程
+        </footer>
+    </div>
+
+    <!-- 复制成功提示 -->
+    <div class="toast" id="toast">✓ 已复制到剪贴板</div>
+
+    <script>
+        // 填充示例
+        function fillExample(text) {
+            document.getElementById('userInput').value = text;
+            document.getElementById('userInput').focus();
+        }
+
+        // 生成提示词的核心逻辑
+        function generatePrompt() {
+            const input = document.getElementById('userInput').value.trim();
+            const btn = document.getElementById('generateBtn');
+            
+            if (!input) {
+                document.getElementById('userInput').focus();
+                return;
+            }
+
+            // 加载状态
+            btn.disabled = true;
+            btn.innerHTML = '<span class="step-num">⏳</span> 正在生成...';
+
+            // 模拟处理延迟，提升体验
+            setTimeout(() => {
+                const result = optimizePrompt(input);
+                
+                // 显示结果
+                document.getElementById('resultContent').textContent = result.prompt;
+                document.getElementById('explanationContent').innerHTML = result.explanation;
+                document.getElementById('outputSection').classList.add('active');
+                
+                // 恢复按钮
+                btn.disabled = false;
+                btn.innerHTML = '<span class="step-num">2</span> 生成提示词';
+                
+                // 滚动到结果
+                document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 600);
+        }
+
+        // 提示词优化引擎：将模糊需求转化为AI友好的自然语言
+        function optimizePrompt(userInput) {
+            const input = userInput.toLowerCase();
+            
+            // 识别意图类型，提供针对性的优化
+            let prompt = '';
+            let explanation = '';
+            
+            // 写作类需求
+            if (input.includes('写') || input.includes('邮件') || input.includes('报告') || input.includes('文案') || input.includes('文章')) {
+                prompt = `请帮我写以下内容：${userInput}
+
+要求：
+- 语气自然、专业，符合日常沟通习惯
+- 结构清晰，重点突出
+- 直接给出完整内容，无需过多解释
+
+如果内容涉及具体场景（如工作邮件、请假申请等），请使用恰当的格式和礼貌用语。`;
+                
+                explanation = '我帮你<strong>明确了输出要求</strong>（语气、结构），并<strong>减少了AI的冗余解释</strong>。加上"直接给出完整内容"可以避免AI先讲一堆写作思路再出正文。';
+            }
+            // 解释/教学类需求
+            else if (input.includes('解释') || input.includes('什么是') || input.includes('怎么') || input.includes('为什么') || input.includes('教')) {
+                const audience = input.includes('小学生') ? '小学生' : 
+                                input.includes('小白') || input.includes('新手') ? '完全不懂的人' : '普通读者';
+                
+                prompt = `请解释以下问题：${userInput}
+
+要求：
+- 用${audience}能听懂的语言
+- 避免专业术语，如果必须用请简单解释
+- 用生活中的例子帮助理解
+- 分步骤或分点说明，条理清晰`;
+                
+                explanation = '我帮你<strong>指定了目标听众</strong>，让AI调整语言难度；<strong>要求用例子和分点</strong>，这样解释更易懂。';
+            }
+            // 计划/建议类需求
+            else if (input.includes('计划') || input.includes('建议') || input.includes('方案') || input.includes('攻略') || input.includes('步骤')) {
+                prompt = `请帮我制定：${userInput}
+
+要求：
+- 给出具体、可执行的行动步骤
+- 说明每一步需要做什么、预计多久
+- 考虑实际情况，给出灵活的调整空间
+- 如有必要，标注关键注意事项`;
+                
+                explanation = '我帮你<strong>强调了"可执行性"</strong>，让AI给出具体步骤而非空泛建议；<strong>要求标注注意事项</strong>，减少执行中的意外问题。';
+            }
+            // 代码/技术类需求
+            else if (input.includes('代码') || input.includes('bug') || input.includes('程序') || input.includes('报错') || input.includes('优化')) {
+                prompt = `请协助处理以下技术问题：${userInput}
+
+要求：
+- 先简要分析问题原因（1-2句话）
+- 给出具体的解决代码或修改方案
+- 解释关键修改点，帮助我理解
+- 如有多种方案，说明各自的优缺点`;
+                
+                explanation = '我帮你<strong>平衡了效率和学习</strong>：既要快速解决问题，也要求解释关键修改，这样你下次遇到类似问题能自己处理。';
+            }
+            // 分析/决策类需求
+            else if (input.includes('分析') || input.includes('对比') || input.includes('选择') || input.includes('哪个') || input.includes('优缺点')) {
+                prompt = `请帮我分析：${userInput}
+
+要求：
+- 全面梳理相关因素，不遗漏重要角度
+- 用清晰的结构呈现（如分点、表格等）
+- 给出明确的结论或建议，并说明理由
+- 如有不确定性，坦诚说明并给出判断依据`;
+                
+                explanation = '我帮你<strong>要求了结构化输出</strong>（表格/分点），让复杂信息一目了然；<strong>要求明确结论</strong>，避免AI只说"各有优劣"却不给建议。';
+            }
+            // 通用优化（兜底）
+            else {
+                prompt = `请协助我完成以下需求：${userInput}
+
+要求：
+- 直接给出实用的回答或成果
+- 结构清晰，便于阅读和使用
+- 如有需要，可补充相关背景知识或注意事项`;
+                
+                explanation = '我帮你<strong>明确了期望的交付形式</strong>（实用、直接），并<strong>预留了灵活性</strong>，让AI根据具体内容判断是否需要补充背景。';
+            }
+
+            return { prompt, explanation };
+        }
+
+        // 复制结果
+        function copyResult() {
+            const text = document.getElementById('resultContent').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast();
+            });
+        }
+
+        // 重新生成
+        function regenerate() {
+            document.getElementById('userInput').value = '';
+            document.getElementById('outputSection').classList.remove('active');
+            document.getElementById('userInput').focus();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 显示提示
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // 回车快捷生成（Ctrl+Enter）
+        document.getElementById('userInput').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                generatePrompt();
+            }
+        });
+    </script>
+</body>
+</html>
