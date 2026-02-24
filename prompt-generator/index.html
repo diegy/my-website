@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PromptCraft Pro - AI提示词生成器 (A/B测试版)</title>
+    <title>PromptCraft Pro - AI提示词生成器 (社区版)</title>
     <style>
         /* ===== CSS Variables & Design Tokens ===== */
         :root {
@@ -47,20 +47,27 @@
             
             /* Typography */
             --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            --font-mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', Consolas, monospace;
+            --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
             
             /* Effects */
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
             --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
             
             /* Transitions */
             --transition-fast: 150ms ease;
             --transition-base: 250ms ease;
+            --transition-slow: 350ms ease;
+            
+            /* Radius */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
         }
 
-        /* ===== Reset & Base Styles ===== */
+        /* ===== Reset & Base ===== */
         *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
@@ -68,7 +75,6 @@
         }
 
         html {
-            font-size: 16px;
             scroll-behavior: smooth;
         }
 
@@ -78,6 +84,10 @@
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
+            background-image: 
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 70%);
         }
 
         /* ===== Layout ===== */
@@ -87,151 +97,144 @@
             padding: var(--space-lg);
         }
 
-        .header {
+        header {
             text-align: center;
-            padding: var(--space-2xl) var(--space-lg);
-            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
-            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-2xl) 0;
+            position: relative;
         }
 
-        .header h1 {
-            font-size: 2.5rem;
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent);
+        }
+
+        .logo {
+            font-size: 3rem;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-light) 100%);
+            background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: var(--space-sm);
+            letter-spacing: -0.02em;
         }
 
-        .header p {
+        .tagline {
             color: var(--text-secondary);
             font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        /* ===== Mode Switcher ===== */
-        .mode-switcher {
+        /* ===== Navigation Tabs ===== */
+        .nav-tabs {
             display: flex;
             justify-content: center;
             gap: var(--space-sm);
-            margin: var(--space-xl) 0;
-            padding: var(--space-sm);
-            background: var(--bg-card);
-            border-radius: 12px;
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
         }
 
-        .mode-btn {
+        .nav-tab {
             padding: var(--space-sm) var(--space-lg);
-            border: none;
-            background: transparent;
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
             color: var(--text-secondary);
-            font-size: 0.875rem;
-            font-weight: 500;
-            border-radius: 8px;
             cursor: pointer;
-            transition: all var(--transition-fast);
+            transition: all var(--transition-base);
+            font-size: 0.9375rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
         }
 
-        .mode-btn:hover {
+        .nav-tab:hover {
+            background: var(--bg-card-hover);
             color: var(--text-primary);
         }
 
-        .mode-btn.active {
-            background: var(--primary);
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: transparent;
             color: white;
+            box-shadow: var(--shadow-glow);
         }
 
-        /* ===== Main Content ===== */
-        .main-content {
+        .nav-tab .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+
+        /* ===== Section Visibility ===== */
+        .section {
             display: none;
+            animation: fadeIn 0.4s ease;
         }
 
-        .main-content.active {
+        .section.active {
             display: block;
         }
 
-        /* ===== A/B Test Section ===== */
-        .ab-test-container {
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== Main Grid ===== */
+        .main-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 320px 1fr;
             gap: var(--space-xl);
-            margin-top: var(--space-xl);
         }
 
         @media (max-width: 1024px) {
-            .ab-test-container {
+            .main-grid {
                 grid-template-columns: 1fr;
             }
         }
 
-        .variant-card {
+        /* ===== Cards ===== */
+        .card {
             background: var(--bg-card);
-            border-radius: 16px;
-            padding: var(--space-xl);
-            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            overflow: hidden;
             transition: all var(--transition-base);
         }
 
-        .variant-card:hover {
-            border-color: var(--border);
+        .card:hover {
+            border-color: var(--border-light);
+            box-shadow: var(--shadow-lg);
         }
 
-        .variant-card.winner {
-            border-color: var(--success);
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.15);
-        }
-
-        .variant-header {
+        .card-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: var(--space-lg);
         }
 
-        .variant-label {
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: var(--space-sm);
         }
 
-        .variant-badge {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.875rem;
-        }
-
-        .variant-badge.a {
-            background: var(--primary);
-            color: white;
-        }
-
-        .variant-badge.b {
-            background: var(--secondary);
-            color: white;
-        }
-
-        .variant-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-        }
-
-        .win-rate {
-            font-size: 0.875rem;
-            color: var(--success);
-            font-weight: 600;
-            opacity: 0;
-            transition: opacity var(--transition-fast);
-        }
-
-        .variant-card.winner .win-rate {
-            opacity: 1;
+        .card-body {
+            padding: var(--space-lg);
         }
 
         /* ===== Form Elements ===== */
@@ -241,31 +244,37 @@
 
         .form-label {
             display: block;
+            margin-bottom: var(--space-sm);
             font-size: 0.875rem;
             font-weight: 500;
             color: var(--text-secondary);
-            margin-bottom: var(--space-sm);
+        }
+
+        .form-label .required {
+            color: var(--error);
+            margin-left: 2px;
         }
 
         .form-input,
-        .form-textarea,
-        .form-select {
+        .form-select,
+        .form-textarea {
             width: 100%;
             padding: var(--space-md);
             background: var(--bg-input);
             border: 1px solid var(--border);
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             color: var(--text-primary);
             font-size: 0.9375rem;
             transition: all var(--transition-fast);
         }
 
         .form-input:focus,
-        .form-textarea:focus,
-        .form-select:focus {
+        .form-select:focus,
+        .form-textarea:focus {
             outline: none;
             border-color: var(--primary);
             background: var(--bg-input-focus);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
         }
 
         .form-textarea {
@@ -275,10 +284,66 @@
             line-height: 1.6;
         }
 
-        .form-textarea.code {
-            font-family: var(--font-mono);
-            font-size: 0.875rem;
-            line-height: 1.7;
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+
+        /* ===== Tags Input ===== */
+        .tags-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            padding: var(--space-sm);
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            min-height: 48px;
+        }
+
+        .tags-input:focus-within {
+            border-color: var(--primary);
+            background: var(--bg-input-focus);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .tag {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: 4px 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius-sm);
+            font-size: 0.8125rem;
+            font-weight: 500;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity var(--transition-fast);
+        }
+
+        .tag-remove:hover {
+            opacity: 1;
+        }
+
+        .tags-input input {
+            flex: 1;
+            min-width: 100px;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+            padding: var(--space-sm);
+        }
+
+        .tags-input input:focus {
+            outline: none;
         }
 
         /* ===== Buttons ===== */
@@ -287,18 +352,19 @@
             align-items: center;
             justify-content: center;
             gap: var(--space-sm);
-            padding: var(--space-md) var(--space-xl);
-            border: none;
-            border-radius: 10px;
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
             font-size: 0.9375rem;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             transition: all var(--transition-fast);
+            border: none;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
+            box-shadow: var(--shadow-md);
         }
 
         .btn-primary:hover {
@@ -314,6 +380,7 @@
 
         .btn-secondary:hover {
             background: var(--bg-input-focus);
+            border-color: var(--border-light);
         }
 
         .btn-success {
@@ -325,215 +392,468 @@
             background: #059669;
         }
 
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: var(--radius-md);
+        }
+
+        .btn-sm {
+            padding: var(--space-sm) var(--space-md);
+            font-size: 0.875rem;
+        }
+
         .btn-group {
             display: flex;
             gap: var(--space-sm);
             flex-wrap: wrap;
         }
 
-        /* ===== A/B Test Controls ===== */
-        .ab-controls {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: var(--space-xl);
-            margin-top: var(--space-xl);
-            border: 1px solid var(--border-light);
+        /* ===== Output Area ===== */
+        .output-area {
+            position: relative;
         }
 
-        .ab-controls h3 {
-            font-size: 1.125rem;
-            margin-bottom: var(--space-lg);
+        .output-header {
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
         }
 
-        .test-config {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--space-lg);
-            margin-bottom: var(--space-lg);
+        .output-tabs {
+            display: flex;
+            gap: var(--space-xs);
         }
 
-        .metric-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: var(--space-md);
-            margin-top: var(--space-lg);
-        }
-
-        .metric-card {
-            background: var(--bg-input);
-            padding: var(--space-lg);
-            border-radius: 12px;
-            text-align: center;
+        .output-tab {
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
             transition: all var(--transition-fast);
         }
 
-        .metric-card:hover {
-            background: var(--bg-input-focus);
+        .output-tab:hover {
+            color: var(--text-primary);
+            background: var(--bg-input);
         }
 
-        .metric-value {
-            font-size: 2rem;
+        .output-tab.active {
+            color: white;
+            background: var(--primary);
+        }
+
+        .output-content {
+            background: var(--bg-darker);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            min-height: 200px;
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .output-content .highlight {
+            color: var(--accent-light);
+        }
+
+        .output-content .keyword {
+            color: var(--primary-light);
+        }
+
+        .output-actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* ===== Stats ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: var(--space-md);
+            background: var(--bg-input);
+            border-radius: var(--radius-md);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary-light);
         }
 
-        .metric-value.positive {
-            color: var(--success);
-        }
-
-        .metric-value.negative {
-            color: var(--error);
-        }
-
-        .metric-label {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-top: var(--space-xs);
-        }
-
-        /* ===== Results Section ===== */
-        .results-section {
-            margin-top: var(--space-xl);
-        }
-
-        .results-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: var(--space-lg);
-        }
-
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--bg-card);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .comparison-table th,
-        .comparison-table td {
-            padding: var(--space-md) var(--space-lg);
-            text-align: left;
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        .comparison-table th {
-            background: var(--bg-input);
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-secondary);
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
-        .comparison-table tr:hover {
-            background: var(--bg-card-hover);
-        }
-
-        .comparison-table td {
-            font-size: 0.9375rem;
-        }
-
-        .score-bar {
-            height: 8px;
-            background: var(--bg-input);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: var(--space-xs);
-        }
-
-        .score-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-
-        .score-fill.a {
-            background: var(--primary);
-        }
-
-        .score-fill.b {
-            background: var(--secondary);
-        }
-
-        /* ===== History Section ===== */
-        .history-section {
-            margin-top: var(--space-xl);
-        }
-
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-md);
-        }
-
-        .history-item {
-            background: var(--bg-card);
-            padding: var(--space-lg);
-            border-radius: 12px;
-            border: 1px solid var(--border-light);
+        /* ===== Community Section ===== */
+        .community-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+            gap: var(--space-md);
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: var(--space-md) var(--space-md) var(--space-md) 44px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: var(--space-md);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .filter-tags {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+        }
+
+        .filter-tag {
+            padding: var(--space-sm) var(--space-md);
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .filter-tag:hover, .filter-tag.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Prompt Cards Grid */
+        .prompts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
             gap: var(--space-lg);
         }
 
-        .history-info {
+        .prompt-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: all var(--transition-base);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .prompt-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .prompt-card-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: var(--space-md);
+        }
+
+        .prompt-author {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .author-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .author-meta {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        .prompt-category {
+            padding: 4px 12px;
+            background: var(--bg-input);
+            border-radius: var(--radius-xl);
+            font-size: 0.75rem;
+            color: var(--accent-light);
+            font-weight: 500;
+        }
+
+        .prompt-card-body {
+            padding: var(--space-lg);
             flex: 1;
         }
 
-        .history-title {
+        .prompt-title {
+            font-size: 1.125rem;
             font-weight: 600;
-            margin-bottom: var(--space-xs);
+            margin-bottom: var(--space-sm);
+            color: var(--text-primary);
         }
 
-        .history-meta {
-            font-size: 0.875rem;
+        .prompt-preview {
             color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        .history-winner {
+        .prompt-tags {
+            display: flex;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+            margin-top: var(--space-md);
+        }
+
+        .prompt-tag {
+            padding: 4px 10px;
+            background: var(--bg-darker);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .prompt-card-footer {
+            padding: var(--space-md) var(--space-lg);
+            border-top: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm) var(--space-md);
-            background: rgba(16, 185, 129, 0.1);
-            border-radius: 8px;
-            color: var(--success);
+            justify-content: space-between;
+        }
+
+        .prompt-stats {
+            display: flex;
+            gap: var(--space-lg);
+        }
+
+        .prompt-stat {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
             font-size: 0.875rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color var(--transition-fast);
+            user-select: none;
+        }
+
+        .prompt-stat:hover {
+            color: var(--primary-light);
+        }
+
+        .prompt-stat.active {
+            color: var(--primary);
+        }
+
+        .prompt-stat.active .stat-icon {
+            transform: scale(1.1);
+        }
+
+        .stat-icon {
+            transition: transform var(--transition-fast);
+        }
+
+        .prompt-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        /* Share Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform var(--transition-base);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
             font-weight: 600;
         }
 
-        /* ===== Toast Notifications ===== */
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            background: var(--bg-input);
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .modal-close:hover {
+            background: var(--error);
+            color: white;
+        }
+
+        .modal-body {
+            padding: var(--space-lg);
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: var(--space-lg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-md);
+        }
+
+        /* Toast Notification */
         .toast-container {
             position: fixed;
-            top: var(--space-lg);
-            right: var(--space-lg);
-            z-index: 1000;
+            bottom: var(--space-xl);
+            right: var(--space-xl);
+            z-index: 1100;
             display: flex;
             flex-direction: column;
-            gap: var(--space-sm);
+            gap: var(--space-md);
         }
 
         .toast {
             padding: var(--space-md) var(--space-lg);
             background: var(--bg-card);
-            border-radius: 10px;
-            border-left: 4px solid var(--primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
             box-shadow: var(--shadow-lg);
             animation: slideIn 0.3s ease;
         }
 
         .toast.success {
-            border-left-color: var(--success);
+            border-color: var(--success);
         }
 
         .toast.error {
-            border-left-color: var(--error);
+            border-color: var(--error);
         }
 
         @keyframes slideIn {
@@ -547,325 +867,96 @@
             }
         }
 
-        /* ===== Utility Classes ===== */
-        .text-center {
+        /* Empty State */
+        .empty-state {
             text-align: center;
+            padding: var(--space-2xl);
         }
 
-        .mb-0 {
-            margin-bottom: 0;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* ===== Standard Mode Styles ===== */
-        .standard-container {
-            max-width: 800px;
-            margin: var(--space-xl) auto;
-        }
-
-        .prompt-builder {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: var(--space-xl);
-            border: 1px solid var(--border-light);
-        }
-
-        .output-section {
-            margin-top: var(--space-xl);
-        }
-
-        .output-box {
-            background: var(--bg-darker);
-            border-radius: 12px;
-            padding: var(--space-lg);
-            font-family: var(--font-mono);
-            font-size: 0.875rem;
-            line-height: 1.7;
-            white-space: pre-wrap;
-            word-break: break-word;
-            border: 1px solid var(--border-light);
-            min-height: 200px;
-        }
-
-        /* ===== Tag Input ===== */
-        .tag-input {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--space-sm);
-            padding: var(--space-sm);
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto var(--space-lg);
             background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            min-height: 48px;
-        }
-
-        .tag {
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
-            gap: var(--space-xs);
-            padding: var(--space-xs) var(--space-sm);
-            background: var(--primary);
-            color: white;
-            border-radius: 6px;
-            font-size: 0.875rem;
+            justify-content: center;
+            font-size: 2.5rem;
         }
 
-        .tag-remove {
-            cursor: pointer;
-            opacity: 0.7;
-            transition: opacity var(--transition-fast);
+        .empty-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: var(--space-sm);
         }
 
-        .tag-remove:hover {
-            opacity: 1;
+        .empty-desc {
+            color: var(--text-secondary);
+            max-width: 400px;
+            margin: 0 auto;
         }
 
-        .tag-input input {
-            flex: 1;
-            min-width: 120px;
-            background: transparent;
-            border: none;
-            color: var(--text-primary);
-            font-size: 0.9375rem;
-            outline: none;
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-input) 25%, var(--bg-card-hover) 50%, var(--bg-input) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius-md);
         }
 
-        /* ===== Loading State ===== */
-        .loading {
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-sm);
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--space-md);
             }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .prompts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .community-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border-light);
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <h1>🚀 PromptCraft Pro</h1>
-        <p>AI提示词生成器 - 现在支持A/B测试，优化你的提示词效果</p>
-    </header>
-
-    <!-- Mode Switcher -->
-    <div class="container">
-        <div class="mode-switcher">
-            <button class="mode-btn active" onclick="switchMode('standard')">标准模式</button>
-            <button class="mode-btn" onclick="switchMode('abtest')">A/B 测试模式</button>
-        </div>
-    </div>
-
-    <!-- Standard Mode -->
-    <div id="standardMode" class="main-content active">
-        <div class="container">
-            <div class="standard-container">
-                <div class="prompt-builder">
-                    <h2 style="margin-bottom: var(--space-lg);">创建提示词</h2>
-                    
-                    <div class="form-group">
-                        <label class="form-label">任务描述</label>
-                        <input type="text" class="form-input" id="stdTask" placeholder="例如：生成一篇关于人工智能的文章">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">角色设定</label>
-                        <input type="text" class="form-input" id="stdRole" placeholder="例如：资深科技作家">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">输出格式</label>
-                        <select class="form-select" id="stdFormat">
-                            <option value="text">纯文本</option>
-                            <option value="markdown">Markdown</option>
-                            <option value="json">JSON</option>
-                            <option value="table">表格</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">约束条件</label>
-                        <div class="tag-input" id="stdConstraints">
-                            <input type="text" placeholder="添加约束条件，按回车确认" onkeydown="addTag(event, this)">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">示例输入（可选）</label>
-                        <textarea class="form-textarea" id="stdExample" placeholder="提供一个示例输入..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">示例输出（可选）</label>
-                        <textarea class="form-textarea" id="stdExampleOut" placeholder="提供一个期望的输出示例..."></textarea>
-                    </div>
-
-                    <button class="btn btn-primary" onclick="generateStandardPrompt()">
-                        ✨ 生成提示词
-                    </button>
-                </div>
-
-                <div class="output-section" id="stdOutputSection" style="display: none;">
-                    <div class="results-header">
-                        <h3>生成的提示词</h3>
-                        <button class="btn btn-secondary" onclick="copyToClipboard('stdOutput')">
-                            📋 复制
-                        </button>
-                    </div>
-                    <div class="output-box" id="stdOutput"></div>
-                    
-                    <div style="margin-top: var(--space-lg);">
-                        <button class="btn btn-success" onclick="startABTestFromStandard()">
-                            🔬 基于此创建A/B测试
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- A/B Test Mode -->
-    <div id="abTestMode" class="main-content">
-        <div class="container">
-            <!-- Test Configuration -->
-            <div class="ab-controls">
-                <h3>
-                    <span>⚙️</span>
-                    测试配置
-                </h3>
-                <div class="test-config">
-                    <div class="form-group mb-0">
-                        <label class="form-label">测试名称</label>
-                        <input type="text" class="form-input" id="testName" placeholder="例如：产品描述生成测试">
-                    </div>
-                    <div class="form-group mb-0">
-                        <label class="form-label">测试目标</label>
-                        <select class="form-select" id="testGoal">
-                            <option value="quality">输出质量</option>
-                            <option value="relevance">相关性</option>
-                            <option value="creativity">创造性</option>
-                            <option value="accuracy">准确性</option>
-                            <option value="efficiency">效率</option>
-                        </select>
-                    </div>
-                    <div class="form-group mb-0">
-                        <label class="form-label">评估标准</label>
-                        <select class="form-select" id="evalCriteria" multiple size="1">
-                            <option value="clarity">清晰度</option>
-                            <option value="completeness">完整性</option>
-                            <option value="consistency">一致性</option>
-                            <option value="usefulness">实用性</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Variant A & B -->
-            <div class="ab-test-container">
-                <!-- Variant A -->
-                <div class="variant-card" id="variantA">
-                    <div class="variant-header">
-                        <div class="variant-label">
-                            <span class="variant-badge a">A</span>
-                            <span class="variant-title">版本 A（对照组）</span>
-                        </div>
-                        <span class="win-rate">🏆 优胜</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">提示词内容</label>
-                        <textarea class="form-textarea code" id="promptA" placeholder="输入版本A的提示词..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">系统角色</label>
-                        <input type="text" class="form-input" id="roleA" placeholder="例如：专业翻译">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">温度参数 (Temperature)</label>
-                        <input type="range" class="form-input" id="tempA" min="0" max="2" step="0.1" value="0.7" oninput="updateRangeValue(this, 'tempAValue')">
-                        <div style="text-align: center; color: var(--text-secondary); font-size: 0.875rem; margin-top: var(--space-xs);">
-                            当前值: <span id="tempAValue">0.7</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">测试备注</label>
-                        <input type="text" class="form-input" id="noteA" placeholder="记录此版本的特点...">
-                    </div>
-
-                    <button class="btn btn-primary" onclick="runTest('A')" id="btnRunA">
-                        ▶️ 运行测试
-                    </button>
-                </div>
-
-                <!-- Variant B -->
-                <div class="variant-card" id="variantB">
-                    <div class="variant-header">
-                        <div class="variant-label">
-                            <span class="variant-badge b">B</span>
-                            <span class="variant-title">版本 B（实验组）</span>
-                        </div>
-                        <span class="win-rate">🏆 优胜</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">提示词内容</label>
-                        <textarea class="form-textarea code" id="promptB" placeholder="输入版本B的提示词..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">系统角色</label>
-                        <input type="text" class="form-input" id="roleB" placeholder="例如：创意作家">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">温度参数 (Temperature)</label>
-                        <input type="range" class="form-input" id="tempB" min="0" max="2" step="0.1" value="0.9" oninput="updateRangeValue(this, 'tempBValue')">
-                        <div style="text-align: center; color: var(--text-secondary); font-size: 0.875rem; margin-top: var(--space-xs);">
-                            当前值: <span id="tempBValue">0.9</span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">测试备注</label>
-                        <input type="text" class="form-input" id="noteB" placeholder="记录此版本的特点...">
-                    </div>
-
-                    <button class="btn btn-secondary" onclick="runTest('B')" id="btnRunB" style="background: var(--secondary);">
-                        ▶️ 运行测试
-                    </button>
-                </div>
-            </div>
-
-            <!-- Test Input -->
-            <div class="ab-controls">
-                <h3>
-                    <span>📝</span>
-                    测试输入
-                </h3>
-                <div class="form-group">
-                    <label class="form-label">统一的测试输入（两个版本使用相同的输入进行对比）</label>
-                    <textarea class="form-textarea" id="testInput" placeholder="输入用于测试的具体内容..."></textarea>
-                </div>
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="runBothTests()">
-                        🔄 同时运行 A/B 测试
-                    </button>
-                    <button class="btn btn-success"
+    <div class
